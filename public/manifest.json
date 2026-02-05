@@ -1,0 +1,27 @@
+{
+  "name": "TraderEdge Pro",
+  "short_name": "TraderEdge",
+  "description": "AI-Powered Prop Firm Challenge Clearing - 87% Win Rate Signals",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0b",
+  "theme_color": "#14b8a6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "business"],
+  "lang": "en-US",
+  "prefer_related_applications": false
+}

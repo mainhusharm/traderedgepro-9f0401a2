@@ -1,0 +1,20 @@
+ services:
+   # Backend API Service
+   - type: web
+     name: traderedgepro-backend
+     runtime: node
+     region: oregon
+     plan: free
+     rootDir: backend
+     buildCommand: npm install
+     startCommand: node server.js
+     envVars:
+       - key: NODE_ENV
+         value: production
+       - key: PORT
+         value: 10000
+       - key: SUPABASE_URL
+         value: https://gsmfjghxwebasmmxqlsi.supabase.co
+       - key: SUPABASE_ANON_KEY
+         sync: false
+     healthCheckPath: /health
