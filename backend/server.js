@@ -6,8 +6,8 @@
  const PORT = process.env.PORT || 3000;
  
  // Supabase configuration
- const SUPABASE_URL = process.env.SUPABASE_URL || 'https://gsmfjghxwebasmmxqlsi.supabase.co';
- const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+ const SUPABASE_URL = process.env.SUPABASE_URL || 'https://toiisjwejwookuqihbmo.supabase.co';
+ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRvaWlzandlandvb2t1cWloYm1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMDI5MzMsImV4cCI6MjA4NTc3ODkzM30.xZ6EhQVj-z7u1dKZk6VXRY2snfhRXpV-h7vgWR-rrzE';
  
  if (!SUPABASE_ANON_KEY) {
    console.error('WARNING: SUPABASE_ANON_KEY not configured. Set it in environment variables.');
@@ -103,12 +103,18 @@
  // Proxy function to forward requests to Supabase Edge Functions
  async function proxyToSupabase(functionName, body, customHeaders = {}) {
    const url = `${SUPABASE_URL}/functions/v1/${functionName}`;
-   
+
+   // Extract the forwarded Authorization header (lowercase from Express)
+   // and remove it from customHeaders to avoid sending duplicate
+   // Authorization values which corrupts the JWT.
+   const forwardedAuth = customHeaders['authorization'] || customHeaders['Authorization'];
+   const { authorization, Authorization: _Auth, ...otherCustomHeaders } = customHeaders;
+
    const headers = {
      'Content-Type': 'application/json',
-     'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+     'Authorization': forwardedAuth || `Bearer ${SUPABASE_ANON_KEY}`,
      'apikey': SUPABASE_ANON_KEY,
-     ...customHeaders
+     ...otherCustomHeaders
    };
    
    console.log(`Proxying to: ${url}`);
@@ -333,12 +339,16 @@
      const { functionName } = req.params;
      const url = `${SUPABASE_URL}/functions/v1/${functionName}`;
      
+     const getCustomHeaders = extractCustomHeaders(req);
+     const getForwardedAuth = getCustomHeaders['authorization'] || getCustomHeaders['Authorization'];
+     const { authorization: _a, Authorization: _A, ...getOtherHeaders } = getCustomHeaders;
+
      const response = await fetch(url, {
        method: 'GET',
        headers: {
-         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+         'Authorization': getForwardedAuth || `Bearer ${SUPABASE_ANON_KEY}`,
          'apikey': SUPABASE_ANON_KEY,
-         ...extractCustomHeaders(req)
+         ...getOtherHeaders
        }
      });
      

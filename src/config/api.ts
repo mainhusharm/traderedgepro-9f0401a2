@@ -7,7 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
  export const RENDER_BACKEND_URL = 'https://traderedgepro-9f0401a2.onrender.com';
  
  // Supabase configuration
-export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://gsmfjghxwebasmmxqlsi.supabase.co';
+export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://toiisjwejwookuqihbmo.supabase.co';
 // Support both env var names to avoid production misconfig (common when migrating)
 export const SUPABASE_ANON_KEY =
   import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
