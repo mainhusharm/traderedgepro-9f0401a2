@@ -144,7 +144,12 @@ app.get('/health', (req, res) => {
     status: 'ok',
     timestamp: new Date().toISOString(),
     supabaseUrl: SUPABASE_URL,
-    version: '1.0.0'
+    version: '1.0.1',
+    geminiConfigured: !!process.env.GEMINI_API_KEY,
+    features: {
+      aiCoach: true,
+      publicAiChat: true
+    }
   });
 });
 
