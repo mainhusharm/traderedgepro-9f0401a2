@@ -182,20 +182,29 @@ const PublicChatWidget = ({ position = 'bottom-right' }: PublicChatWidgetProps) 
       }
 
     } catch (err: any) {
-      console.error('Chat error:', err);
+      console.error('Chat error details:', {
+        message: err?.message,
+        status: err?.status,
+        code: err?.code,
+        fullError: err
+      });
 
-      // Provide a helpful fallback response
-      const fallbackResponses = [
-        "Hey, I'm having a little connection hiccup! Could you try that again? If it keeps happening, feel free to email us at support@traderedgepro.com 💬",
-        "Oops, my wires got crossed for a sec! Give it another shot? You can also check our FAQ page for quick answers.",
-        "Sorry about that! I'm experiencing some technical difficulties. Try again in a moment, or reach out to us at support@traderedgepro.com if you need immediate help!"
-      ];
-      const randomFallback = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+      // Provide a helpful fallback response with debug info in console
+      let fallbackMessage = "Hey, I'm having a little connection hiccup! Could you try that again? If it keeps happening, feel free to email us at support@traderedgepro.com 💬";
+
+      // Check for specific error types
+      if (err?.message?.includes('Failed to fetch') || err?.message?.includes('NetworkError')) {
+        console.error('Network error - Edge function may not be deployed or CORS issue');
+        fallbackMessage = "I'm having trouble connecting to our servers. Please check your internet connection or try again in a moment!";
+      } else if (err?.status === 500 || err?.message?.includes('500')) {
+        console.error('Server error - Check edge function logs in Supabase dashboard');
+        fallbackMessage = "Our servers are experiencing some issues. Please try again in a moment!";
+      }
 
       const errorMessage: ChatMessage = {
         id: `error-${Date.now()}`,
         role: 'assistant',
-        content: randomFallback,
+        content: fallbackMessage,
         timestamp: new Date(),
         agentName: currentAgentName,
       };
