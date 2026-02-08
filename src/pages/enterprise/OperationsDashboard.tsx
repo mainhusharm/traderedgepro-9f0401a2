@@ -1,409 +1,395 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
+  LayoutDashboard,
   Settings,
-  ArrowLeft,
-  RefreshCw,
-  Activity,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Zap,
-  TrendingUp,
-  Server,
-  Database,
   Workflow,
-  Download,
-  Filter,
-  Search
+  ListTodo,
+  AlertTriangle,
+  BarChart3,
+  Users,
+  Receipt,
+  LogOut,
+  Search,
+  Bell,
+  ChevronRight,
+  ChevronLeft,
+  CheckCircle,
+  Clock,
+  XCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import Header from '@/components/layout/Header';
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
-// Mock data for automation performance
+// Sidebar navigation items
+const sidebarItems = [
+  { icon: LayoutDashboard, label: 'Dashboard', active: true },
+  { icon: Settings, label: 'Automations' },
+  { icon: Workflow, label: 'Workflows' },
+  { icon: ListTodo, label: 'Tasks' },
+  { icon: AlertTriangle, label: 'Failures' },
+  { icon: BarChart3, label: 'Analytics' },
+  { icon: Users, label: 'Team' },
+  { icon: Receipt, label: 'Transactions' },
+];
+
+// Automation performance data
 const automationData = [
-  { name: 'Signal Generation', success: 95, failed: 5 },
-  { name: 'Trade Execution', success: 92, failed: 8 },
-  { name: 'Risk Analysis', success: 98, failed: 2 },
-  { name: 'Report Generation', success: 88, failed: 12 },
-  { name: 'Email Notifications', success: 99, failed: 1 },
-  { name: 'Data Sync', success: 94, failed: 6 },
+  { day: 'Mon', value: 180 },
+  { day: 'Tue', value: 220 },
+  { day: 'Wed', value: 280 },
+  { day: 'Thu', value: 250 },
+  { day: 'Fri', value: 320 },
+  { day: 'Sat', value: 380 },
+  { day: 'Sun', value: 290 },
 ];
 
-const revenueByProduct = [
-  { name: 'Starter', value: 45000, color: '#6366f1' },
-  { name: 'Pro', value: 125000, color: '#22c55e' },
-  { name: 'Enterprise', value: 89000, color: '#f59e0b' },
+// Reported cases data
+const reportedCasesData = [
+  { day: 'Mon', value: 45 },
+  { day: 'Tue', value: 52 },
+  { day: 'Wed', value: 38 },
+  { day: 'Thu', value: 65 },
+  { day: 'Fri', value: 48 },
+  { day: 'Sat', value: 72 },
+  { day: 'Sun', value: 55 },
 ];
 
-const failureTypes = [
-  { type: 'API Timeout', count: 23, percentage: 35 },
-  { type: 'Database Connection', count: 18, percentage: 27 },
-  { type: 'Workflow Syntax', count: 15, percentage: 23 },
-  { type: 'Authentication', count: 10, percentage: 15 },
+// Failures data
+const failuresData = [
+  { type: 'API Timeout', time: '09:11', status: 'resolved' },
+  { type: 'Database Connection...', time: '04:33', status: 'pending' },
+  { type: 'Workflow Syntax Error', time: '04:33', status: 'error' },
+  { type: 'DataadicasProstry', time: '2:30m', status: 'warning' },
+  { type: 'Fullname Status', time: '09:10', status: 'resolved' },
+  { type: 'Workflow Syntax Error', time: '04:32', status: 'error' },
 ];
 
+// Transactions data
 const transactionsData = [
-  { id: 'TXN-001', product: 'Pro Plan', user: 'john@example.com', status: 'completed', amount: 199, time: '2 min ago' },
-  { id: 'TXN-002', product: 'Starter Plan', user: 'jane@example.com', status: 'pending', amount: 49.5, time: '5 min ago' },
-  { id: 'TXN-003', product: 'Enterprise', user: 'corp@example.com', status: 'completed', amount: 499, time: '12 min ago' },
-  { id: 'TXN-004', product: 'Pro Plan', user: 'mike@example.com', status: 'failed', amount: 199, time: '15 min ago' },
-  { id: 'TXN-005', product: 'Starter Plan', user: 'sarah@example.com', status: 'completed', amount: 49.5, time: '23 min ago' },
-];
-
-const systemHealthData = [
-  { time: '00:00', cpu: 45, memory: 62, requests: 120 },
-  { time: '04:00', cpu: 32, memory: 58, requests: 85 },
-  { time: '08:00', cpu: 68, memory: 74, requests: 340 },
-  { time: '12:00', cpu: 82, memory: 81, requests: 520 },
-  { time: '16:00', cpu: 75, memory: 78, requests: 480 },
-  { time: '20:00', cpu: 55, memory: 65, requests: 280 },
+  { product: 'Product B', user: 'Christine R.', status: 'Completed', date: '11 Aug 2024', team: 'Team 32mg' },
+  { product: 'Product A', user: 'Christine R.', status: 'Completed', date: '11 Aug 2024', team: 'Team 32mg' },
+  { product: 'Product C', user: 'Christine R.', status: 'In-Progress', date: '11 Aug 2024', team: 'Team 32mg' },
+  { product: 'Product D', user: 'Christine R.', status: 'Completed', date: '11 Aug 2024', team: 'Team 32mg' },
 ];
 
 const OperationsDashboard = () => {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    setTimeout(() => {
-      setLastUpdated(new Date());
-      setIsRefreshing(false);
-    }, 1000);
-  };
-
-  const filteredTransactions = transactionsData.filter(txn => {
-    const matchesSearch = txn.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      txn.id.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || txn.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
-
-  const getStatusBadge = (status: string) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed':
-        return <Badge className="bg-green-500/20 text-green-500"><CheckCircle className="w-3 h-3 mr-1" />Completed</Badge>;
-      case 'pending':
-        return <Badge className="bg-yellow-500/20 text-yellow-500"><Clock className="w-3 h-3 mr-1" />Pending</Badge>;
-      case 'failed':
-        return <Badge className="bg-red-500/20 text-red-500"><XCircle className="w-3 h-3 mr-1" />Failed</Badge>;
-      default:
-        return <Badge>{status}</Badge>;
+      case 'Completed': return 'text-green-500';
+      case 'In-Progress': return 'text-blue-500';
+      default: return 'text-gray-500';
     }
   };
 
-  const exportData = () => {
-    const csvContent = 'data:text/csv;charset=utf-8,' +
-      'ID,Product,User,Status,Amount,Time\n' +
-      filteredTransactions.map(t => `${t.id},${t.product},${t.user},${t.status},${t.amount},${t.time}`).join('\n');
-    const link = document.createElement('a');
-    link.href = encodeURI(csvContent);
-    link.download = `operations_report_${new Date().toISOString().split('T')[0]}.csv`;
-    link.click();
+  const getFailureIcon = (status: string) => {
+    switch (status) {
+      case 'resolved': return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case 'pending': return <Clock className="w-4 h-4 text-yellow-500" />;
+      case 'error': return <XCircle className="w-4 h-4 text-red-500" />;
+      case 'warning': return <AlertTriangle className="w-4 h-4 text-orange-500" />;
+      default: return <Clock className="w-4 h-4 text-gray-500" />;
+    }
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="min-h-screen bg-[#f8fafc] flex">
+      {/* Sidebar */}
+      <aside className={`${sidebarCollapsed ? 'w-16' : 'w-56'} bg-white border-r border-gray-200 flex flex-col transition-all duration-300`}>
+        <div className="p-4 border-b border-gray-100">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <Settings className="w-5 h-5 text-white" />
+            </div>
+            {!sidebarCollapsed && <span className="font-semibold text-gray-800">Donezo</span>}
+          </div>
+        </div>
 
-      <main className="container mx-auto px-4 py-8 pt-24">
+        <nav className="flex-1 p-2">
+          {sidebarItems.map((item, index) => (
+            <button
+              key={index}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg mb-1 transition-colors ${
+                item.active
+                  ? 'bg-blue-50 text-blue-600'
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <item.icon className="w-5 h-5" />
+              {!sidebarCollapsed && <span className="text-sm font-medium">{item.label}</span>}
+            </button>
+          ))}
+        </nav>
+
+        <div className="p-2 border-t border-gray-100">
+          <button
+            onClick={() => {
+              sessionStorage.removeItem('enterprise_dashboard_session');
+              navigate('/enterprise-login');
+            }}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50"
+          >
+            <LogOut className="w-5 h-5" />
+            {!sidebarCollapsed && <span className="text-sm font-medium">Logout</span>}
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => navigate('/enterprise')}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold flex items-center gap-2">
-                <Settings className="w-6 h-6 text-primary" />
-                Operations Dashboard
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Last updated: {lastUpdated.toLocaleTimeString()}
-              </p>
+        <header className="bg-white border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Input
+                placeholder="Search"
+                className="pl-10 w-64 bg-gray-50 border-gray-200"
+              />
+            </div>
+            <div className="flex items-center gap-4">
+              <button className="relative">
+                <Bell className="w-5 h-5 text-gray-500" />
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
+              </button>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500">Bogie</span>
+                <Avatar className="w-8 h-8">
+                  <AvatarFallback className="bg-blue-100 text-blue-600 text-xs">SA</AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-medium">Sarah</span>
+                <span className="text-xs text-gray-400">Admin</span>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={handleRefresh} disabled={isRefreshing}>
-              <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
-            <Button variant="outline" onClick={exportData}>
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </Button>
-          </div>
-        </div>
+        </header>
 
-        {/* Key Metrics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card className="glass-card">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Active Automations</p>
-                  <p className="text-2xl font-bold">47</p>
-                  <p className="text-xs text-green-500">+5 this week</p>
-                </div>
-                <div className="p-3 rounded-full bg-primary/10">
-                  <Workflow className="w-6 h-6 text-primary" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="glass-card">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Success Rate</p>
-                  <p className="text-2xl font-bold">98.2%</p>
-                  <p className="text-xs text-green-500">+0.3% from last week</p>
-                </div>
-                <div className="p-3 rounded-full bg-green-500/10">
-                  <TrendingUp className="w-6 h-6 text-green-500" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="glass-card">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Total Failures</p>
-                  <p className="text-2xl font-bold">66</p>
-                  <p className="text-xs text-red-500">-12 from last week</p>
-                </div>
-                <div className="p-3 rounded-full bg-red-500/10">
-                  <AlertTriangle className="w-6 h-6 text-red-500" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="glass-card">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Revenue Generated</p>
-                  <p className="text-2xl font-bold">$259K</p>
-                  <p className="text-xs text-green-500">+18% this month</p>
-                </div>
-                <div className="p-3 rounded-full bg-amber-500/10">
-                  <Zap className="w-6 h-6 text-amber-500" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Charts Row */}
-        <div className="grid lg:grid-cols-2 gap-6 mb-8">
-          {/* Automation Performance */}
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="text-lg">Automation Performance</CardTitle>
-              <CardDescription>Success vs failure rates by automation type</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={automationData} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                    <XAxis type="number" stroke="#888" />
-                    <YAxis dataKey="name" type="category" stroke="#888" width={120} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}
-                    />
-                    <Bar dataKey="success" fill="#22c55e" name="Success %" radius={[0, 4, 4, 0]} />
-                    <Bar dataKey="failed" fill="#ef4444" name="Failed %" radius={[0, 4, 4, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* System Health */}
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="text-lg">System Health</CardTitle>
-              <CardDescription>CPU, Memory, and Request load over time</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={systemHealthData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                    <XAxis dataKey="time" stroke="#888" />
-                    <YAxis stroke="#888" />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}
-                    />
-                    <Line type="monotone" dataKey="cpu" stroke="#6366f1" name="CPU %" strokeWidth={2} />
-                    <Line type="monotone" dataKey="memory" stroke="#22c55e" name="Memory %" strokeWidth={2} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Failures Overview */}
-        <div className="grid lg:grid-cols-3 gap-6 mb-8">
-          <Card className="glass-card lg:col-span-1">
-            <CardHeader>
-              <CardTitle className="text-lg">Failures Overview</CardTitle>
-              <CardDescription>Error types breakdown</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {failureTypes.map((failure, index) => (
-                  <div key={index}>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>{failure.type}</span>
-                      <span className="text-muted-foreground">{failure.count} ({failure.percentage}%)</span>
+        {/* Dashboard Content */}
+        <div className="p-6">
+          <div className="grid grid-cols-12 gap-6">
+            {/* Operational Overview */}
+            <Card className="col-span-3 bg-white shadow-sm border-gray-100">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-gray-600">Operational Overview</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-500">Revenue Generated</span>
+                      <Badge className="bg-green-100 text-green-600 text-xs">10%</Badge>
                     </div>
-                    <Progress value={failure.percentage} className="h-2" />
+                    <p className="text-2xl font-bold text-gray-800">$130,709</p>
+                    <p className="text-xs text-gray-400">11 Increases last month</p>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
 
-          <Card className="glass-card lg:col-span-2">
-            <CardHeader>
-              <CardTitle className="text-lg">Revenue by Product</CardTitle>
-              <CardDescription>Distribution of revenue across plans</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-8">
-                <div className="h-[200px] w-[200px]">
+                  <div>
+                    <span className="text-xs text-gray-500">This Month</span>
+                    <p className="text-xl font-bold text-gray-800">$130,709</p>
+                  </div>
+
+                  <div className="flex items-center justify-center">
+                    <div className="relative w-32 h-32">
+                      <svg className="w-full h-full -rotate-90">
+                        <circle cx="64" cy="64" r="56" fill="none" stroke="#e5e7eb" strokeWidth="12" />
+                        <circle
+                          cx="64"
+                          cy="64"
+                          r="56"
+                          fill="none"
+                          stroke="#3b82f6"
+                          strokeWidth="12"
+                          strokeDasharray={`${42 * 3.52} 352`}
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-xs text-gray-400">08%</span>
+                        <span className="text-2xl font-bold text-gray-800">42%</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-center text-xs text-gray-500">Revenue</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Automation Performance */}
+            <Card className="col-span-5 bg-white shadow-sm border-gray-100">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium text-gray-600">Automation Performance</CardTitle>
+                  <Badge className="bg-blue-100 text-blue-600 text-xs">Systems</Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[180px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={revenueByProduct}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={50}
-                        outerRadius={80}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {revenueByProduct.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}
-                        formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']}
-                      />
-                    </PieChart>
+                    <BarChart data={automationData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                      <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9ca3af' }} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9ca3af' }} />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                    </BarChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="flex-1 space-y-4">
-                  {revenueByProduct.map((product, index) => (
+                <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                  <span className="text-xs text-gray-500">10 Total This Month</span>
+                  <div className="flex items-center gap-4 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-500">Performance Stats:</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="font-medium text-gray-700">Automations</span>
+                      <span className="text-gray-400">3m</span>
+                      <span className="text-gray-400">12%</span>
+                      <span className="text-gray-400">18</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="font-medium text-gray-700">Failures:</span>
+                      <span className="text-gray-400">16%</span>
+                      <span className="text-gray-400">97%</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Failures Overview */}
+            <Card className="col-span-4 bg-white shadow-sm border-gray-100">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium text-gray-600">Failures Overview</CardTitle>
+                  <span className="text-xs text-gray-400">Recent Activity</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {failuresData.map((failure, index) => (
                     <div key={index} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: product.color }} />
-                        <span>{product.name}</span>
+                        {getFailureIcon(failure.status)}
+                        <span className="text-sm text-gray-700">{failure.type}</span>
                       </div>
-                      <span className="font-semibold">${product.value.toLocaleString()}</span>
+                      <span className="text-xs text-gray-400">{failure.time}</span>
                     </div>
                   ))}
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Transactions Table */}
-        <Card className="glass-card">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-lg">Recent Transactions</CardTitle>
-                <CardDescription>Latest automation-processed transactions</CardDescription>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 w-[200px]"
-                  />
+                <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                    <span className="text-xs text-gray-500">58% Automations</span>
+                  </div>
                 </div>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-[130px]">
-                    <Filter className="w-4 h-4 mr-2" />
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="failed">Failed</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Transaction ID</TableHead>
-                  <TableHead>Product</TableHead>
-                  <TableHead>User</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                  <TableHead className="text-right">Time</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredTransactions.map((txn) => (
-                  <TableRow key={txn.id}>
-                    <TableCell className="font-mono">{txn.id}</TableCell>
-                    <TableCell>{txn.product}</TableCell>
-                    <TableCell>{txn.user}</TableCell>
-                    <TableCell>{getStatusBadge(txn.status)}</TableCell>
-                    <TableCell className="text-right">${txn.amount}</TableCell>
-                    <TableCell className="text-right text-muted-foreground">{txn.time}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+
+            {/* Reported Cases */}
+            <Card className="col-span-4 bg-white shadow-sm border-gray-100">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium text-gray-600">Reported Cases</CardTitle>
+                  <div className="flex items-center gap-1">
+                    <button className="p-1 hover:bg-gray-100 rounded"><ChevronLeft className="w-4 h-4 text-gray-400" /></button>
+                    <button className="p-1 hover:bg-gray-100 rounded"><ChevronRight className="w-4 h-4 text-gray-400" /></button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-6 mb-4">
+                  <div className="text-center">
+                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mb-1">
+                      <span className="text-lg font-bold text-gray-700">5</span>
+                    </div>
+                    <span className="text-xs text-gray-500">Issues</span>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-1">
+                      <span className="text-lg font-bold text-blue-600">8</span>
+                    </div>
+                    <span className="text-xs text-gray-500">Errors</span>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mb-1">
+                      <span className="text-lg font-bold text-gray-700">5</span>
+                    </div>
+                    <span className="text-xs text-gray-500">Failures</span>
+                  </div>
+                </div>
+                <div className="text-xs text-gray-500 mb-2">Mobiterm</div>
+                <div className="h-[100px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={reportedCasesData}>
+                      <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af' }} />
+                      <Bar dataKey="value" fill="#93c5fd" radius={[2, 2, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Transactions */}
+            <Card className="col-span-8 bg-white shadow-sm border-gray-100">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium text-gray-600">Transactions</CardTitle>
+                  <div className="flex items-center gap-2">
+                    <Input placeholder="Q. Hour" className="w-20 h-8 text-xs" />
+                    <Button variant="ghost" size="sm" className="h-8 text-xs">...</Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="grid grid-cols-4 text-xs text-gray-500 pb-2 border-b border-gray-100">
+                    <span>Product</span>
+                    <span>Status</span>
+                    <span>Team 32mg</span>
+                    <span></span>
+                  </div>
+                  {transactionsData.map((txn, index) => (
+                    <div key={index} className="grid grid-cols-4 items-center py-2">
+                      <div className="flex items-center gap-2">
+                        <Avatar className="w-8 h-8">
+                          <AvatarFallback className="bg-blue-100 text-blue-600 text-xs">
+                            {txn.product[8]}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="text-sm font-medium text-gray-700">{txn.product}</p>
+                          <p className="text-xs text-gray-400">{txn.user}</p>
+                        </div>
+                      </div>
+                      <span className={`text-sm font-medium ${getStatusColor(txn.status)}`}>
+                        {txn.status}
+                      </span>
+                      <span className="text-sm text-gray-500">{txn.date}</span>
+                      <span></span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </main>
     </div>
   );

@@ -1,507 +1,405 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import {
-  Crown,
-  ArrowLeft,
-  RefreshCw,
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  Users,
-  CreditCard,
-  Building2,
+  LayoutGrid,
+  Clock,
+  Copy,
+  FileText,
+  LogOut,
   ArrowUpRight,
   ArrowDownRight,
-  Calendar,
-  Download,
-  FileText,
-  PiggyBank,
-  Receipt,
-  Wallet,
-  Activity,
-  Globe
+  CreditCard,
+  Send,
+  Globe,
+  ChevronRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
-import Header from '@/components/layout/Header';
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
-// Mock data
-const monthlyRevenue = [
-  { month: 'Jan', current: 85000, previous: 72000 },
-  { month: 'Feb', current: 92000, previous: 78000 },
-  { month: 'Mar', current: 98000, previous: 85000 },
-  { month: 'Apr', current: 105000, previous: 89000 },
-  { month: 'May', current: 112000, previous: 95000 },
-  { month: 'Jun', current: 125000, previous: 102000 },
-  { month: 'Jul', current: 118000, previous: 108000 },
-  { month: 'Aug', current: 132000, previous: 112000 },
-  { month: 'Sep', current: 145000, previous: 118000 },
-  { month: 'Oct', current: 155000, previous: 125000 },
-  { month: 'Nov', current: 168000, previous: 138000 },
-  { month: 'Dec', current: 185000, previous: 152000 },
+// Sidebar items
+const sidebarItems = [
+  { icon: LayoutGrid, active: true },
+  { icon: Clock },
+  { icon: Copy },
+  { icon: FileText },
 ];
 
-const transactionHistory = [
-  { date: '2026-02-08', type: 'Revenue', amount: 12500, category: 'Subscriptions' },
-  { date: '2026-02-08', type: 'Revenue', amount: 4990, category: 'Enterprise' },
-  { date: '2026-02-07', type: 'Expense', amount: -2500, category: 'Marketing' },
-  { date: '2026-02-07', type: 'Revenue', amount: 8750, category: 'Subscriptions' },
-  { date: '2026-02-06', type: 'Expense', amount: -1200, category: 'Infrastructure' },
-  { date: '2026-02-06', type: 'Revenue', amount: 15200, category: 'Subscriptions' },
+// Savings chart data
+const savingsData = [
+  { day: 'Saturday', value: 12 },
+  { day: 'Sunday', value: 15 },
+  { day: 'Monday', value: 18 },
+  { day: 'Tuesday', value: 25 },
+  { day: 'Wednesday', value: 22 },
+  { day: 'Thursday', value: 28 },
 ];
 
-const invoices = [
-  { id: 'INV-001', client: 'Tech Corp', amount: 4990, status: 'paid', date: '2026-02-05' },
-  { id: 'INV-002', client: 'Trading LLC', amount: 1990, status: 'pending', date: '2026-02-08' },
-  { id: 'INV-003', client: 'Finance Inc', amount: 4990, status: 'overdue', date: '2026-01-25' },
-  { id: 'INV-004', client: 'Hedge Fund Co', amount: 4990, status: 'paid', date: '2026-02-01' },
+// Transaction chart data
+const transactionData = [
+  { day: 'Sunday', insert: 35, expense: 20 },
+  { day: 'Sunday', insert: 50, expense: 25 },
+  { day: 'Monday', insert: 40, expense: 18 },
+  { day: 'Tuesday', insert: 30, expense: 35 },
+  { day: 'Wednesday', insert: 45, expense: 22 },
+  { day: 'Thursday', insert: 55, expense: 28 },
 ];
 
-const expenseCategories = [
-  { name: 'Infrastructure', value: 35000, color: '#6366f1' },
-  { name: 'Marketing', value: 28000, color: '#22c55e' },
-  { name: 'Salaries', value: 45000, color: '#f59e0b' },
-  { name: 'Support', value: 12000, color: '#ec4899' },
-  { name: 'R&D', value: 18000, color: '#8b5cf6' },
+// Invoice data
+const invoiceData = [
+  { name: 'Gregory McBride', invoiceId: '#K2SJ79', avatar: 'GM' },
+  { name: 'Joseph Powell', invoiceId: '#K2 P1GR', avatar: 'JP' },
+  { name: 'Jared Pinto', invoiceId: '#KM/024', avatar: 'JP' },
+  { name: 'Jared Pinto', invoiceId: '#FX/P1J34', avatar: 'JP' },
 ];
 
-const productPerformance = [
-  { name: 'Starter Plan', revenue: 125000, users: 2500, growth: 12 },
-  { name: 'Pro Plan', revenue: 450000, users: 2260, growth: 28 },
-  { name: 'Enterprise', revenue: 285000, users: 57, growth: 45 },
-];
-
-const accountSummary = [
-  { name: 'Operating Account', balance: 485000, type: 'checking', lastActivity: '2 hours ago' },
-  { name: 'Savings Reserve', balance: 250000, type: 'savings', lastActivity: '1 week ago' },
-  { name: 'Tax Reserve', balance: 125000, type: 'savings', lastActivity: '1 month ago' },
+// Last transactions
+const lastTransactions = [
+  { name: 'Cameron Watkins', date: '29 April 2023', amount: '+$235.78 USD', type: 'credit' },
+  { name: 'Georgia Goddard', date: '26 April 2023', amount: '-$145.99 USD', type: 'debit' },
+  { name: 'Bailey Thorpe', date: '21 April 2023', amount: '+$235.76 USD', type: 'credit' },
+  { name: 'Emma Andrews', date: '18 April 2023', amount: '-$12.29 USD', type: 'debit' },
 ];
 
 const ExecutiveDashboard = () => {
   const navigate = useNavigate();
-  const [dateRange, setDateRange] = useState('this-year');
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 1000);
-  };
-
-  const totalRevenue = monthlyRevenue.reduce((acc, m) => acc + m.current, 0);
-  const previousRevenue = monthlyRevenue.reduce((acc, m) => acc + m.previous, 0);
-  const revenueGrowth = ((totalRevenue - previousRevenue) / previousRevenue * 100).toFixed(1);
-  const totalExpenses = expenseCategories.reduce((acc, e) => acc + e.value, 0);
-  const netProfit = totalRevenue - totalExpenses * 12;
-  const savingsRate = ((netProfit / totalRevenue) * 100).toFixed(1);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-
-      <main className="container mx-auto px-4 py-8 pt-24">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => navigate('/enterprise')}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold flex items-center gap-2">
-                <Crown className="w-6 h-6 text-primary" />
-                Executive Dashboard
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Top-level business performance and key metrics
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="w-[150px]">
-                <Calendar className="w-4 h-4 mr-2" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="this-month">This Month</SelectItem>
-                <SelectItem value="this-quarter">This Quarter</SelectItem>
-                <SelectItem value="this-year">This Year</SelectItem>
-                <SelectItem value="all-time">All Time</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="outline" onClick={handleRefresh} disabled={isRefreshing}>
-              <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
-            <Button>
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </Button>
-          </div>
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Dark Sidebar */}
+      <aside className="w-16 bg-[#1a1a2e] flex flex-col items-center py-6">
+        <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-8">
+          <span className="text-white text-lg">↩</span>
         </div>
 
-        {/* Key Executive Metrics */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card className="glass-card border-primary/30">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Total Revenue</p>
-                  <p className="text-3xl font-bold text-primary">${(totalRevenue / 1000000).toFixed(2)}M</p>
-                  <div className="flex items-center gap-1 text-green-500 text-xs mt-1">
-                    <ArrowUpRight className="w-3 h-3" />
-                    +{revenueGrowth}% YoY
+        <nav className="flex-1 flex flex-col items-center gap-4">
+          {sidebarItems.map((item, index) => (
+            <button
+              key={index}
+              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
+                item.active
+                  ? 'bg-white/20 text-white'
+                  : 'text-gray-500 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <item.icon className="w-5 h-5" />
+            </button>
+          ))}
+        </nav>
+
+        <button
+          onClick={() => {
+            sessionStorage.removeItem('enterprise_dashboard_session');
+            navigate('/enterprise-login');
+          }}
+          className="w-10 h-10 rounded-xl flex items-center justify-center text-gray-500 hover:bg-white/10 hover:text-white"
+        >
+          <LogOut className="w-5 h-5" />
+        </button>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-auto">
+        <div className="p-6">
+          <div className="grid grid-cols-12 gap-6">
+            {/* Left Column - Account Overview */}
+            <div className="col-span-3 space-y-4">
+              {/* Current Amount */}
+              <Card className="bg-white shadow-sm border-0 rounded-2xl">
+                <CardContent className="p-4">
+                  <p className="text-3xl font-bold text-gray-800">$6,21,982.70</p>
+                  <p className="text-xs text-gray-500">Current Account</p>
+                </CardContent>
+              </Card>
+
+              {/* Deposits & Withdraw */}
+              <div className="space-y-3">
+                <div className="bg-white rounded-xl p-4 shadow-sm flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <ArrowUpRight className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-gray-800">$2,18,571</p>
+                    <p className="text-xs text-gray-500">Deposits</p>
                   </div>
                 </div>
-                <div className="p-3 rounded-full bg-primary/10">
-                  <DollarSign className="w-6 h-6 text-primary" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
-          <Card className="glass-card">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Net Profit</p>
-                  <p className="text-3xl font-bold text-green-500">${(netProfit / 1000000).toFixed(2)}M</p>
-                  <div className="flex items-center gap-1 text-green-500 text-xs mt-1">
-                    <TrendingUp className="w-3 h-3" />
-                    {savingsRate}% margin
+                <div className="bg-white rounded-xl p-4 shadow-sm flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                    <ArrowDownRight className="w-5 h-5 text-gray-600" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-gray-800">$1,21,927</p>
+                    <p className="text-xs text-gray-500">Withdraw</p>
                   </div>
                 </div>
-                <div className="p-3 rounded-full bg-green-500/10">
-                  <TrendingUp className="w-6 h-6 text-green-500" />
-                </div>
               </div>
-            </CardContent>
-          </Card>
 
-          <Card className="glass-card">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Total Users</p>
-                  <p className="text-3xl font-bold">12,847</p>
-                  <div className="flex items-center gap-1 text-green-500 text-xs mt-1">
-                    <ArrowUpRight className="w-3 h-3" />
-                    +847 this month
+              {/* Credit Limits */}
+              <Card className="bg-white shadow-sm border-0 rounded-2xl">
+                <CardContent className="p-4 space-y-3">
+                  <p className="text-xs text-gray-500">Credit Limits</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">$128 - $2013</span>
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
                   </div>
-                </div>
-                <div className="p-3 rounded-full bg-blue-500/10">
-                  <Users className="w-6 h-6 text-blue-500" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="glass-card">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Monthly Savings</p>
-                  <p className="text-3xl font-bold">$47.5K</p>
-                  <div className="flex items-center gap-1 text-green-500 text-xs mt-1">
-                    <PiggyBank className="w-3 h-3" />
-                    +12% from target
+                  <p className="text-xs text-gray-500">Quote Limits</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">$321 - $1,234</span>
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
                   </div>
-                </div>
-                <div className="p-3 rounded-full bg-amber-500/10">
-                  <PiggyBank className="w-6 h-6 text-amber-500" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                </CardContent>
+              </Card>
 
-        {/* Revenue Chart & Product Performance */}
-        <div className="grid lg:grid-cols-3 gap-6 mb-8">
-          <Card className="glass-card lg:col-span-2">
-            <CardHeader>
-              <CardTitle className="text-lg">Revenue Comparison</CardTitle>
-              <CardDescription>Current vs Previous Year</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[350px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={monthlyRevenue}>
-                    <defs>
-                      <linearGradient id="currentGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
-                      </linearGradient>
-                      <linearGradient id="previousGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#64748b" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#64748b" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                    <XAxis dataKey="month" stroke="#888" />
-                    <YAxis stroke="#888" tickFormatter={(value) => `$${value / 1000}k`} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}
-                      formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="current"
-                      stroke="#6366f1"
-                      fill="url(#currentGradient)"
-                      strokeWidth={2}
-                      name="2026"
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="previous"
-                      stroke="#64748b"
-                      fill="url(#previousGradient)"
-                      strokeWidth={2}
-                      strokeDasharray="5 5"
-                      name="2025"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Product Performance */}
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="text-lg">Product Performance</CardTitle>
-              <CardDescription>Revenue by product tier</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {productPerformance.map((product, index) => (
-                  <div key={index} className="p-3 rounded-lg bg-white/5">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium">{product.name}</span>
-                      <Badge className="bg-green-500/20 text-green-500">
-                        +{product.growth}%
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-xl font-bold">${(product.revenue / 1000).toFixed(0)}K</span>
-                      <span className="text-muted-foreground">{product.users.toLocaleString()} users</span>
-                    </div>
-                    <Progress value={(product.revenue / 500000) * 100} className="mt-2 h-1" />
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Expenses & Transaction History */}
-        <div className="grid lg:grid-cols-2 gap-6 mb-8">
-          {/* Expense Breakdown */}
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="text-lg">Expense Breakdown</CardTitle>
-              <CardDescription>Monthly operating costs</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-8">
-                <div className="h-[200px] w-[200px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={expenseCategories}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={80}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {expenseCategories.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}
-                        formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="flex-1 space-y-3">
-                  {expenseCategories.map((expense, index) => (
+              {/* Your Invoice */}
+              <Card className="bg-white shadow-sm border-0 rounded-2xl">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-gray-700">Your Invoice</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {invoiceData.map((invoice, index) => (
                     <div key={index} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: expense.color }} />
-                        <span className="text-sm">{expense.name}</span>
+                        <Avatar className="w-8 h-8">
+                          <AvatarFallback className="bg-gray-100 text-gray-600 text-xs">{invoice.avatar}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="text-sm font-medium text-gray-700">{invoice.name}</p>
+                          <p className="text-xs text-gray-400">Invoice ID: {invoice.invoiceId}</p>
+                        </div>
                       </div>
-                      <span className="font-semibold">${expense.value.toLocaleString()}</span>
                     </div>
                   ))}
-                  <div className="pt-3 border-t border-white/10">
-                    <div className="flex justify-between">
-                      <span className="font-medium">Total</span>
-                      <span className="font-bold">${totalExpenses.toLocaleString()}</span>
+                  <Button variant="link" className="w-full text-xs text-blue-500 p-0">
+                    View All Invoice
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Center Column - Financial Dashboard */}
+            <div className="col-span-5 space-y-4">
+              <Card className="bg-white shadow-sm border-0 rounded-2xl">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg font-semibold text-gray-800">Financial Dashboard</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {/* Savings Chart */}
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-sm font-medium text-gray-700">Savings</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-400">Weekly</span>
+                        <ChevronRight className="w-3 h-3 text-gray-400" />
+                      </div>
+                    </div>
+                    <div className="h-[150px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={savingsData}>
+                          <defs>
+                            <linearGradient id="savingsGradient" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#1a1a2e" stopOpacity={0.1} />
+                              <stop offset="95%" stopColor="#1a1a2e" stopOpacity={0} />
+                            </linearGradient>
+                          </defs>
+                          <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af' }} />
+                          <YAxis hide />
+                          <Tooltip />
+                          <Area type="monotone" dataKey="value" stroke="#1a1a2e" fill="url(#savingsGradient)" strokeWidth={2} />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
+                      <span>Tax</span>
+                      <span className="font-medium">12.25</span>
+                      <span className="text-gray-300">|</span>
+                      <span>Cap</span>
+                      <span className="font-medium">13.25</span>
                     </div>
                   </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
-          {/* Transaction History */}
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="text-lg">Transaction History</CardTitle>
-              <CardDescription>Recent financial activity</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[180px] mb-4">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={transactionHistory}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                    <XAxis dataKey="date" stroke="#888" tickFormatter={(value) => value.split('-')[2]} />
-                    <YAxis stroke="#888" tickFormatter={(value) => `$${Math.abs(value) / 1000}k`} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}
-                      formatter={(value: number) => [`$${Math.abs(value).toLocaleString()}`, '']}
-                    />
-                    <Bar
-                      dataKey="amount"
-                      fill={(entry: any) => entry.amount >= 0 ? '#22c55e' : '#ef4444'}
-                    >
-                      {transactionHistory.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.amount >= 0 ? '#22c55e' : '#ef4444'} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="space-y-2">
-                {transactionHistory.slice(0, 4).map((txn, index) => (
-                  <div key={index} className="flex items-center justify-between py-2 border-b border-white/5">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-full ${txn.amount >= 0 ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
-                        {txn.amount >= 0 ?
-                          <ArrowUpRight className="w-4 h-4 text-green-500" /> :
-                          <ArrowDownRight className="w-4 h-4 text-red-500" />
-                        }
+                  {/* Transaction Chart */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-sm font-medium text-gray-700">Transaction</p>
+                      <div className="flex items-center gap-4 text-xs">
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 bg-gray-800 rounded-full" />
+                          <span className="text-gray-500">Insert</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 bg-gray-300 rounded-full" />
+                          <span className="text-gray-500">Expense</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="h-[150px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={transactionData}>
+                          <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af' }} />
+                          <YAxis hide />
+                          <Tooltip />
+                          <Bar dataKey="insert" fill="#1a1a2e" radius={[4, 4, 0, 0]} />
+                          <Bar dataKey="expense" fill="#d1d5db" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  {/* Expense Summary */}
+                  <div className="mt-6 pt-4 border-t border-gray-100">
+                    <p className="text-sm font-medium text-gray-700 mb-3">Expense</p>
+                    <div className="grid grid-cols-4 gap-4">
+                      <div>
+                        <p className="text-lg font-bold text-gray-800">$14,591</p>
+                        <p className="text-xs text-gray-400">Household</p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium">{txn.category}</p>
-                        <p className="text-xs text-muted-foreground">{txn.date}</p>
+                        <p className="text-lg font-bold text-gray-800">$19,123</p>
+                        <p className="text-xs text-gray-400">Utility Bill</p>
+                      </div>
+                      <div>
+                        <p className="text-lg font-bold text-gray-800">$21,859</p>
+                        <p className="text-xs text-gray-400">Food</p>
+                      </div>
+                      <div>
+                        <p className="text-lg font-bold text-gray-800">$12,724</p>
+                        <p className="text-xs text-gray-400">Entertainment</p>
                       </div>
                     </div>
-                    <span className={`font-semibold ${txn.amount >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                      {txn.amount >= 0 ? '+' : ''}${txn.amount.toLocaleString()}
-                    </span>
                   </div>
-                ))}
+
+                  {/* Webinar Banner */}
+                  <div className="mt-6 bg-gradient-to-r from-gray-100 to-gray-50 rounded-xl p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
+                        <span className="text-2xl">👨‍💼</span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-800">Join Figest Webinar of the</p>
+                        <p className="text-sm font-medium text-gray-800">Year: Cash Knowledge from</p>
+                        <p className="text-sm font-medium text-gray-800">Expert</p>
+                      </div>
+                    </div>
+                    <Button size="sm" className="bg-gray-800 hover:bg-gray-900 text-white">
+                      Let's Try
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Column - Cards & Transactions */}
+            <div className="col-span-4 space-y-4">
+              {/* Credit Cards */}
+              <div className="flex gap-4">
+                <Card className="flex-1 bg-[#1a1a2e] text-white shadow-sm border-0 rounded-2xl">
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-8">
+                      <div className="w-8 h-6 bg-yellow-400 rounded" />
+                      <span className="text-xs opacity-60">VISA</span>
+                    </div>
+                    <p className="text-lg font-mono tracking-wider mb-2">**** 98765</p>
+                    <div className="flex justify-between text-xs">
+                      <div>
+                        <p className="opacity-60">Exp</p>
+                        <p>12.25</p>
+                      </div>
+                      <div>
+                        <p className="opacity-60">Cap</p>
+                        <p>13.25</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="flex-1 bg-gray-100 shadow-sm border-0 rounded-2xl">
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-8">
+                      <div className="w-8 h-6 bg-gray-400 rounded" />
+                      <span className="text-xs text-gray-400">VI</span>
+                    </div>
+                    <p className="text-lg font-mono tracking-wider text-gray-800 mb-2">**** 98</p>
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <div>
+                        <p>Exp</p>
+                        <p>12.25</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-            </CardContent>
-          </Card>
-        </div>
 
-        {/* Invoices & Account Summary */}
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Invoice Management */}
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="text-lg">Invoice Management</CardTitle>
-              <CardDescription>Track outstanding and paid invoices</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Invoice</TableHead>
-                    <TableHead>Client</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {invoices.map((invoice) => (
-                    <TableRow key={invoice.id}>
-                      <TableCell className="font-mono">{invoice.id}</TableCell>
-                      <TableCell>{invoice.client}</TableCell>
-                      <TableCell>${invoice.amount.toLocaleString()}</TableCell>
-                      <TableCell>
-                        <Badge className={
-                          invoice.status === 'paid' ? 'bg-green-500/20 text-green-500' :
-                          invoice.status === 'pending' ? 'bg-yellow-500/20 text-yellow-500' :
-                          'bg-red-500/20 text-red-500'
-                        }>
-                          {invoice.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+              {/* Quick Actions */}
+              <div className="flex gap-3">
+                <Card className="flex-1 bg-white shadow-sm border-0 rounded-xl cursor-pointer hover:shadow-md transition-shadow">
+                  <CardContent className="p-4 flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <Send className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <p className="text-sm font-medium text-gray-700">Bank Transfer</p>
+                    <ChevronRight className="w-4 h-4 text-gray-400 ml-auto" />
+                  </CardContent>
+                </Card>
 
-          {/* Account Summary */}
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="text-lg">Account Summary</CardTitle>
-              <CardDescription>Financial accounts overview</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {accountSummary.map((account, index) => (
-                  <div key={index} className="p-4 rounded-lg bg-white/5 border border-white/10">
-                    <div className="flex items-center justify-between mb-2">
+                <Card className="flex-1 bg-white shadow-sm border-0 rounded-xl cursor-pointer hover:shadow-md transition-shadow">
+                  <CardContent className="p-4 flex items-center gap-3">
+                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                      <Globe className="w-5 h-5 text-purple-600" />
+                    </div>
+                    <p className="text-sm font-medium text-gray-700">Global Transfer</p>
+                    <ChevronRight className="w-4 h-4 text-gray-400 ml-auto" />
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Last Transaction */}
+              <Card className="bg-white shadow-sm border-0 rounded-2xl">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm font-medium text-gray-700">Last Transaction</CardTitle>
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {lastTransactions.map((transaction, index) => (
+                    <div key={index} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-full ${account.type === 'checking' ? 'bg-primary/10' : 'bg-green-500/10'}`}>
-                          {account.type === 'checking' ?
-                            <CreditCard className="w-5 h-5 text-primary" /> :
-                            <PiggyBank className="w-5 h-5 text-green-500" />
-                          }
-                        </div>
+                        <Avatar className="w-10 h-10">
+                          <AvatarFallback className={`text-xs ${
+                            transaction.type === 'credit' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+                          }`}>
+                            {transaction.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
                         <div>
-                          <p className="font-medium">{account.name}</p>
-                          <p className="text-xs text-muted-foreground capitalize">{account.type}</p>
+                          <p className="text-sm font-medium text-gray-700">{transaction.name}</p>
+                          <p className="text-xs text-gray-400">{transaction.date}</p>
                         </div>
                       </div>
-                      <span className="text-xl font-bold">${account.balance.toLocaleString()}</span>
+                      <p className={`text-sm font-semibold ${
+                        transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        {transaction.amount}
+                      </p>
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Activity className="w-3 h-3" />
-                      Last activity: {account.lastActivity}
-                    </div>
-                  </div>
-                ))}
-                <div className="pt-4 border-t border-white/10">
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Total Balance</span>
-                    <span className="text-2xl font-bold text-primary">
-                      ${accountSummary.reduce((acc, a) => acc + a.balance, 0).toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
       </main>
     </div>

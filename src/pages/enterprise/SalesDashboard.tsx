@@ -1,484 +1,393 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import {
-  TrendingUp,
-  ArrowLeft,
-  RefreshCw,
-  DollarSign,
-  Users,
-  Target,
-  Phone,
-  MessageCircle,
-  Calendar,
-  CheckCircle,
-  Clock,
+  LayoutDashboard,
+  Bell,
+  UtensilsCrossed,
+  Menu,
+  Star,
+  Settings,
   FileText,
-  ArrowUpRight,
-  ArrowDownRight,
-  Filter,
-  ChevronRight
+  CreditCard,
+  Wallet,
+  LogOut,
+  Search,
+  Calendar,
+  ChevronDown,
+  ArrowUpRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, LineChart, Line } from 'recharts';
-import Header from '@/components/layout/Header';
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from 'recharts';
 
-// Mock data
-const salesData = [
-  { day: 'Mon', sales: 4500, conversions: 12 },
-  { day: 'Tue', sales: 5200, conversions: 15 },
-  { day: 'Wed', sales: 4800, conversions: 11 },
-  { day: 'Thu', sales: 6100, conversions: 18 },
-  { day: 'Fri', sales: 7200, conversions: 22 },
-  { day: 'Sat', sales: 3800, conversions: 8 },
-  { day: 'Sun', sales: 2900, conversions: 6 },
+// Sidebar items
+const sidebarItems = [
+  { icon: LayoutDashboard, label: 'Dashboard', active: true },
+  { icon: Bell, label: 'Alerts' },
+  { icon: UtensilsCrossed, label: 'Food Order' },
+  { icon: Menu, label: 'Manage Menu' },
+  { icon: Star, label: 'Customer Review' },
+  { icon: Settings, label: 'Settings' },
+  { icon: FileText, label: 'Reports' },
+  { icon: CreditCard, label: 'Payment' },
+  { icon: Wallet, label: 'Accounts' },
 ];
 
-const pipelineStages = [
-  { stage: 'Contacted', count: 45, value: 89500, color: '#6366f1' },
-  { stage: 'Negotiation', count: 28, value: 56000, color: '#f59e0b' },
-  { stage: 'Offer Sent', count: 15, value: 29850, color: '#8b5cf6' },
-  { stage: 'Deal Closed', count: 32, value: 63680, color: '#22c55e' },
+// Today's sales data
+const todaySalesData = [
+  { hour: '6pm', value: 2500 },
+  { hour: '7pm', value: 3200 },
+  { hour: '8pm', value: 4100 },
+  { hour: '9pm', value: 3800 },
+  { hour: '10pm', value: 4500 },
+  { hour: '11pm', value: 5200 },
+  { hour: '12am', value: 4800 },
 ];
 
-const deals = [
-  { id: 'DL-001', name: 'Enterprise Corp', product: 'Enterprise Plan', value: 4990, stage: 'negotiation', probability: 75, owner: 'John', daysInStage: 3 },
-  { id: 'DL-002', name: 'Tech Startup', product: 'Pro Plan', value: 1990, stage: 'offer_sent', probability: 90, owner: 'Sarah', daysInStage: 1 },
-  { id: 'DL-003', name: 'Trading Firm', product: 'Enterprise Plan', value: 4990, stage: 'contacted', probability: 40, owner: 'Mike', daysInStage: 5 },
-  { id: 'DL-004', name: 'Individual Trader', product: 'Starter Plan', value: 495, stage: 'closed', probability: 100, owner: 'Tom', daysInStage: 0 },
-  { id: 'DL-005', name: 'Hedge Fund Inc', product: 'Enterprise Plan', value: 4990, stage: 'negotiation', probability: 60, owner: 'John', daysInStage: 7 },
+// Timeline project data
+const timelineData = [
+  { month: '2pm', value: 40 },
+  { month: '3pm', value: 33 },
+  { month: '4pm', value: 28 },
+  { month: '4pm', value: 35 },
 ];
 
-const timelineProjects = [
-  { name: 'Q1 Sales Target', progress: 78, deadline: 'Mar 31', status: 'on_track' },
-  { name: 'New Product Launch', progress: 45, deadline: 'Feb 28', status: 'at_risk' },
-  { name: 'Partner Onboarding', progress: 92, deadline: 'Feb 15', status: 'ahead' },
-  { name: 'Enterprise Campaign', progress: 33, deadline: 'Apr 15', status: 'on_track' },
+// Deal stages
+const dealStages = [
+  {
+    stage: 'Contacted',
+    color: 'bg-red-100',
+    textColor: 'text-red-600',
+    deals: [
+      { name: 'Bani Wasp', company: 'Corp Rspn', value: '430 Orders', amount: '24' },
+      { name: 'Afflrmgy', company: 'Event Psny', value: '860 Ordis', amount: '24' },
+    ]
+  },
+  {
+    stage: 'Negotiation',
+    color: 'bg-yellow-100',
+    textColor: 'text-yellow-600',
+    deals: [
+      { name: '2585% Remies', company: 'Sustnitnon-niqsny', value: 'Ms used Orders', amount: '' },
+      { name: 'Firads Maps', company: 'Con-ar-trob-pq-provins', value: 'hinted seel', amount: '' },
+    ]
+  },
+  {
+    stage: 'Offer Sent',
+    color: 'bg-blue-100',
+    textColor: 'text-blue-600',
+    deals: [
+      { name: '71 Fiber', amount: '0' },
+      { name: '4811 Ulse', value: 'Representation', amount: '41' },
+      { name: 'Fissst Hares', company: 'Carbers-sq-prods', value: 'net censpyr', amount: '' },
+    ]
+  },
+  {
+    stage: 'Deal Closed',
+    color: 'bg-green-100',
+    textColor: 'text-green-600',
+    deals: [
+      { name: 'Magy Viness', company: 'Travelation of Doiclan', value: '$122,540', amount: '', arrow: true },
+      { name: 'Braed Weng', company: 'hematiol ar Oxiclan', value: '$194,500', amount: '', arrow: true },
+      { name: 'Alrik Close', company: 'Dissesedis at-GIG/2024', value: '$123,500', amount: '', arrow: true },
+    ]
+  },
 ];
 
-const performanceComparison = {
-  last5Days: { sales: 28500, conversions: 67, avgDeal: 425 },
-  lastWeek: { sales: 34500, conversions: 82, avgDeal: 421 },
-};
+// Comparison data
+const comparisonData = [
+  { day: 'Last 4 Days', value: 45000 },
+  { day: 'Last Week', value: 62000 },
+];
 
 const SalesDashboard = () => {
   const navigate = useNavigate();
-  const [dateRange, setDateRange] = useState('last-7-days');
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 1000);
-  };
-
-  const getStageBadge = (stage: string) => {
-    switch (stage) {
-      case 'contacted':
-        return <Badge className="bg-blue-500/20 text-blue-500">Contacted</Badge>;
-      case 'negotiation':
-        return <Badge className="bg-yellow-500/20 text-yellow-500">Negotiation</Badge>;
-      case 'offer_sent':
-        return <Badge className="bg-purple-500/20 text-purple-500">Offer Sent</Badge>;
-      case 'closed':
-        return <Badge className="bg-green-500/20 text-green-500">Closed</Badge>;
-      default:
-        return <Badge>{stage}</Badge>;
-    }
-  };
-
-  const totalPipelineValue = pipelineStages.reduce((acc, stage) => acc + stage.value, 0);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="min-h-screen bg-[#faf8f5] flex">
+      {/* Sidebar */}
+      <aside className="w-56 bg-white border-r border-orange-100 flex flex-col">
+        <div className="p-4 border-b border-orange-50">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold">D</span>
+            </div>
+            <span className="font-semibold text-gray-800">Dowace</span>
+          </div>
+        </div>
 
-      <main className="container mx-auto px-4 py-8 pt-24">
+        <nav className="flex-1 p-2">
+          {sidebarItems.map((item, index) => (
+            <button
+              key={index}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg mb-1 transition-colors ${
+                item.active
+                  ? 'bg-orange-50 text-orange-600'
+                  : 'text-gray-600 hover:bg-orange-50/50'
+              }`}
+            >
+              <item.icon className="w-5 h-5" />
+              <span className="text-sm font-medium">{item.label}</span>
+            </button>
+          ))}
+        </nav>
+
+        <div className="p-2 border-t border-orange-50">
+          <button
+            onClick={() => {
+              sessionStorage.removeItem('enterprise_dashboard_session');
+              navigate('/enterprise-login');
+            }}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-orange-50"
+          >
+            <LogOut className="w-5 h-5" />
+            <span className="text-sm font-medium">Logout</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => navigate('/enterprise')}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold flex items-center gap-2">
-                <TrendingUp className="w-6 h-6 text-orange-500" />
-                Sales Dashboard
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Track sales, conversions, and pipeline performance
-              </p>
+        <header className="bg-white border-b border-orange-100 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Input
+                placeholder="Q. Search"
+                className="pl-10 w-64 bg-orange-50/50 border-orange-100"
+              />
+            </div>
+            <div className="flex items-center gap-4">
+              <button className="p-2 hover:bg-orange-50 rounded-lg">
+                <Settings className="w-5 h-5 text-gray-400" />
+              </button>
+              <span className="text-sm text-gray-500">Settings</span>
+              <span className="text-sm text-gray-500">Sortings</span>
+              <Avatar className="w-8 h-8">
+                <AvatarFallback className="bg-orange-100 text-orange-600 text-xs">DW</AvatarFallback>
+              </Avatar>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="w-[150px]">
-                <Calendar className="w-4 h-4 mr-2" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="today">Today</SelectItem>
-                <SelectItem value="last-7-days">Last 7 Days</SelectItem>
-                <SelectItem value="last-30-days">Last 30 Days</SelectItem>
-                <SelectItem value="this-quarter">This Quarter</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="outline" onClick={handleRefresh} disabled={isRefreshing}>
-              <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
+        </header>
+
+        {/* Dashboard Content */}
+        <div className="p-6">
+          <div className="mb-6">
+            <h1 className="text-xl font-bold text-gray-800">Sales Dashboard</h1>
           </div>
-        </div>
 
-        {/* Key Metrics */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card className="glass-card">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Daily Sales</p>
-                  <p className="text-2xl font-bold">$34,500</p>
-                  <div className="flex items-center gap-1 text-green-500 text-xs">
-                    <ArrowUpRight className="w-3 h-3" />
-                    +12.5% vs last week
+          <div className="grid grid-cols-12 gap-6">
+            {/* Today's Sales */}
+            <Card className="col-span-4 bg-white shadow-sm border-0 rounded-2xl">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500">Today</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-400">Last 5 days</span>
+                      <ChevronDown className="w-3 h-3 text-gray-400" />
+                    </div>
                   </div>
                 </div>
-                <div className="p-3 rounded-full bg-green-500/10">
-                  <DollarSign className="w-6 h-6 text-green-500" />
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold text-gray-800 mb-1">$30,254.00</p>
+                <p className="text-xs text-green-500 flex items-center gap-1 mb-4">
+                  <ArrowUpRight className="w-3 h-3" />
+                  + 2.14% vs last week
+                </p>
+                <div className="h-[120px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={todaySalesData}>
+                      <XAxis dataKey="hour" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af' }} />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="#d4a574" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          <Card className="glass-card">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Conversions</p>
-                  <p className="text-2xl font-bold">92</p>
-                  <div className="flex items-center gap-1 text-green-500 text-xs">
-                    <ArrowUpRight className="w-3 h-3" />
-                    +8 from yesterday
+            {/* Timeline Project */}
+            <Card className="col-span-4 bg-white shadow-sm border-0 rounded-2xl">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-gray-600">Timeline Project</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 bg-orange-100 rounded-full h-4">
+                      <div className="bg-orange-400 h-4 rounded-full" style={{ width: '40%' }} />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">40%</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 bg-orange-100 rounded-full h-4">
+                      <div className="bg-orange-300 h-4 rounded-full" style={{ width: '33%' }} />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">33%</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 bg-orange-100 rounded-full h-4">
+                      <div className="bg-orange-200 h-4 rounded-full" style={{ width: '28%' }} />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">28%</span>
                   </div>
                 </div>
-                <div className="p-3 rounded-full bg-primary/10">
-                  <Target className="w-6 h-6 text-primary" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          <Card className="glass-card">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Pipeline Value</p>
-                  <p className="text-2xl font-bold">${totalPipelineValue.toLocaleString()}</p>
-                  <div className="flex items-center gap-1 text-green-500 text-xs">
-                    <ArrowUpRight className="w-3 h-3" />
-                    +$15K this week
-                  </div>
-                </div>
-                <div className="p-3 rounded-full bg-orange-500/10">
-                  <TrendingUp className="w-6 h-6 text-orange-500" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="glass-card">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Active Leads</p>
-                  <p className="text-2xl font-bold">120</p>
-                  <div className="flex items-center gap-1 text-yellow-500 text-xs">
-                    <ArrowDownRight className="w-3 h-3" />
-                    -3 from yesterday
-                  </div>
-                </div>
-                <div className="p-3 rounded-full bg-blue-500/10">
-                  <Users className="w-6 h-6 text-blue-500" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Sales Chart & Pipeline */}
-        <div className="grid lg:grid-cols-3 gap-6 mb-8">
-          <Card className="glass-card lg:col-span-2">
-            <CardHeader>
-              <CardTitle className="text-lg">Sales Trend</CardTitle>
-              <CardDescription>Daily sales and conversions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={salesData}>
-                    <defs>
-                      <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                    <XAxis dataKey="day" stroke="#888" />
-                    <YAxis yAxisId="left" stroke="#888" tickFormatter={(value) => `$${value / 1000}k`} />
-                    <YAxis yAxisId="right" orientation="right" stroke="#888" />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}
-                      formatter={(value: number, name: string) => [
-                        name === 'sales' ? `$${value.toLocaleString()}` : value,
-                        name === 'sales' ? 'Sales' : 'Conversions'
-                      ]}
+            {/* Viser Report */}
+            <Card className="col-span-4 bg-white shadow-sm border-0 rounded-2xl">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-gray-600">Viser Report</CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center justify-center">
+                <div className="relative w-32 h-32">
+                  <svg className="w-full h-full -rotate-90">
+                    <circle cx="64" cy="64" r="50" fill="none" stroke="#f3f4f6" strokeWidth="20" />
+                    <circle
+                      cx="64"
+                      cy="64"
+                      r="50"
+                      fill="none"
+                      stroke="#d4a574"
+                      strokeWidth="20"
+                      strokeDasharray={`${65 * 3.14} 314`}
+                      strokeLinecap="round"
                     />
-                    <Area
-                      yAxisId="left"
-                      type="monotone"
-                      dataKey="sales"
-                      stroke="#f59e0b"
-                      fill="url(#salesGradient)"
-                      strokeWidth={2}
-                    />
-                    <Line
-                      yAxisId="right"
-                      type="monotone"
-                      dataKey="conversions"
-                      stroke="#22c55e"
-                      strokeWidth={2}
-                      dot={{ fill: '#22c55e' }}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Deal Stage Pipeline */}
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="text-lg">Deal Pipeline</CardTitle>
-              <CardDescription>Deals by stage</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {pipelineStages.map((stage, index) => (
-                  <div key={index}>
-                    <div className="flex justify-between text-sm mb-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: stage.color }} />
-                        <span>{stage.stage}</span>
-                      </div>
-                      <div className="text-right">
-                        <span className="font-semibold">{stage.count} deals</span>
-                        <span className="text-muted-foreground ml-2">${stage.value.toLocaleString()}</span>
-                      </div>
-                    </div>
-                    <Progress
-                      value={(stage.value / totalPipelineValue) * 100}
-                      className="h-2"
-                    />
-                  </div>
-                ))}
-                <div className="pt-4 border-t border-white/10">
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Total Pipeline</span>
-                    <span className="text-xl font-bold text-primary">${totalPipelineValue.toLocaleString()}</span>
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-xs text-gray-400">Flexmode</span>
+                    <span className="text-xs text-gray-400">for 45 demo</span>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
 
-        {/* Performance Circles & Timeline */}
-        <div className="grid lg:grid-cols-2 gap-6 mb-8">
-          {/* Performance Comparison */}
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="text-lg">Performance Comparison</CardTitle>
-              <CardDescription>Last 5 days vs Last week</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-3 gap-4">
-                {/* Contact Rate Circle */}
-                <div className="flex flex-col items-center">
-                  <div className="relative w-24 h-24">
-                    <svg className="w-full h-full -rotate-90">
-                      <circle cx="48" cy="48" r="40" fill="none" stroke="#333" strokeWidth="8" />
-                      <circle
-                        cx="48"
-                        cy="48"
-                        r="40"
-                        fill="none"
-                        stroke="#6366f1"
-                        strokeWidth="8"
-                        strokeDasharray={`${72 * 2.51} 251`}
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-lg font-bold">72%</span>
-                    </div>
+            {/* Deal Pipeline */}
+            <div className="col-span-12 grid grid-cols-4 gap-4">
+              {dealStages.map((stage, stageIndex) => (
+                <div key={stageIndex}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <Badge className={`${stage.color} ${stage.textColor} text-xs`}>
+                      {stage.stage}
+                    </Badge>
+                    <span className="text-xs text-gray-400">{stageIndex === 0 ? '0' : ''}</span>
                   </div>
-                  <span className="text-sm text-muted-foreground mt-2">Contact Rate</span>
-                </div>
-
-                {/* Conversion Rate Circle */}
-                <div className="flex flex-col items-center">
-                  <div className="relative w-24 h-24">
-                    <svg className="w-full h-full -rotate-90">
-                      <circle cx="48" cy="48" r="40" fill="none" stroke="#333" strokeWidth="8" />
-                      <circle
-                        cx="48"
-                        cy="48"
-                        r="40"
-                        fill="none"
-                        stroke="#22c55e"
-                        strokeWidth="8"
-                        strokeDasharray={`${12.4 * 2.51} 251`}
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-lg font-bold">12.4%</span>
-                    </div>
+                  <div className="space-y-3">
+                    {stage.deals.map((deal, dealIndex) => (
+                      <Card key={dealIndex} className="bg-white shadow-sm border-0 rounded-xl">
+                        <CardContent className="p-3">
+                          <p className="text-sm font-medium text-gray-800">{deal.name}</p>
+                          {deal.company && (
+                            <p className="text-xs text-gray-500">{deal.company}</p>
+                          )}
+                          {deal.value && (
+                            <p className={`text-sm font-semibold mt-1 ${deal.arrow ? 'text-green-600' : 'text-gray-600'}`}>
+                              {deal.value}
+                              {deal.arrow && <span className="ml-1">↗</span>}
+                            </p>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
-                  <span className="text-sm text-muted-foreground mt-2">Conversion</span>
                 </div>
-
-                {/* Win Rate Circle */}
-                <div className="flex flex-col items-center">
-                  <div className="relative w-24 h-24">
-                    <svg className="w-full h-full -rotate-90">
-                      <circle cx="48" cy="48" r="40" fill="none" stroke="#333" strokeWidth="8" />
-                      <circle
-                        cx="48"
-                        cy="48"
-                        r="40"
-                        fill="none"
-                        stroke="#f59e0b"
-                        strokeWidth="8"
-                        strokeDasharray={`${45 * 2.51} 251`}
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-lg font-bold">45%</span>
-                    </div>
-                  </div>
-                  <span className="text-sm text-muted-foreground mt-2">Win Rate</span>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-2 gap-4 text-sm">
-                <div className="p-3 rounded-lg bg-white/5">
-                  <p className="text-muted-foreground">Last 5 Days</p>
-                  <p className="text-lg font-semibold">${performanceComparison.last5Days.sales.toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground">{performanceComparison.last5Days.conversions} conversions</p>
-                </div>
-                <div className="p-3 rounded-lg bg-white/5">
-                  <p className="text-muted-foreground">Last Week</p>
-                  <p className="text-lg font-semibold">${performanceComparison.lastWeek.sales.toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground">{performanceComparison.lastWeek.conversions} conversions</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Timeline Projects */}
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="text-lg">Project Timeline</CardTitle>
-              <CardDescription>Track progress on sales initiatives</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {timelineProjects.map((project, index) => (
-                  <div key={index} className="p-3 rounded-lg bg-white/5">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium">{project.name}</span>
-                      <Badge className={
-                        project.status === 'ahead' ? 'bg-green-500/20 text-green-500' :
-                        project.status === 'on_track' ? 'bg-blue-500/20 text-blue-500' :
-                        'bg-red-500/20 text-red-500'
-                      }>
-                        {project.status === 'ahead' ? 'Ahead' :
-                         project.status === 'on_track' ? 'On Track' : 'At Risk'}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <Progress value={project.progress} className="flex-1 h-2" />
-                      <span className="text-sm font-medium">{project.progress}%</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Calendar className="w-3 h-3" />
-                      Due: {project.deadline}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Deal Cards */}
-        <Card className="glass-card">
-          <CardHeader>
-            <CardTitle className="text-lg">Active Deals</CardTitle>
-            <CardDescription>Track individual deal progress</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {deals.map((deal) => (
-                <Card key={deal.id} className="bg-white/5 border-white/10 cursor-pointer hover:border-primary/50 transition-colors">
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <p className="font-medium">{deal.name}</p>
-                        <p className="text-sm text-muted-foreground">{deal.product}</p>
-                      </div>
-                      {getStageBadge(deal.stage)}
-                    </div>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-2xl font-bold text-primary">${deal.value.toLocaleString()}</span>
-                      <div className="flex items-center gap-1 text-sm">
-                        <span className={deal.probability >= 70 ? 'text-green-500' : deal.probability >= 40 ? 'text-yellow-500' : 'text-red-500'}>
-                          {deal.probability}%
-                        </span>
-                        <span className="text-muted-foreground">likely</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        <Avatar className="w-6 h-6">
-                          <AvatarFallback className="text-xs bg-primary/20 text-primary">{deal.owner[0]}</AvatarFallback>
-                        </Avatar>
-                        <span className="text-muted-foreground">{deal.owner}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <Clock className="w-3 h-3" />
-                        {deal.daysInStage}d in stage
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
               ))}
             </div>
-          </CardContent>
-        </Card>
+
+            {/* Bottom Stats */}
+            <div className="col-span-4 flex gap-4">
+              <div className="flex-1 bg-white rounded-2xl p-4 shadow-sm">
+                <div className="relative w-20 h-20 mx-auto">
+                  <svg className="w-full h-full -rotate-90">
+                    <circle cx="40" cy="40" r="35" fill="none" stroke="#f3f4f6" strokeWidth="8" />
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="35"
+                      fill="none"
+                      stroke="#d4a574"
+                      strokeWidth="8"
+                      strokeDasharray={`${87 * 2.2} 220`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-lg font-bold text-gray-800">87%</span>
+                  </div>
+                </div>
+                <p className="text-xs text-center text-gray-500 mt-2">Developed select</p>
+              </div>
+
+              <div className="flex-1 bg-white rounded-2xl p-4 shadow-sm">
+                <p className="text-3xl font-bold text-gray-800 text-center">58</p>
+                <p className="text-xs text-center text-gray-500 mt-2">Product Demos scheduled</p>
+              </div>
+            </div>
+
+            {/* Total Revenue */}
+            <div className="col-span-4 bg-white rounded-2xl p-4 shadow-sm">
+              <p className="text-xs text-gray-500 mb-1">Ad Fill Rate by Blo</p>
+              <p className="text-xs text-gray-400 mb-2">Automatic tracked</p>
+              <p className="text-3xl font-bold text-gray-800">$123,500</p>
+              <div className="flex items-center gap-4 mt-3 text-xs">
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full" />
+                  <span className="text-gray-500">Standard by</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-gray-300 rounded-full" />
+                  <span className="text-gray-500">tax (2%Bldg)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Comparison Chart */}
+            <div className="col-span-4 bg-white rounded-2xl p-4 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-orange-400 rounded-full" />
+                  <span className="text-xs text-gray-500">Last 4 Days</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-gray-300 rounded-full" />
+                  <span className="text-xs text-gray-500">Last Week</span>
+                </div>
+              </div>
+              <div className="h-[100px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={[
+                    { day: '1', last4: 30, lastWeek: 25 },
+                    { day: '2', last4: 45, lastWeek: 35 },
+                    { day: '3', last4: 35, lastWeek: 42 },
+                    { day: '4', last4: 55, lastWeek: 48 },
+                    { day: '5', last4: 48, lastWeek: 52 },
+                  ]}>
+                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af' }} />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="last4" stroke="#d4a574" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="lastWeek" stroke="#d1d5db" strokeWidth={2} dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   );
