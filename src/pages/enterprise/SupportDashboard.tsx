@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -12,66 +12,128 @@ import {
   Search,
   Filter,
   Plus,
-  Clock,
-  User,
   Bell,
-  FileBarChart
+  RefreshCw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { supabase } from '@/integrations/supabase/client';
 
-// Sidebar items
-const sidebarItems = [
-  { icon: LayoutDashboard, label: 'Dashboard' },
-  { icon: Ticket, label: 'Tickets', active: true },
-  { icon: BarChart3, label: 'Analytics' },
-  { icon: SettingsIcon, label: 'Automations' },
-  { icon: FileText, label: 'Docs' },
-  { icon: Users, label: 'Team' },
-  { icon: Settings, label: 'Settings' },
-];
-
-// Tickets data organized by status
-const ticketsData = {
-  allTickets: [
-    { id: 1, title: 'Build ticket', user: 'Christine', time: '10 min', priority: 'high', category: 'Build' },
-    { id: 2, title: 'Payment issue', description: 'G: Sound mp3 Title', user: 'Hernias', time: '10 min', priority: 'medium', category: 'Payment' },
-    { id: 3, title: 'Urgent', description: 'Tradition Sale, Includes', user: 'Hernias', time: '45 min', priority: 'urgent', category: 'Urgent' },
-    { id: 4, title: 'Payment issues', description: 'CI SnapOut use priorities', user: 'Hernias', time: '26 min', priority: 'medium', category: 'Payment' },
-    { id: 5, title: 'Twitter', user: 'Twitter', time: '05 Hrs', priority: 'low', category: 'Social' },
-  ],
-  newTickets: [
-    { id: 1, title: 'App Bugs', description: 'Dr. Allywayne undefined team', user: 'User', time: '34 min', priority: 'high', category: 'Bug', color: 'red' },
-    { id: 2, title: 'Password reset', description: 'Or Reductoin are 2 positionsr', user: 'Janet', time: '31 min', priority: 'medium', category: 'Auth', color: 'green' },
-    { id: 3, title: 'Login problem', description: 'Saddress impacts', user: 'Remillia', time: '18 min', priority: 'medium', category: 'Auth', color: 'blue' },
-  ],
-  inProgress: [
-    { id: 1, title: 'App Bug', description: 'Dr Elisabeths Carbngex', user: 'Hernias', time: '03 hrs', priority: 'high', category: 'Bug', color: 'purple' },
-    { id: 2, title: 'Onboarding quest...', description: 'Dr Reportnors or Progess', user: 'Hernias', time: '01:01', priority: 'medium', category: 'Onboarding', color: 'blue' },
-    { id: 3, title: 'Password reset', description: 'Or Abanconi mer 5 popliemts', user: 'Hernias', time: '01 Ohm', priority: 'medium', category: 'Auth', color: 'green' },
-  ],
-  resolved: [
-    { id: 1, title: 'Onboarding', description: 'Problemactivating process', user: 'Hernias', time: '10 min', priority: 'resolved', category: 'Onboarding', color: 'green', subtext: 'surfing' },
-    { id: 2, title: 'Login problem', description: 'Contactson-only CB3433', user: 'Hernias', time: '01 hrs', priority: 'resolved', category: 'Auth', color: 'blue' },
-    { id: 3, title: 'Login problem', description: 'Ezilmz', user: 'Hernias', time: '60 Ratings', priority: 'resolved', category: 'Auth', color: 'purple' },
-  ],
-};
+interface TicketData {
+  id: string;
+  title: string;
+  description?: string;
+  user: string;
+  time: string;
+  priority: string;
+  category: string;
+  color?: string;
+  status: string;
+}
 
 const SupportDashboard = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState('tickets');
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const tabs = [
-    { id: 'all', label: 'All Tickets', count: 320, color: 'bg-purple-100 text-purple-600' },
-    { id: 'new', label: 'New', count: 75, color: 'bg-red-100 text-red-600' },
-    { id: 'inProgress', label: 'In Progress', count: 112, color: 'bg-blue-100 text-blue-600' },
-    { id: 'resolved', label: 'Resolved', count: 153, color: 'bg-green-100 text-green-600' },
+  // Real data states
+  const [allTickets, setAllTickets] = useState<TicketData[]>([]);
+  const [newTickets, setNewTickets] = useState<TicketData[]>([]);
+  const [inProgressTickets, setInProgressTickets] = useState<TicketData[]>([]);
+  const [resolvedTickets, setResolvedTickets] = useState<TicketData[]>([]);
+  const [ticketCounts, setTicketCounts] = useState({ all: 0, new: 0, inProgress: 0, resolved: 0 });
+
+  // Sidebar items
+  const sidebarItems = [
+    { icon: LayoutDashboard, label: 'Dashboard', id: 'dashboard' },
+    { icon: Ticket, label: 'Tickets', id: 'tickets', active: true },
+    { icon: BarChart3, label: 'Analytics', id: 'analytics' },
+    { icon: SettingsIcon, label: 'Automations', id: 'automations' },
+    { icon: FileText, label: 'Docs', id: 'docs' },
+    { icon: Users, label: 'Team', id: 'team' },
+    { icon: Settings, label: 'Settings', id: 'settings' },
   ];
 
-  const getPriorityColor = (priority: string) => {
+  useEffect(() => {
+    fetchTickets();
+  }, []);
+
+  const fetchTickets = async () => {
+    setLoading(true);
+    try {
+      // Fetch all support tickets
+      const { data: tickets, error } = await supabase
+        .from('support_tickets')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const formatTicket = (ticket: any): TicketData => ({
+        id: ticket.id,
+        title: ticket.subject || 'Untitled',
+        description: ticket.description?.substring(0, 50) + '...',
+        user: ticket.agent_name || 'Customer',
+        time: formatTimeAgo(new Date(ticket.created_at)),
+        priority: ticket.priority || 'medium',
+        category: ticket.category || 'general',
+        color: getPriorityColor(ticket.priority),
+        status: ticket.status
+      });
+
+      const allFormatted = tickets?.map(formatTicket) || [];
+      setAllTickets(allFormatted);
+
+      // Filter by status
+      const newOnes = allFormatted.filter(t => t.status === 'open');
+      const inProgress = allFormatted.filter(t => t.status === 'in_progress' || t.status === 'pending');
+      const resolved = allFormatted.filter(t => t.status === 'resolved' || t.status === 'closed');
+
+      setNewTickets(newOnes);
+      setInProgressTickets(inProgress);
+      setResolvedTickets(resolved);
+
+      setTicketCounts({
+        all: allFormatted.length,
+        new: newOnes.length,
+        inProgress: inProgress.length,
+        resolved: resolved.length
+      });
+
+    } catch (error) {
+      console.error('Error fetching tickets:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatTimeAgo = (date: Date): string => {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 60) return `${diffMins} min`;
+    if (diffHours < 24) return `${diffHours} hrs`;
+    return `${diffDays} days`;
+  };
+
+  const getPriorityColor = (priority: string): string => {
+    switch (priority) {
+      case 'urgent': return 'red';
+      case 'high': return 'orange';
+      case 'medium': return 'blue';
+      case 'low': return 'green';
+      default: return 'gray';
+    }
+  };
+
+  const getPriorityBadgeColor = (priority: string) => {
     switch (priority) {
       case 'urgent': return 'bg-red-500';
       case 'high': return 'bg-orange-500';
@@ -82,15 +144,49 @@ const SupportDashboard = () => {
     }
   };
 
-  const getTicketColor = (color?: string) => {
+  const getTicketBorderColor = (color?: string) => {
     switch (color) {
       case 'red': return 'border-l-red-500';
+      case 'orange': return 'border-l-orange-500';
       case 'green': return 'border-l-green-500';
       case 'blue': return 'border-l-blue-500';
       case 'purple': return 'border-l-purple-500';
       default: return 'border-l-gray-300';
     }
   };
+
+  const filterTickets = (tickets: TicketData[]) => {
+    if (!searchQuery) return tickets;
+    return tickets.filter(t =>
+      t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.category.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  };
+
+  const TicketCard = ({ ticket }: { ticket: TicketData }) => (
+    <Card className={`bg-white shadow-sm border-l-4 ${getTicketBorderColor(ticket.color)} cursor-pointer hover:shadow-md transition-shadow`}>
+      <CardContent className="p-3">
+        <div className="flex items-start justify-between mb-2">
+          <span className={`w-2 h-2 rounded-full ${getPriorityBadgeColor(ticket.priority)}`} />
+          <span className="text-xs text-gray-400">{ticket.time}</span>
+        </div>
+        <p className="text-sm font-medium text-gray-800 mb-1">{ticket.title}</p>
+        {ticket.description && (
+          <p className="text-xs text-gray-500 mb-2">{ticket.description}</p>
+        )}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Avatar className="w-5 h-5">
+              <AvatarFallback className="text-[10px] bg-gray-100">{ticket.user[0]}</AvatarFallback>
+            </Avatar>
+            <span className="text-xs text-gray-500">{ticket.user}</span>
+          </div>
+          <Badge className="text-[10px] bg-gray-100 text-gray-600">{ticket.category}</Badge>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <div className="min-h-screen bg-[#f5f3ff] flex">
@@ -101,7 +197,7 @@ const SupportDashboard = () => {
             <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
               <Ticket className="w-5 h-5 text-white" />
             </div>
-            <span className="font-semibold text-gray-800">Career Coaches</span>
+            <span className="font-semibold text-gray-800">TraderEdge Support</span>
           </div>
         </div>
 
@@ -109,8 +205,9 @@ const SupportDashboard = () => {
           {sidebarItems.map((item, index) => (
             <button
               key={index}
+              onClick={() => setActiveTab(item.id)}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg mb-1 transition-colors ${
-                item.active
+                activeTab === item.id
                   ? 'bg-purple-100 text-purple-700'
                   : 'text-gray-600 hover:bg-purple-50'
               }`}
@@ -121,19 +218,24 @@ const SupportDashboard = () => {
           ))}
         </nav>
 
-        {/* My Rules Section */}
+        {/* Quick Stats */}
         <div className="p-4 border-t border-purple-50">
           <div className="flex items-center gap-2 mb-2">
             <Settings className="w-4 h-4 text-purple-600" />
-            <span className="text-sm font-medium text-gray-700">My Rules</span>
+            <span className="text-sm font-medium text-gray-700">Quick Stats</span>
           </div>
           <div className="bg-purple-50 rounded-lg p-3 mb-2">
-            <p className="text-xs text-purple-700">Gain up one times 8 leser</p>
-            <p className="text-xs text-purple-500">Start ring</p>
+            <p className="text-xs text-purple-700">Open Tickets: {ticketCounts.new}</p>
+            <p className="text-xs text-purple-500">Resolved Today: {resolvedTickets.filter(t => t.time.includes('min') || t.time.includes('hrs')).length}</p>
           </div>
-          <Button size="sm" variant="outline" className="w-full text-purple-600 border-purple-200">
+          <Button
+            size="sm"
+            variant="outline"
+            className="w-full text-purple-600 border-purple-200"
+            onClick={() => navigate('/enterprise/operations')}
+          >
             <Plus className="w-4 h-4 mr-1" />
-            Create a Rule
+            View Operations
           </Button>
         </div>
 
@@ -159,17 +261,21 @@ const SupportDashboard = () => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <Input
-                placeholder="Q. Search tickets..."
+                placeholder="Search tickets..."
                 className="pl-10 w-64 bg-purple-50 border-purple-100"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 bg-white px-1">⌘K</span>
             </div>
             <div className="flex items-center gap-4">
-              <button className="text-sm text-gray-500">Payslip</button>
-              <button className="text-sm text-gray-500">Report</button>
+              <Button variant="outline" size="sm" onClick={fetchTickets} disabled={loading}>
+                <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
               <Bell className="w-5 h-5 text-gray-400" />
               <Avatar className="w-8 h-8">
-                <AvatarFallback className="bg-purple-100 text-purple-600 text-xs">CC</AvatarFallback>
+                <AvatarFallback className="bg-purple-100 text-purple-600 text-xs">SP</AvatarFallback>
               </Avatar>
             </div>
           </div>
@@ -179,11 +285,10 @@ const SupportDashboard = () => {
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-xl font-bold text-gray-800">All Tickets</h1>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-sm text-gray-500">All Ticket</span>
-                <span className="text-xs text-gray-400">▼</span>
-              </div>
+              <h1 className="text-xl font-bold text-gray-800">Support Tickets</h1>
+              <p className="text-sm text-gray-500 mt-1">
+                {ticketCounts.all} total tickets • {ticketCounts.new} open
+              </p>
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" className="text-gray-500">
@@ -197,130 +302,74 @@ const SupportDashboard = () => {
             </div>
           </div>
 
-          {/* Ticket Columns */}
-          <div className="grid grid-cols-4 gap-4">
-            {/* All Tickets Column */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <h3 className="font-medium text-gray-700">All Tickets</h3>
-                <Badge className="bg-purple-100 text-purple-600">(320)</Badge>
-                <span className="text-gray-400">0 1</span>
-              </div>
-              <div className="space-y-3">
-                {ticketsData.allTickets.map((ticket) => (
-                  <Card key={ticket.id} className={`bg-white shadow-sm border-l-4 ${getTicketColor()}`}>
-                    <CardContent className="p-3">
-                      <div className="flex items-start justify-between mb-2">
-                        <span className={`w-2 h-2 rounded-full ${getPriorityColor(ticket.priority)}`} />
-                        <span className="text-xs text-gray-400">{ticket.time}</span>
-                      </div>
-                      <p className="text-sm font-medium text-gray-800 mb-1">{ticket.title}</p>
-                      {ticket.description && (
-                        <p className="text-xs text-gray-500 mb-2">{ticket.description}</p>
-                      )}
-                      <div className="flex items-center gap-2">
-                        <Avatar className="w-5 h-5">
-                          <AvatarFallback className="text-[10px] bg-gray-100">{ticket.user[0]}</AvatarFallback>
-                        </Avatar>
-                        <span className="text-xs text-gray-500">{ticket.user}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+          {loading ? (
+            <div className="flex items-center justify-center h-64">
+              <RefreshCw className="w-8 h-8 animate-spin text-purple-500" />
             </div>
+          ) : (
+            /* Ticket Columns */
+            <div className="grid grid-cols-4 gap-4">
+              {/* All Tickets Column */}
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <h3 className="font-medium text-gray-700">All Tickets</h3>
+                  <Badge className="bg-purple-100 text-purple-600">({ticketCounts.all})</Badge>
+                </div>
+                <div className="space-y-3 max-h-[600px] overflow-y-auto">
+                  {filterTickets(allTickets).length > 0 ? filterTickets(allTickets).slice(0, 10).map((ticket) => (
+                    <TicketCard key={ticket.id} ticket={ticket} />
+                  )) : (
+                    <p className="text-sm text-gray-400 text-center py-8">No tickets found</p>
+                  )}
+                </div>
+              </div>
 
-            {/* New Tickets Column */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <h3 className="font-medium text-gray-700">New</h3>
-                <Badge className="bg-red-100 text-red-600">(75)</Badge>
-                <span className="text-gray-400">0 1</span>
+              {/* New Tickets Column */}
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <h3 className="font-medium text-gray-700">New</h3>
+                  <Badge className="bg-red-100 text-red-600">({ticketCounts.new})</Badge>
+                </div>
+                <div className="space-y-3 max-h-[600px] overflow-y-auto">
+                  {filterTickets(newTickets).length > 0 ? filterTickets(newTickets).map((ticket) => (
+                    <TicketCard key={ticket.id} ticket={ticket} />
+                  )) : (
+                    <p className="text-sm text-gray-400 text-center py-8">No new tickets</p>
+                  )}
+                </div>
               </div>
-              <div className="space-y-3">
-                {ticketsData.newTickets.map((ticket) => (
-                  <Card key={ticket.id} className={`bg-white shadow-sm border-l-4 ${getTicketColor(ticket.color)}`}>
-                    <CardContent className="p-3">
-                      <div className="flex items-start justify-between mb-2">
-                        <Badge className={`text-xs ${ticket.color === 'red' ? 'bg-red-100 text-red-600' : ticket.color === 'green' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
-                          {ticket.category}
-                        </Badge>
-                        <span className="text-xs text-gray-400">{ticket.time}</span>
-                      </div>
-                      <p className="text-sm font-medium text-gray-800 mb-1">{ticket.title}</p>
-                      <p className="text-xs text-gray-500 mb-2">{ticket.description}</p>
-                      <div className="flex items-center gap-2">
-                        <Avatar className="w-5 h-5">
-                          <AvatarFallback className="text-[10px] bg-purple-100 text-purple-600">{ticket.user[0]}</AvatarFallback>
-                        </Avatar>
-                        <span className="text-xs text-gray-500">{ticket.user}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
 
-            {/* In Progress Column */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <h3 className="font-medium text-gray-700">In Progress</h3>
-                <Badge className="bg-blue-100 text-blue-600">(112)</Badge>
-                <span className="text-gray-400">△ 1</span>
+              {/* In Progress Column */}
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <h3 className="font-medium text-gray-700">In Progress</h3>
+                  <Badge className="bg-blue-100 text-blue-600">({ticketCounts.inProgress})</Badge>
+                </div>
+                <div className="space-y-3 max-h-[600px] overflow-y-auto">
+                  {filterTickets(inProgressTickets).length > 0 ? filterTickets(inProgressTickets).map((ticket) => (
+                    <TicketCard key={ticket.id} ticket={ticket} />
+                  )) : (
+                    <p className="text-sm text-gray-400 text-center py-8">No tickets in progress</p>
+                  )}
+                </div>
               </div>
-              <div className="space-y-3">
-                {ticketsData.inProgress.map((ticket) => (
-                  <Card key={ticket.id} className={`bg-white shadow-sm border-l-4 ${getTicketColor(ticket.color)}`}>
-                    <CardContent className="p-3">
-                      <div className="flex items-start justify-between mb-2">
-                        <Badge className="bg-blue-100 text-blue-600 text-xs">● Running</Badge>
-                        <span className="text-xs text-gray-400">{ticket.time}</span>
-                      </div>
-                      <p className="text-sm font-medium text-gray-800 mb-1">{ticket.title}</p>
-                      <p className="text-xs text-gray-500 mb-2">{ticket.description}</p>
-                      <div className="flex items-center gap-2">
-                        <Avatar className="w-5 h-5">
-                          <AvatarFallback className="text-[10px] bg-gray-100">{ticket.user[0]}</AvatarFallback>
-                        </Avatar>
-                        <span className="text-xs text-gray-500">{ticket.user}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
 
-            {/* Resolved Column */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <h3 className="font-medium text-gray-700">Resolved</h3>
-                <Badge className="bg-green-100 text-green-600">(153)</Badge>
-              </div>
-              <div className="space-y-3">
-                {ticketsData.resolved.map((ticket) => (
-                  <Card key={ticket.id} className={`bg-white shadow-sm border-l-4 ${getTicketColor(ticket.color)}`}>
-                    <CardContent className="p-3">
-                      <div className="flex items-start justify-between mb-2">
-                        <Badge className="bg-green-100 text-green-600 text-xs">● Resolved</Badge>
-                        <span className="text-xs text-gray-400">{ticket.time}</span>
-                      </div>
-                      <p className="text-sm font-medium text-gray-800 mb-1">{ticket.title}</p>
-                      <p className="text-xs text-gray-500 mb-2">{ticket.description}</p>
-                      {ticket.subtext && (
-                        <p className="text-xs text-purple-500 mb-2">{ticket.subtext}</p>
-                      )}
-                      <div className="flex items-center gap-2">
-                        <Avatar className="w-5 h-5">
-                          <AvatarFallback className="text-[10px] bg-green-100 text-green-600">{ticket.user[0]}</AvatarFallback>
-                        </Avatar>
-                        <span className="text-xs text-gray-500">{ticket.user}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+              {/* Resolved Column */}
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <h3 className="font-medium text-gray-700">Resolved</h3>
+                  <Badge className="bg-green-100 text-green-600">({ticketCounts.resolved})</Badge>
+                </div>
+                <div className="space-y-3 max-h-[600px] overflow-y-auto">
+                  {filterTickets(resolvedTickets).length > 0 ? filterTickets(resolvedTickets).map((ticket) => (
+                    <TicketCard key={ticket.id} ticket={ticket} />
+                  )) : (
+                    <p className="text-sm text-gray-400 text-center py-8">No resolved tickets</p>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
     </div>

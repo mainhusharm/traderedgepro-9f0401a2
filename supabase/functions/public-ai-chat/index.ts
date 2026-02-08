@@ -6,10 +6,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
- // Admin's Gemini API key for public-facing bots (Zoe, etc.)
- // Use v1beta for OpenAI-compatible endpoint with Gemini
- const ADMIN_GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
- const ADMIN_GEMINI_MODEL = 'gemini-2.0-flash';
+// Gemini API configuration - using the standard REST API
+const GEMINI_MODEL = 'gemini-2.0-flash';
 
 // Agent configurations - ZOE talks like a human, not an AI
 const AGENT_CONFIG: Record<string, { 
@@ -183,21 +181,28 @@ serve(async (req) => {
       ];
     }
 
-    // Call AI Gateway
-    const response = await fetch(ADMIN_GEMINI_API_URL, {
+    // Build conversation for Gemini format
+    const systemInstruction = agent.systemPrompt;
+    const contents = contextMessages.map((m: any) => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }]
+    }));
+
+    // Call Gemini API using the standard REST endpoint
+    const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+
+    const response = await fetch(GEMINI_API_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${GEMINI_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: ADMIN_GEMINI_MODEL,
-        messages: [
-          { role: 'system', content: agent.systemPrompt },
-          ...contextMessages
-        ],
-        max_tokens: 600,
-        temperature: 0.8, // Slightly higher for more natural responses
+        systemInstruction: { parts: [{ text: systemInstruction }] },
+        contents: contents,
+        generationConfig: {
+          maxOutputTokens: 600,
+          temperature: 0.8,
+        },
       }),
     });
 
@@ -246,7 +251,8 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    let aiResponse = data.choices?.[0]?.message?.content || "Sorry, I'm having trouble right now. Give me a sec and try again?";
+    // Gemini returns response in candidates[0].content.parts[0].text format
+    let aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I'm having trouble right now. Give me a sec and try again?";
     
     let ticketCreated = false;
     let ticketId = null;
