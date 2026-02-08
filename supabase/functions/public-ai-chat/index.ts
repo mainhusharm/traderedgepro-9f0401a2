@@ -7,8 +7,9 @@ const corsHeaders = {
 };
 
  // Admin's Gemini API key for public-facing bots (Zoe, etc.)
+ // Use v1beta for OpenAI-compatible endpoint with Gemini
  const ADMIN_GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
- const ADMIN_GEMINI_MODEL = 'gemini-2.5-flash';
+ const ADMIN_GEMINI_MODEL = 'gemini-2.0-flash';
 
 // Agent configurations - ZOE talks like a human, not an AI
 const AGENT_CONFIG: Record<string, { 
@@ -144,9 +145,19 @@ serve(async (req) => {
     
     // Use Admin's Gemini API key for public-facing support bots
     const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
-    
+
     if (!GEMINI_API_KEY) {
-      throw new Error('Gemini API key not configured');
+      console.error('GEMINI_API_KEY not configured in Supabase environment');
+      // Return a helpful fallback response when API key is not configured
+      const agent = AGENT_CONFIG[currentAgent || agentId || 'zoe'];
+      return new Response(JSON.stringify({
+        response: "Hey! I'm experiencing some technical difficulties right now. For immediate help, please check our FAQ page or reach out to us at support@traderedgepro.com. We're always happy to help! 💬",
+        agent: agent?.name || 'Zoe',
+        agentRole: agent?.role || 'Customer Support'
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     // Determine which agent to use
@@ -193,21 +204,45 @@ serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('AI Gateway error:', response.status, errorText);
-      
+
+      // Fallback responses when API fails
+      const fallbackResponses = [
+        "Hey! I'm having a bit of trouble connecting right now. Could you try again in a moment? If it keeps happening, feel free to reach out through our contact form!",
+        "Hmm, looks like my connection hiccuped. Mind giving that another shot? If the issue persists, you can always email us at support@traderedgepro.com!",
+        "Oops, technical difficulties on my end! Try again in a sec? Or if you'd prefer, you can check out our FAQ page while I get back on my feet.",
+      ];
+      const fallbackResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+
       if (response.status === 429) {
-        return new Response(JSON.stringify({ error: 'Too many requests. Please wait a moment.' }), {
-          status: 429,
+        return new Response(JSON.stringify({
+          response: "Whoa, we're getting a lot of messages right now! Give me a minute to catch up and try again. 😊",
+          agent: agent.name,
+          agentRole: agent.role
+        }), {
+          status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: 'Service temporarily unavailable.' }), {
-          status: 402,
+      if (response.status === 402 || response.status === 403) {
+        return new Response(JSON.stringify({
+          response: fallbackResponse,
+          agent: agent.name,
+          agentRole: agent.role
+        }), {
+          status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
-      
-      throw new Error(`Gemini API error: ${response.status}`);
+
+      // For other errors, return a graceful fallback
+      return new Response(JSON.stringify({
+        response: fallbackResponse,
+        agent: agent.name,
+        agentRole: agent.role
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const data = await response.json();
@@ -330,10 +365,13 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in public-ai-chat:', error);
-    return new Response(JSON.stringify({ 
-      error: error instanceof Error ? error.message : 'Unknown error' 
+    // Return a friendly fallback instead of an error
+    return new Response(JSON.stringify({
+      response: "I'm having a little trouble right now, but don't worry! You can reach our team directly at support@traderedgepro.com or check out our FAQ for quick answers. Sorry about this! 🙏",
+      agent: 'Zoe',
+      agentRole: 'Customer Support'
     }), {
-      status: 500,
+      status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }

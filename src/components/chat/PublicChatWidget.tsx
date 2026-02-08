@@ -183,11 +183,19 @@ const PublicChatWidget = ({ position = 'bottom-right' }: PublicChatWidgetProps) 
 
     } catch (err: any) {
       console.error('Chat error:', err);
-      
+
+      // Provide a helpful fallback response
+      const fallbackResponses = [
+        "Hey, I'm having a little connection hiccup! Could you try that again? If it keeps happening, feel free to email us at support@traderedgepro.com 💬",
+        "Oops, my wires got crossed for a sec! Give it another shot? You can also check our FAQ page for quick answers.",
+        "Sorry about that! I'm experiencing some technical difficulties. Try again in a moment, or reach out to us at support@traderedgepro.com if you need immediate help!"
+      ];
+      const randomFallback = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+
       const errorMessage: ChatMessage = {
         id: `error-${Date.now()}`,
         role: 'assistant',
-        content: "Oops, something went wrong on my end. Mind trying that again?",
+        content: randomFallback,
         timestamp: new Date(),
         agentName: currentAgentName,
       };

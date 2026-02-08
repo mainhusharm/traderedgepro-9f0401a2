@@ -141,7 +141,7 @@ const TrialExpiredPage = () => {
                     <Button
                       className="w-full"
                       variant={plan.popular ? 'default' : 'outline'}
-                      onClick={() => navigate(`/payment?plan=${plan.name.toLowerCase()}`)}
+                      onClick={() => navigate(`/payment-flow?plan=${plan.name.toLowerCase()}`)}
                     >
                       Upgrade to {plan.name}
                       <ArrowRight className="w-4 h-4 ml-2" />
@@ -154,7 +154,7 @@ const TrialExpiredPage = () => {
 
           {/* Additional Actions */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button variant="ghost" onClick={() => navigate('/pricing')}>
+            <Button variant="ghost" onClick={() => navigate('/membership')}>
               View All Plans
             </Button>
             <Button variant="ghost" onClick={() => navigate('/contact-support')}>

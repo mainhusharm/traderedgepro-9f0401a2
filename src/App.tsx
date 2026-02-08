@@ -83,6 +83,16 @@ import AntimatterLanding from "./pages/AntimatterLanding";
 import TreasureHuntPage from "./pages/TreasureHuntPage";
 import TreasureHuntRevealPage from "./pages/TreasureHuntRevealPage";
 
+// Enterprise Dashboard Pages
+import { EnterpriseDashboardRoute } from "./lib/auth/EnterpriseDashboardRoute";
+import EnterpriseLoginPage from "./pages/enterprise/EnterpriseLoginPage";
+import EnterpriseDashboardLanding from "./pages/enterprise/EnterpriseDashboardLanding";
+import OperationsDashboard from "./pages/enterprise/OperationsDashboard";
+import FinancialDashboard from "./pages/enterprise/FinancialDashboard";
+import SupportDashboard from "./pages/enterprise/SupportDashboard";
+import SalesDashboard from "./pages/enterprise/SalesDashboard";
+import ExecutiveDashboard from "./pages/enterprise/ExecutiveDashboard";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -124,6 +134,7 @@ const App = () => {
                 {/* Subscription & Payment Routes */}
                 <Route path="/membership" element={<MembershipPage />} />
                 <Route path="/payment-flow" element={<PaymentFlowPage />} />
+                <Route path="/payment" element={<PaymentFlowPage />} />
                 <Route path="/renew" element={<RenewalPage />} />
                 <Route path="/payment-success" element={<PaymentSuccessPage />} />
                 <Route path="/successful-payment" element={<PaymentSuccessPage />} />
@@ -289,7 +300,40 @@ const App = () => {
                   </AccountantRoute>
                 } />
                 <Route path="/manager/dashboard" element={<ManagerDashboard />} />
-                
+
+                {/* Enterprise Dashboard Routes */}
+                <Route path="/enterprise-login" element={<EnterpriseLoginPage />} />
+                <Route path="/enterprise" element={
+                  <EnterpriseDashboardRoute requiredRoles={['admin', 'executive', 'operations', 'financial', 'support', 'sales']}>
+                    <EnterpriseDashboardLanding />
+                  </EnterpriseDashboardRoute>
+                } />
+                <Route path="/enterprise/operations" element={
+                  <EnterpriseDashboardRoute requiredRoles={['admin', 'executive', 'operations']}>
+                    <OperationsDashboard />
+                  </EnterpriseDashboardRoute>
+                } />
+                <Route path="/enterprise/financial" element={
+                  <EnterpriseDashboardRoute requiredRoles={['admin', 'executive', 'financial']}>
+                    <FinancialDashboard />
+                  </EnterpriseDashboardRoute>
+                } />
+                <Route path="/enterprise/support" element={
+                  <EnterpriseDashboardRoute requiredRoles={['admin', 'executive', 'support']}>
+                    <SupportDashboard />
+                  </EnterpriseDashboardRoute>
+                } />
+                <Route path="/enterprise/sales" element={
+                  <EnterpriseDashboardRoute requiredRoles={['admin', 'executive', 'sales']}>
+                    <SalesDashboard />
+                  </EnterpriseDashboardRoute>
+                } />
+                <Route path="/enterprise/executive" element={
+                  <EnterpriseDashboardRoute requiredRoles={['admin', 'executive']}>
+                    <ExecutiveDashboard />
+                  </EnterpriseDashboardRoute>
+                } />
+
                 {/* Catch-all */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
