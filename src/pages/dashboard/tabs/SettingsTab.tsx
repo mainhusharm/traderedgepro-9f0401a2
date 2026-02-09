@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Settings, User, Shield, Bell, Palette, Database, Key, Save, Mail, BellRing, Smartphone } from 'lucide-react';
+import { Settings, User, Shield, Bell, Palette, Database, Key, Save, Mail, BellRing, Smartphone, Users, Settings2, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,10 +10,15 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useSignalNotifications } from '@/hooks/useSignalNotifications';
 import useTheme from '@/hooks/useTheme';
+import { usePlanFeatures } from '@/lib/hooks/usePlanFeatures';
+import TeamDashboard from '@/components/dashboard/TeamDashboard';
+import CustomSignalParameters from '@/components/dashboard/CustomSignalParameters';
+import WhiteLabelReports from '@/components/dashboard/WhiteLabelReports';
 
 const SettingsTab = () => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const planFeatures = usePlanFeatures();
   const { isSupported, permission, isEnabled, enableNotifications, disableNotifications } = useSignalNotifications();
   const { settings: displaySettings, updateSettings: setDisplaySettings } = useTheme();
   
@@ -126,13 +131,31 @@ const SettingsTab = () => {
     }
   };
 
-  const sections = [
+  // Build sections dynamically based on plan
+  const baseSections = [
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'push-notifications', label: 'Push Notifications', icon: Smartphone },
     { id: 'email-preferences', label: 'Email Preferences', icon: Mail },
     { id: 'risk', label: 'Risk Management', icon: Shield },
     { id: 'display', label: 'Display', icon: Palette },
     { id: 'notifications', label: 'Notifications', icon: Bell },
+  ];
+
+  // Enterprise-only sections
+  const enterpriseSections = [];
+  if (planFeatures.teamDashboard) {
+    enterpriseSections.push({ id: 'team', label: 'Team Dashboard', icon: Users });
+  }
+  if (planFeatures.customSignalParameters) {
+    enterpriseSections.push({ id: 'signal-params', label: 'Signal Parameters', icon: Settings2 });
+  }
+  if (planFeatures.whiteLabelReports) {
+    enterpriseSections.push({ id: 'white-label', label: 'White-Label Reports', icon: FileText });
+  }
+
+  const sections = [
+    ...baseSections,
+    ...enterpriseSections,
     { id: 'data', label: 'Data & Privacy', icon: Database },
     { id: 'api', label: 'API & Integrations', icon: Key },
   ];
@@ -633,6 +656,15 @@ const SettingsTab = () => {
           </div>
         );
 
+      case 'team':
+        return planFeatures.teamDashboard ? <TeamDashboard /> : null;
+
+      case 'signal-params':
+        return planFeatures.customSignalParameters ? <CustomSignalParameters /> : null;
+
+      case 'white-label':
+        return planFeatures.whiteLabelReports ? <WhiteLabelReports /> : null;
+
       case 'data':
         return (
           <div className="space-y-6">
@@ -645,7 +677,7 @@ const SettingsTab = () => {
                 Export Data
               </Button>
             </div>
-            
+
             <div className="p-4 rounded-lg bg-warning/10 border border-warning/20">
               <h4 className="font-semibold text-warning mb-2">Delete Account</h4>
               <p className="text-sm text-muted-foreground mb-4">

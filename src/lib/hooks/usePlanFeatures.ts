@@ -5,27 +5,29 @@ export interface PlanFeatures {
   // Signals
   signalsPerDay: number;
   unlimitedSignals: boolean;
-  
+
   // AI
   basicAiReasoning: boolean;
   fullAiReasoning: boolean;
   advancedAiCoach: boolean;
-  
+  aiMarketScanner: boolean;
+
   // Notifications
   emailNotifications: boolean;
   pushNotifications: boolean;
-  
+
   // Risk Management
   basicRiskCalculator: boolean;
   advancedRiskManagement: boolean;
-  
+
   // Community & Support
   communityAccess: boolean;
   prioritySupport: boolean;
   whiteGloveSupport: boolean;
   onboardingCall: boolean;
   dedicatedAccountManager: boolean;
-  
+  weeklyLiveTradingRoom: boolean;
+
   // Analytics & Tools
   performanceAnalytics: boolean;
   mt5Integration: boolean;
@@ -33,7 +35,13 @@ export interface PlanFeatures {
   customApiAccess: boolean;
   strategyCustomization: boolean;
   personalGuidance: boolean;
-  
+
+  // Enterprise Features
+  teamDashboard: boolean;
+  customSignalParameters: boolean;
+  whiteLabelReports: boolean;
+  prioritySignalDelivery: boolean;
+
   // Plan info
   planName: string;
   planLevel: 'free' | 'starter' | 'pro' | 'enterprise';
@@ -45,6 +53,7 @@ const FREE_FEATURES: PlanFeatures = {
   basicAiReasoning: false,
   fullAiReasoning: false,
   advancedAiCoach: false,
+  aiMarketScanner: false,
   emailNotifications: false,
   pushNotifications: false,
   basicRiskCalculator: false,
@@ -54,12 +63,17 @@ const FREE_FEATURES: PlanFeatures = {
   whiteGloveSupport: false,
   onboardingCall: false,
   dedicatedAccountManager: false,
+  weeklyLiveTradingRoom: false,
   performanceAnalytics: false,
   mt5Integration: false,
   multiAccountManagement: false,
   customApiAccess: false,
   strategyCustomization: false,
   personalGuidance: false,
+  teamDashboard: false,
+  customSignalParameters: false,
+  whiteLabelReports: false,
+  prioritySignalDelivery: false,
   planName: 'Free',
   planLevel: 'free',
 };
@@ -70,21 +84,27 @@ const STARTER_FEATURES: PlanFeatures = {
   basicAiReasoning: true,
   fullAiReasoning: false,
   advancedAiCoach: false,
+  aiMarketScanner: false,
   emailNotifications: true,
   pushNotifications: false,
   basicRiskCalculator: true,
   advancedRiskManagement: false,
-  communityAccess: true,
+  communityAccess: false, // Moved to Pro
   prioritySupport: false,
   whiteGloveSupport: false,
   onboardingCall: false,
   dedicatedAccountManager: false,
+  weeklyLiveTradingRoom: false,
   performanceAnalytics: false,
   mt5Integration: false,
   multiAccountManagement: false,
   customApiAccess: false,
   strategyCustomization: false,
   personalGuidance: false,
+  teamDashboard: false,
+  customSignalParameters: false,
+  whiteLabelReports: false,
+  prioritySignalDelivery: false,
   planName: 'Starter',
   planLevel: 'starter',
 };
@@ -95,6 +115,7 @@ const PRO_FEATURES: PlanFeatures = {
   basicAiReasoning: true,
   fullAiReasoning: true,
   advancedAiCoach: false,
+  aiMarketScanner: true, // New Pro feature
   emailNotifications: true,
   pushNotifications: true,
   basicRiskCalculator: true,
@@ -104,12 +125,17 @@ const PRO_FEATURES: PlanFeatures = {
   whiteGloveSupport: false,
   onboardingCall: true,
   dedicatedAccountManager: false,
+  weeklyLiveTradingRoom: true, // New Pro feature
   performanceAnalytics: true,
   mt5Integration: false,
   multiAccountManagement: false,
   customApiAccess: false,
-  strategyCustomization: true, // Now enabled for Pro
-  personalGuidance: true, // 1-on-1 expert guidance
+  strategyCustomization: true,
+  personalGuidance: true,
+  teamDashboard: false,
+  customSignalParameters: false,
+  whiteLabelReports: false,
+  prioritySignalDelivery: false,
   planName: 'Pro',
   planLevel: 'pro',
 };
@@ -120,6 +146,7 @@ const ENTERPRISE_FEATURES: PlanFeatures = {
   basicAiReasoning: true,
   fullAiReasoning: true,
   advancedAiCoach: true,
+  aiMarketScanner: true,
   emailNotifications: true,
   pushNotifications: true,
   basicRiskCalculator: true,
@@ -129,12 +156,17 @@ const ENTERPRISE_FEATURES: PlanFeatures = {
   whiteGloveSupport: true,
   onboardingCall: true,
   dedicatedAccountManager: true,
+  weeklyLiveTradingRoom: true,
   performanceAnalytics: true,
   mt5Integration: true,
   multiAccountManagement: true,
   customApiAccess: true,
   strategyCustomization: true,
-  personalGuidance: true, // 1-on-1 expert guidance
+  personalGuidance: true,
+  teamDashboard: true, // New Enterprise feature
+  customSignalParameters: true, // New Enterprise feature
+  whiteLabelReports: true, // New Enterprise feature
+  prioritySignalDelivery: true, // New Enterprise feature
   planName: 'Enterprise',
   planLevel: 'enterprise',
 };

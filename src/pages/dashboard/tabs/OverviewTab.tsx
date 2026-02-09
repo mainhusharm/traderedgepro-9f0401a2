@@ -9,11 +9,15 @@ import EconomicCalendar from '@/components/dashboard/EconomicCalendar';
 import AccountHealthScore from '@/components/dashboard/AccountHealthScore';
 import DailyTradingChecklist from '@/components/dashboard/DailyTradingChecklist';
 import DailyEquityPrompt from '@/components/dashboard/DailyEquityPrompt';
+import WeeklyLiveTradingRoom from '@/components/dashboard/WeeklyLiveTradingRoom';
+import AIMarketScanner from '@/components/dashboard/AIMarketScanner';
+import FeatureGate from '@/components/dashboard/FeatureGate';
 import { Button } from '@/components/ui/button';
 
 import { TradingSessionHeatmap } from '@/components/dashboard/TradingSessionHeatmap';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { usePlanFeatures } from '@/lib/hooks/usePlanFeatures';
 
 interface OverviewTabProps {
   dashboardData: any;
@@ -29,6 +33,7 @@ interface RecentActivity {
 
 const OverviewTab = ({ dashboardData }: OverviewTabProps) => {
   const { user } = useAuth();
+  const planFeatures = usePlanFeatures();
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [isLoadingActivity, setIsLoadingActivity] = useState(true);
   const [showEquityPrompt, setShowEquityPrompt] = useState(false);
@@ -365,8 +370,32 @@ const OverviewTab = ({ dashboardData }: OverviewTabProps) => {
       {/* Market Hours & Economic Calendar - Single Column */}
       <div className="grid grid-cols-1 gap-6">
         <MarketHoursIndicator />
-        <EconomicCalendar />
+        {planFeatures.performanceAnalytics && <EconomicCalendar />}
       </div>
+
+      {/* Pro Features - AI Market Scanner & Weekly Live Trading Room */}
+      {(planFeatures.aiMarketScanner || planFeatures.weeklyLiveTradingRoom) && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {planFeatures.aiMarketScanner && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <AIMarketScanner />
+            </motion.div>
+          )}
+          {planFeatures.weeklyLiveTradingRoom && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+            >
+              <WeeklyLiveTradingRoom />
+            </motion.div>
+          )}
+        </div>
+      )}
 
       {/* Trading Session Heatmap */}
       <TradingSessionHeatmap />

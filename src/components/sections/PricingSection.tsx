@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Star, Zap, Crown, Gift, Coins, ChevronDown, ChevronUp, Rocket, type LucideIcon } from 'lucide-react';
+import { Check, Star, Zap, Crown, Gift, Coins, ChevronDown, ChevronUp, Sparkles, type LucideIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -11,15 +11,11 @@ interface Plan {
   icon: LucideIcon;
   price: number;
   yearlyPrice: number;
-  originalPrice?: number;
-  discountedPrice?: number;
-  launchDiscount?: boolean;
   period: string;
   description: string;
   features: string[];
   isAffiliate?: boolean;
   popular?: boolean;
-  christmasOffer?: boolean;
   badge?: string;
   badgeColor?: string;
 }
@@ -58,8 +54,6 @@ const PricingSection = () => {
       icon: Zap,
       price: 99,
       yearlyPrice: 79,
-      originalPrice: 99,
-      discountedPrice: 49.50,
       period: 'month',
       description: 'Perfect for new traders',
       features: [
@@ -67,26 +61,19 @@ const PricingSection = () => {
         'Basic AI reasoning',
         'Email notifications',
         'Risk calculator',
-        'Community access',
         'Standard Phase Tracking',
         '5 Prop Firm Analyzers',
         'Auto Lot Size Calculator',
         'Trade Journal (Basic)',
-        'Economic Calendar',
       ],
       popular: false,
-      christmasOffer: true,
-      badge: '50% OFF',
-      badgeColor: 'bg-red-500',
     },
     {
       id: 'pro',
       name: 'Pro',
       icon: Star,
-      price: 199,
-      yearlyPrice: 159,
-      originalPrice: 199,
-      launchDiscount: true,
+      price: 299,
+      yearlyPrice: 239,
       period: 'month',
       description: 'For serious traders',
       features: [
@@ -98,7 +85,6 @@ const PricingSection = () => {
         '1-on-1 Expert Guidance Sessions',
         'Priority support (12-24h)',
         '1-on-1 onboarding call',
-        'Performance analytics',
         'Private Community Access',
         'Multi Account Tracker',
         'Advanced Trading Journal',
@@ -106,23 +92,28 @@ const PricingSection = () => {
         'AI Trading Coach (Nexus)',
         'Monthly Performance Reports',
         'Session Heatmaps',
+        'Weekly Live Trading Room',
+        'AI Market Scanner',
+        'Economic Calendar',
       ],
       popular: true,
-      badge: '🚀 LAUNCH 20% OFF',
-      badgeColor: 'bg-gradient-to-r from-primary to-purple-500',
+      badge: 'MOST POPULAR',
+      badgeColor: 'bg-primary',
     },
     {
       id: 'enterprise',
       name: 'Enterprise',
       icon: Crown,
-      price: 499,
-      yearlyPrice: 399,
+      price: 899,
+      yearlyPrice: 719,
       period: '3 months',
       description: 'For trading teams & professionals',
       features: [
         'Everything in Pro',
-        '⭐ VIP Signals (Priority Access)',
+        '⭐ VIP Signals (Priority Delivery)',
         '⭐ 1-on-1 Expert Guidance (Unlimited)',
+        'Team Dashboard (up to 5 users)',
+        'Custom Signal Parameters',
         'MT5 automation integration',
         'Multi-account management',
         'Custom API access',
@@ -133,7 +124,8 @@ const PricingSection = () => {
         'VIP Private Community Access',
         'Professional Backtesting Suite',
         'Trade Correlation Analysis',
-        'Custom Dashboards',
+        'White-label Reports',
+        'Quarterly Strategy Review Call',
       ],
       popular: false,
       badge: 'BEST VALUE',
@@ -148,20 +140,10 @@ const PricingSection = () => {
     }
     const price = getPrice(plan);
     const billing = isYearly ? 'yearly' : 'monthly';
-    // For Pro plan with launch discount, include coupon code
-    const couponParam = plan.launchDiscount ? '&coupon=PROLAUNCH20' : '';
-    navigate(`/auth?plan=${plan.id}&price=${price}&billing=${billing}${couponParam}`);
+    navigate(`/auth?plan=${plan.id}&price=${price}&billing=${billing}`);
   };
 
   const getPrice = (plan: Plan) => {
-    if (plan.discountedPrice && plan.id === 'starter') {
-      return plan.discountedPrice;
-    }
-    // Show launch discount for Pro plan
-    if (plan.launchDiscount && plan.id === 'pro') {
-      const basePrice = isYearly ? plan.yearlyPrice : plan.price;
-      return Math.round(basePrice * 0.8 * 100) / 100; // 20% off
-    }
     return isYearly ? plan.yearlyPrice : plan.price;
   };
 
@@ -209,138 +191,286 @@ const PricingSection = () => {
           </div>
         </motion.div>
 
-        {/* Plans grid - 4 columns with hover effect */}
-        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto pt-6">
+        {/* Plans grid - 4 columns with enhanced animations */}
+        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-8 max-w-7xl mx-auto pt-8">
           {plans.map((plan, index) => (
             <motion.div
               key={plan.id}
               data-card
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 40, rotateX: -10 }}
+              whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              transition={{
+                delay: index * 0.15,
+                type: "spring",
+                stiffness: 100,
+                damping: 15
+              }}
+              whileHover={{
+                y: -12,
+                transition: { type: "spring", stiffness: 400, damping: 25 }
+              }}
               onMouseEnter={() => setHoveredPlan(plan.id)}
               onMouseLeave={() => setHoveredPlan(null)}
-              className={`relative glass-card p-6 rounded-2xl flex flex-col transition-all duration-300 cursor-pointer overflow-visible ${
-                plan.popular ? 'border-primary ring-2 ring-primary' : 'border-white/10'
-              } ${hoveredPlan === plan.id ? 'scale-[1.08] shadow-[0_25px_50px_-12px_rgba(99,102,241,0.35)] z-20' : hoveredPlan ? 'scale-[0.98] opacity-80' : 'scale-100'}`}
-              style={{ 
+              className={`group relative rounded-2xl flex flex-col cursor-pointer overflow-visible
+                ${plan.popular ? 'z-10' : ''}
+                ${hoveredPlan && hoveredPlan !== plan.id ? 'opacity-60 scale-[0.97]' : 'opacity-100 scale-100'}
+              `}
+              style={{
                 transformOrigin: 'center center',
+                transformStyle: 'preserve-3d',
+                perspective: '1000px',
               }}
             >
-              {/* Badge - positioned well outside the card with high z-index */}
-              {plan.badge && (
-                <div 
-                  className={`absolute -top-5 left-1/2 -translate-x-1/2 px-5 py-2 ${plan.badgeColor} text-white text-xs font-bold rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.4)] z-30 whitespace-nowrap border-2 border-white/20`}
-                  style={{ transform: 'translateX(-50%) translateY(0)' }}
-                >
-                  {plan.badge}
-                </div>
+              {/* Animated gradient border */}
+              <div className={`absolute -inset-[1px] rounded-2xl transition-all duration-500 pointer-events-none ${
+                plan.popular
+                  ? 'bg-gradient-to-r from-primary via-purple-500 to-pink-500 opacity-100'
+                  : plan.id === 'enterprise'
+                  ? 'bg-gradient-to-r from-purple-500 via-violet-500 to-indigo-500 opacity-100'
+                  : plan.id === 'kickstarter'
+                  ? 'bg-gradient-to-r from-green-400 via-emerald-500 to-teal-400 opacity-100'
+                  : 'bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 opacity-60 group-hover:opacity-100'
+              }`}
+              style={{
+                animation: plan.popular || plan.id === 'kickstarter' ? 'gradient-rotate 3s linear infinite' : undefined,
+                backgroundSize: '200% 200%',
+              }}
+              />
+
+              {/* Glow effect for cards */}
+              {plan.popular && (
+                <motion.div
+                  className="absolute -inset-4 rounded-3xl bg-primary/20 blur-2xl -z-10"
+                  animate={{
+                    opacity: [0.3, 0.6, 0.3],
+                    scale: [1, 1.05, 1],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
+              )}
+              {plan.id === 'kickstarter' && (
+                <motion.div
+                  className="absolute -inset-4 rounded-3xl bg-green-500/15 blur-2xl -z-10"
+                  animate={{
+                    opacity: [0.2, 0.4, 0.2],
+                    scale: [1, 1.03, 1],
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
+              )}
+              {plan.id === 'enterprise' && (
+                <motion.div
+                  className="absolute -inset-4 rounded-3xl bg-purple-500/15 blur-2xl -z-10"
+                  animate={{
+                    opacity: [0.2, 0.5, 0.2],
+                    scale: [1, 1.04, 1],
+                  }}
+                  transition={{
+                    duration: 3.5,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
               )}
 
-              <div className="flex items-center gap-3 mb-4 mt-2">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                  plan.popular ? 'bg-primary' : 'bg-white/10'
-                }`}>
-                  <plan.icon className={`w-5 h-5 ${plan.popular ? 'text-primary-foreground' : 'text-primary'}`} />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold">{plan.name}</h3>
-                  <p className="text-xs text-muted-foreground">{plan.description}</p>
-                </div>
-              </div>
+              {/* Card content */}
+              <div className={`relative rounded-2xl p-6 flex flex-col h-full transition-all duration-300 ${
+                plan.popular
+                  ? 'bg-gradient-to-b from-primary/10 via-background to-background'
+                  : 'bg-background'
+              }`}>
 
-              <div className="mb-6">
-                {plan.discountedPrice && plan.id === 'starter' ? (
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-success">${plan.discountedPrice}</span>
-                    <span className="text-lg text-muted-foreground line-through">${plan.originalPrice}</span>
-                    <span className="text-muted-foreground">/{plan.period}</span>
+                {/* Shimmer effect on hover */}
+                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden pointer-events-none">
+                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+                </div>
+
+                {/* Badge with animation */}
+                {plan.badge && (
+                  <motion.div
+                    initial={{ y: -20, opacity: 0 }}
+                    whileInView={{ y: 0, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.15 + 0.3, type: "spring" }}
+                    className={`absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 text-white text-xs font-bold rounded-full shadow-lg z-30 whitespace-nowrap ${
+                      plan.popular
+                        ? 'bg-gradient-to-r from-primary to-purple-500'
+                        : plan.id === 'enterprise'
+                        ? 'bg-gradient-to-r from-purple-500 to-violet-500'
+                        : plan.badgeColor
+                    }`}
+                  >
+                    {plan.badge}
+                  </motion.div>
+                )}
+
+                {/* Icon and Title */}
+                <div className="flex items-center gap-3 mb-4 mt-2">
+                  <motion.div
+                    className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                      plan.popular
+                        ? 'bg-gradient-to-br from-primary to-purple-500 shadow-lg shadow-primary/25'
+                        : plan.id === 'enterprise'
+                        ? 'bg-gradient-to-br from-purple-500 to-violet-500 shadow-lg shadow-purple-500/25'
+                        : plan.id === 'kickstarter'
+                        ? 'bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg shadow-green-500/25'
+                        : 'bg-gradient-to-br from-cyan-500/80 to-blue-500/80 shadow-lg shadow-cyan-500/20'
+                    }`}
+                    whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <plan.icon className="w-6 h-6 text-white" />
+                  </motion.div>
+                  <div>
+                    <h3 className="text-xl font-bold">{plan.name}</h3>
+                    <p className="text-xs text-muted-foreground">{plan.description}</p>
                   </div>
-                ) : plan.launchDiscount && plan.id === 'pro' ? (
-                  <div className="flex flex-col">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-bold text-primary">${getPrice(plan)}</span>
-                      <span className="text-lg text-muted-foreground line-through">${isYearly ? plan.yearlyPrice : plan.price}</span>
-                      <span className="text-muted-foreground">/{plan.period}</span>
-                    </div>
-                    <div className="flex items-center gap-1 mt-1">
-                      <Rocket className="w-3 h-3 text-primary" />
-                      <span className="text-xs text-primary font-medium">Use code: PROLAUNCH20</span>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-bold">
+                </div>
+
+                {/* Price with animation */}
+                <div className="mb-6">
+                  <motion.div
+                    className="flex items-baseline gap-1"
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    whileInView={{ scale: 1, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.15 + 0.2 }}
+                  >
+                    <span className={`text-4xl font-bold ${
+                      plan.popular
+                        ? 'bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent'
+                        : plan.id === 'enterprise'
+                        ? 'bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text text-transparent'
+                        : plan.id === 'kickstarter'
+                        ? 'bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent'
+                        : 'bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent'
+                    }`}>
                       {plan.price === 0 ? 'FREE' : `$${isYearly ? plan.yearlyPrice : plan.price}`}
                     </span>
-                    {plan.price > 0 && <span className="text-muted-foreground">/{plan.period}</span>}
-                  </div>
+                    {plan.price > 0 && <span className="text-muted-foreground text-sm">/{plan.period}</span>}
+                  </motion.div>
+                  {isYearly && plan.price > 0 && (
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      viewport={{ once: true }}
+                      className="text-xs text-success mt-1"
+                    >
+                      Save ${((plan.price - plan.yearlyPrice) * 12).toFixed(0)}/year
+                    </motion.p>
+                  )}
+                </div>
+
+                {/* Features list with staggered animation */}
+                <ul className="space-y-2.5 mb-4 flex-1">
+                  {plan.features.slice(0, 6).map((feature, featureIndex) => (
+                    <motion.li
+                      key={feature}
+                      className="flex items-start gap-2"
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 + featureIndex * 0.05 + 0.3 }}
+                    >
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
+                        plan.popular ? 'bg-success/20' : 'bg-success/10'
+                      }`}>
+                        <Check className="w-3 h-3 text-success" />
+                      </div>
+                      <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">{feature}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+
+                {plan.features.length > 6 && (
+                  <Collapsible
+                    open={expandedFeatures[plan.id]}
+                    onOpenChange={(open) => setExpandedFeatures(prev => ({ ...prev, [plan.id]: open }))}
+                  >
+                    <CollapsibleContent className="mb-4">
+                      <ul className="space-y-2.5">
+                        {plan.features.slice(6).map((feature) => (
+                          <li key={feature} className="flex items-start gap-2">
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
+                              plan.popular ? 'bg-success/20' : 'bg-success/10'
+                            }`}>
+                              <Check className="w-3 h-3 text-success" />
+                            </div>
+                            <span className="text-sm text-muted-foreground">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CollapsibleContent>
+                    <CollapsibleTrigger asChild>
+                      <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground hover:text-foreground mb-4 group/btn">
+                        {expandedFeatures[plan.id] ? (
+                          <>
+                            <ChevronUp className="w-3 h-3 mr-1 transition-transform group-hover/btn:-translate-y-0.5" />
+                            Show less
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="w-3 h-3 mr-1 transition-transform group-hover/btn:translate-y-0.5" />
+                            +{plan.features.length - 6} more features
+                          </>
+                        )}
+                      </Button>
+                    </CollapsibleTrigger>
+                  </Collapsible>
                 )}
-              </div>
 
-              <ul className="space-y-2 mb-4 flex-1">
-                {plan.features.slice(0, 6).map((feature) => (
-                  <li key={feature} className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-success shrink-0 mt-0.5" />
-                    <span className="text-xs">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {plan.features.length > 6 && (
-                <Collapsible 
-                  open={expandedFeatures[plan.id]} 
-                  onOpenChange={(open) => setExpandedFeatures(prev => ({ ...prev, [plan.id]: open }))}
+                {/* CTA Button with enhanced styling */}
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <CollapsibleContent className="mb-4">
-                    <ul className="space-y-2">
-                      {plan.features.slice(6).map((feature) => (
-                        <li key={feature} className="flex items-start gap-2">
-                          <Check className="w-4 h-4 text-success shrink-0 mt-0.5" />
-                          <span className="text-xs">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CollapsibleContent>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground hover:text-foreground mb-4">
-                      {expandedFeatures[plan.id] ? (
-                        <>
-                          <ChevronUp className="w-3 h-3 mr-1" />
-                          Show less
-                        </>
-                      ) : (
-                        <>
-                          <ChevronDown className="w-3 h-3 mr-1" />
-                          +{plan.features.length - 6} more features
-                        </>
-                      )}
-                    </Button>
-                  </CollapsibleTrigger>
-                </Collapsible>
-              )}
-
-              <Button
-                onClick={() => handlePlanSelect(plan)}
-                variant={plan.popular ? 'default' : 'outline'}
-                className="w-full"
-              >
-                {plan.isAffiliate ? (
-                  <>
-                    <Gift className="w-4 h-4 mr-2" />
-                    Get Started Free
-                  </>
-                ) : (
-                  <>
-                    <Coins className="w-4 h-4 mr-2" />
-                    Get Started
-                  </>
-                )}
-              </Button>
+                  <Button
+                    onClick={() => handlePlanSelect(plan)}
+                    className={`w-full h-12 font-semibold transition-all duration-300 ${
+                      plan.popular
+                        ? 'bg-gradient-to-r from-primary to-purple-500 hover:from-primary/90 hover:to-purple-500/90 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 text-white'
+                        : plan.id === 'enterprise'
+                        ? 'bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-500/90 hover:to-violet-500/90 text-white shadow-lg shadow-purple-500/20'
+                        : plan.id === 'kickstarter'
+                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-500/90 hover:to-emerald-500/90 text-white shadow-lg shadow-green-500/20'
+                        : 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-500/90 hover:to-blue-500/90 text-white shadow-lg shadow-cyan-500/20'
+                    }`}
+                  >
+                    {plan.isAffiliate ? (
+                      <>
+                        <Gift className="w-4 h-4 mr-2" />
+                        Get Started Free
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Get Started
+                      </>
+                    )}
+                  </Button>
+                </motion.div>
+              </div>
             </motion.div>
           ))}
         </div>
+
+        {/* Add keyframes for gradient animation */}
+        <style>{`
+          @keyframes gradient-rotate {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+        `}</style>
 
         {/* Trust badges */}
         <motion.div
