@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Check, X, Star, ExternalLink, Shield, DollarSign, Clock, AlertTriangle } from 'lucide-react';
+import { Check, Star, ArrowRight, ArrowUpRight, Sparkles, Shield } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -10,360 +10,290 @@ import { useState } from 'react';
 const propFirms = [
   {
     name: 'FTMO',
-    logo: 'FTMO',
     rating: 4.8,
-    accountSizes: ['$10K', '$25K', '$50K', '$100K', '$200K'],
-    profitTarget: { phase1: '10%', phase2: '5%' },
-    maxDailyLoss: '5%',
-    maxOverallLoss: '10%',
+    profitTarget: '10% / 5%',
+    maxDrawdown: '10%',
+    dailyDrawdown: '5%',
     profitSplit: '80-90%',
-    tradingDays: 'Min 4',
-    timeLimit: '30 days per phase',
-    price: '$155 - $1,080',
-    features: ['Free retake', 'Swing trading', 'News trading allowed', 'Scaling plan'],
-    cons: ['Strict rules', 'Higher prices'],
+    price: 'From $155',
+    features: ['Free retake', 'Scaling plan', 'News trading'],
     recommended: true,
   },
   {
     name: 'The Funded Trader',
-    logo: 'TFT',
     rating: 4.6,
-    accountSizes: ['$5K', '$10K', '$25K', '$50K', '$100K', '$200K'],
-    profitTarget: { phase1: '8%', phase2: '5%' },
-    maxDailyLoss: '5%',
-    maxOverallLoss: '10%',
+    profitTarget: '8% / 5%',
+    maxDrawdown: '10%',
+    dailyDrawdown: '5%',
     profitSplit: '80-90%',
-    tradingDays: 'Min 3',
-    timeLimit: 'Unlimited',
-    price: '$65 - $949',
-    features: ['Low prices', 'Unlimited time', 'Multiple account types', 'Good support'],
-    cons: ['Newer firm', 'Limited track record'],
+    price: 'From $65',
+    features: ['Unlimited time', 'Multiple types', 'Good support'],
     recommended: false,
   },
   {
     name: 'Topstep',
-    logo: 'TS',
     rating: 4.7,
-    accountSizes: ['$50K', '$100K', '$150K'],
-    profitTarget: { phase1: '$3K-$9K', phase2: 'N/A' },
-    maxDailyLoss: '$1K-$3K',
-    maxOverallLoss: '$2K-$4.5K',
+    profitTarget: '$3K-$9K',
+    maxDrawdown: '$2K-$4.5K',
+    dailyDrawdown: '$1K-$3K',
     profitSplit: '90-100%',
-    tradingDays: 'Min 5',
-    timeLimit: 'Unlimited',
-    price: '$165 - $375/mo',
-    features: ['Futures focused', 'Monthly subscription', 'Great education', '100% first $10K'],
-    cons: ['Subscription model', 'Futures only'],
+    price: 'From $165/mo',
+    features: ['Futures focus', 'Great education', '100% first $10K'],
     recommended: false,
   },
   {
     name: 'True Forex Funds',
-    logo: 'TFF',
     rating: 4.5,
-    accountSizes: ['$10K', '$25K', '$50K', '$100K', '$200K'],
-    profitTarget: { phase1: '8%', phase2: '4%' },
-    maxDailyLoss: '4%',
-    maxOverallLoss: '8%',
+    profitTarget: '8% / 4%',
+    maxDrawdown: '8%',
+    dailyDrawdown: '4%',
     profitSplit: '80%',
-    tradingDays: 'Min 5',
-    timeLimit: '35 days / unlimited',
-    price: '$99 - $899',
-    features: ['Lower drawdown limits', 'Good reputation', 'Fast payouts', 'MT4/MT5'],
-    cons: ['Lower profit split', 'Stricter drawdown'],
+    price: 'From $99',
+    features: ['Fast payouts', 'Good reputation', 'MT4/MT5'],
     recommended: false,
   },
   {
     name: 'MyForexFunds',
-    logo: 'MFF',
     rating: 4.4,
-    accountSizes: ['$5K', '$10K', '$20K', '$50K', '$100K'],
-    profitTarget: { phase1: '8%', phase2: '5%' },
-    maxDailyLoss: '5%',
-    maxOverallLoss: '12%',
+    profitTarget: '8% / 5%',
+    maxDrawdown: '12%',
+    dailyDrawdown: '5%',
     profitSplit: '75-85%',
-    tradingDays: 'Min 3',
-    timeLimit: 'Unlimited',
-    price: '$49 - $499',
-    features: ['Very affordable', 'Generous drawdown', 'Fast verification', 'Active community'],
-    cons: ['Lower profit split', 'Growing pains'],
+    price: 'From $49',
+    features: ['Very affordable', 'Generous DD', 'Active community'],
     recommended: false,
   },
 ];
 
+const tips = [
+  { title: 'Match your style', desc: 'Choose rules that fit how you naturally trade.' },
+  { title: 'Consider total cost', desc: 'Factor in fees vs potential funded account value.' },
+  { title: 'Check payout history', desc: 'Look for firms with proven, consistent payouts.' },
+  { title: 'Read everything', desc: 'Understand all rules before you start.' },
+];
+
 const PropFirmComparisonPage = () => {
-  const [selectedFirm, setSelectedFirm] = useState<string | null>(null);
+  const [hoveredFirm, setHoveredFirm] = useState<string | null>(null);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 left-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <SEO
-        title="Compare Best Prop Firms 2026 | How to Pass Your Challenge"
-        description="Compare FTMO, Funding Pips, and top prop trading firms. Find the best profit splits, drawdown limits, and challenge rules to get funded in 2026."
-        keywords="prop firm comparison, best prop firms 2026, FTMO vs Funding Pips, prop trading firms, funded trading accounts, prop firm rules"
+        title="Compare Best Prop Firms 2026 | TraderEdge Pro"
+        description="Compare FTMO, Funding Pips, and top prop trading firms. Find the best profit splits, drawdown limits, and challenge rules."
+        keywords="prop firm comparison, best prop firms 2026, FTMO vs Funding Pips, prop trading firms"
         canonicalUrl="https://traderedgepro.com/prop-comparison"
       />
       <Header />
-      
-      <main className="pt-32 pb-20">
-        <div className="container mx-auto px-6">
-          {/* Hero */}
-          <motion.div 
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm mb-6">
-              <Shield className="w-4 h-4" />
-              Prop Firm Guide
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Compare <span className="gradient-text">Prop Trading Firms</span>
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Find the best prop firm for your trading style. Compare rules, profit splits, and account sizes.
-            </p>
-          </motion.div>
 
-          {/* Quick Stats */}
-          <motion.div 
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            {[
-              { icon: Shield, label: 'Firms Analyzed', value: '15+' },
-              { icon: DollarSign, label: 'Capital Available', value: '$5M+' },
-              { icon: Clock, label: 'Avg. Challenge Time', value: '14 days' },
-              { icon: Star, label: 'Success Rate w/ TEP', value: '78%' },
-            ].map((stat, index) => (
-              <div key={stat.label} className="glass-card p-6 rounded-2xl text-center">
-                <stat.icon className="w-8 h-8 text-primary mx-auto mb-3" />
-                <p className="text-2xl font-bold gradient-text">{stat.value}</p>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
-              </div>
-            ))}
-          </motion.div>
+      {/* Hero */}
+      <section className="relative pt-32 md:pt-40 pb-16 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="max-w-3xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300/80 mb-6">
+                <Shield className="w-3.5 h-3.5" />
+                Prop Firm Guide
+              </span>
 
-          {/* Comparison Cards */}
-          <motion.div 
-            className="space-y-6 mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <h2 className="text-2xl font-bold mb-6">Top Prop Firms Compared</h2>
-            {propFirms.map((firm, index) => (
-              <motion.div
-                key={firm.name}
-                className={`glass-card rounded-2xl overflow-hidden ${
-                  firm.recommended ? 'ring-2 ring-primary' : ''
-                }`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 + index * 0.1 }}
-              >
-                {firm.recommended && (
-                  <div className="bg-primary text-primary-foreground text-center py-2 text-sm font-semibold">
-                    ⭐ Most Popular Choice
-                  </div>
-                )}
-                <div className="p-6">
-                  <div className="flex flex-col lg:flex-row lg:items-center gap-6">
-                    {/* Logo & Rating */}
-                    <div className="flex items-center gap-4 lg:w-48 shrink-0">
-                      <div className="w-16 h-16 bg-primary/20 rounded-xl flex items-center justify-center">
-                        <span className="text-xl font-bold text-primary">{firm.logo}</span>
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-lg">{firm.name}</h3>
-                        <div className="flex items-center gap-1 text-yellow-500">
-                          <Star className="w-4 h-4 fill-current" />
-                          <span className="text-sm">{firm.rating}</span>
-                        </div>
-                      </div>
-                    </div>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl tracking-tight leading-[1.15] mb-5">
+                <span className="font-light text-white/50">Find the right firm</span>
+                <br />
+                <span className="font-semibold italic bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">for your style.</span>
+              </h1>
 
-                    {/* Key Stats */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1">
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Profit Target</p>
-                        <p className="font-semibold text-sm">P1: {firm.profitTarget.phase1}</p>
-                        <p className="font-semibold text-sm">P2: {firm.profitTarget.phase2}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Max Drawdown</p>
-                        <p className="font-semibold text-sm">Daily: {firm.maxDailyLoss}</p>
-                        <p className="font-semibold text-sm">Total: {firm.maxOverallLoss}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Profit Split</p>
-                        <p className="font-semibold text-lg text-primary">{firm.profitSplit}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Price Range</p>
-                        <p className="font-semibold text-sm">{firm.price}</p>
-                      </div>
-                    </div>
+              <p className="text-base md:text-lg text-white/40 max-w-xl leading-relaxed font-light">
+                Compare rules, profit splits, and costs from the industry's{' '}
+                <span className="text-white/60 font-normal">top prop trading firms</span>.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
-                    {/* Actions */}
-                    <div className="flex gap-2 lg:flex-col">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setSelectedFirm(selectedFirm === firm.name ? null : firm.name)}
-                      >
-                        {selectedFirm === firm.name ? 'Hide Details' : 'View Details'}
-                      </Button>
-                      <Button size="sm" className="btn-glow">
-                        Visit Site <ExternalLink className="w-3 h-3 ml-1" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Expanded Details */}
-                  {selectedFirm === firm.name && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="mt-6 pt-6 border-t border-white/10"
-                    >
-                      <div className="grid md:grid-cols-3 gap-6">
-                        <div>
-                          <h4 className="font-semibold mb-3">Account Sizes</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {firm.accountSizes.map((size) => (
-                              <span key={size} className="px-3 py-1 bg-muted rounded-full text-sm">
-                                {size}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                        <div>
-                          <h4 className="font-semibold mb-3 flex items-center gap-2">
-                            <Check className="w-4 h-4 text-green-500" /> Pros
-                          </h4>
-                          <ul className="space-y-1 text-sm">
-                            {firm.features.map((feature) => (
-                              <li key={feature} className="flex items-center gap-2 text-muted-foreground">
-                                <Check className="w-3 h-3 text-green-500" />
-                                {feature}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        <div>
-                          <h4 className="font-semibold mb-3 flex items-center gap-2">
-                            <AlertTriangle className="w-4 h-4 text-yellow-500" /> Cons
-                          </h4>
-                          <ul className="space-y-1 text-sm">
-                            {firm.cons.map((con) => (
-                              <li key={con} className="flex items-center gap-2 text-muted-foreground">
-                                <X className="w-3 h-3 text-red-500" />
-                                {con}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                      <div className="mt-4 flex gap-4 text-sm text-muted-foreground">
-                        <span>Min Trading Days: {firm.tradingDays}</span>
-                        <span>•</span>
-                        <span>Time Limit: {firm.timeLimit}</span>
-                      </div>
-                    </motion.div>
-                  )}
+      {/* Comparison Cards */}
+      <section className="relative py-8 px-6">
+        <div className="max-w-6xl mx-auto space-y-4">
+          {propFirms.map((firm, index) => (
+            <motion.div
+              key={firm.name}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + index * 0.05 }}
+              onMouseEnter={() => setHoveredFirm(firm.name)}
+              onMouseLeave={() => setHoveredFirm(null)}
+              className={`relative rounded-xl bg-white/[0.02] border transition-all duration-300 ${
+                firm.recommended
+                  ? 'border-purple-500/30 bg-purple-500/[0.03]'
+                  : 'border-white/[0.05] hover:border-purple-500/20'
+              }`}
+            >
+              {/* Top Pick Badge */}
+              {firm.recommended && (
+                <div className="absolute -top-3 left-6 px-3 py-1 bg-purple-500 text-white text-xs font-medium rounded-full">
+                  TOP PICK
                 </div>
-              </motion.div>
-            ))}
-          </motion.div>
+              )}
 
-          {/* Comparison Table */}
-          <motion.div 
-            className="mb-16 overflow-x-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <h2 className="text-2xl font-bold mb-6">Quick Comparison</h2>
-            <table className="w-full min-w-[800px]">
-              <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left py-4 px-4 font-semibold">Firm</th>
-                  <th className="text-left py-4 px-4 font-semibold">Profit Split</th>
-                  <th className="text-left py-4 px-4 font-semibold">Max Daily Loss</th>
-                  <th className="text-left py-4 px-4 font-semibold">Max Total Loss</th>
-                  <th className="text-left py-4 px-4 font-semibold">Min Price</th>
-                  <th className="text-left py-4 px-4 font-semibold">Rating</th>
-                </tr>
-              </thead>
-              <tbody>
-                {propFirms.map((firm) => (
-                  <tr key={firm.name} className="border-b border-white/5 hover:bg-white/5">
-                    <td className="py-4 px-4 font-medium">{firm.name}</td>
-                    <td className="py-4 px-4 text-primary font-semibold">{firm.profitSplit}</td>
-                    <td className="py-4 px-4">{firm.maxDailyLoss}</td>
-                    <td className="py-4 px-4">{firm.maxOverallLoss}</td>
-                    <td className="py-4 px-4">{firm.price.split(' - ')[0]}</td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                        {firm.rating}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </motion.div>
-
-          {/* Tips Section */}
-          <motion.div 
-            className="mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-          >
-            <div className="glass-card p-8 rounded-3xl bg-gradient-to-br from-primary/10 to-transparent">
-              <h2 className="text-2xl font-bold mb-6">Tips for Choosing a Prop Firm</h2>
-              <div className="grid md:grid-cols-2 gap-6">
-                {[
-                  { title: 'Match Your Style', desc: 'Choose rules that align with how you naturally trade' },
-                  { title: 'Consider the Cost', desc: 'Factor in challenge fees vs potential funded account value' },
-                  { title: 'Check the Track Record', desc: 'Look for firms with proven payout history' },
-                  { title: 'Read the Fine Print', desc: 'Understand all rules before committing' },
-                ].map((tip) => (
-                  <div key={tip.title} className="flex items-start gap-4">
-                    <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center shrink-0">
-                      <Check className="w-4 h-4 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-1">{tip.title}</h3>
-                      <p className="text-sm text-muted-foreground">{tip.desc}</p>
+              <div className="p-5 grid md:grid-cols-7 gap-4 items-center">
+                {/* Firm Info */}
+                <div className="md:col-span-2 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center font-semibold text-purple-300">
+                    {firm.name.slice(0, 2).toUpperCase()}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium">{firm.name}</h3>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                      <span className="text-sm text-white/40">{firm.rating}</span>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
+                </div>
 
-          {/* CTA */}
-          <motion.div 
-            className="text-center"
+                {/* Stats */}
+                <div className="hidden md:block">
+                  <p className="text-xs text-white/30 mb-1">Profit Target</p>
+                  <p className="font-medium text-sm">{firm.profitTarget}</p>
+                </div>
+                <div className="hidden md:block">
+                  <p className="text-xs text-white/30 mb-1">Max Drawdown</p>
+                  <p className="font-medium text-sm">{firm.maxDrawdown}</p>
+                </div>
+                <div className="hidden md:block">
+                  <p className="text-xs text-white/30 mb-1">Profit Split</p>
+                  <p className="font-semibold text-purple-300 text-sm">{firm.profitSplit}</p>
+                </div>
+                <div className="hidden md:block">
+                  <p className="text-xs text-white/30 mb-1">Starting Price</p>
+                  <p className="font-medium text-sm">{firm.price}</p>
+                </div>
+
+                {/* Action */}
+                <div className="flex justify-end">
+                  <Button variant="ghost" size="sm" className="rounded-full text-white/60 hover:text-purple-300 hover:bg-purple-500/10">
+                    Visit
+                    <ArrowUpRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </div>
+
+                {/* Mobile Stats */}
+                <div className="col-span-full md:hidden grid grid-cols-2 gap-3 text-sm">
+                  <div className="p-3 rounded-lg bg-white/[0.03]">
+                    <span className="text-white/30 text-xs">Target: </span>
+                    <span className="font-medium">{firm.profitTarget}</span>
+                  </div>
+                  <div className="p-3 rounded-lg bg-white/[0.03]">
+                    <span className="text-white/30 text-xs">Max DD: </span>
+                    <span className="font-medium">{firm.maxDrawdown}</span>
+                  </div>
+                  <div className="p-3 rounded-lg bg-white/[0.03]">
+                    <span className="text-white/30 text-xs">Split: </span>
+                    <span className="font-semibold text-purple-300">{firm.profitSplit}</span>
+                  </div>
+                  <div className="p-3 rounded-lg bg-white/[0.03]">
+                    <span className="text-white/30 text-xs">Price: </span>
+                    <span className="font-medium">{firm.price}</span>
+                  </div>
+                </div>
+
+                {/* Features - Show on hover */}
+                {hoveredFirm === firm.name && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="col-span-full flex flex-wrap gap-2 pt-4 border-t border-white/[0.05]"
+                  >
+                    {firm.features.map((feature) => (
+                      <span
+                        key={feature}
+                        className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-white/[0.03] text-white/50 border border-white/[0.06]"
+                      >
+                        <Check className="w-3 h-3 text-green-400" />
+                        {feature}
+                      </span>
+                    ))}
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Tips */}
+      <section className="relative py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-[200px_1fr] gap-8 md:gap-16">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              className="flex items-start gap-2"
+            >
+              <Sparkles className="w-4 h-4 text-amber-400 mt-0.5" />
+              <span className="text-xs font-medium tracking-[0.2em] uppercase text-white/20">
+                Before You Choose
+              </span>
+            </motion.div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              {tips.map((tip, index) => (
+                <motion.div
+                  key={tip.title}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.08 }}
+                  className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-amber-500/20 transition-all duration-300 flex items-start gap-4"
+                >
+                  <span className="text-xl font-semibold text-amber-400/60">0{index + 1}</span>
+                  <div>
+                    <h3 className="font-medium text-white mb-1">{tip.title}</h3>
+                    <p className="text-sm text-white/30 font-light">{tip.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="relative py-20 md:py-28 px-6 border-t border-white/[0.06]">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex flex-col md:flex-row md:items-center md:justify-between gap-6"
           >
-            <h2 className="text-3xl font-bold mb-4">Pass Your Challenge with TraderEdge Pro</h2>
-            <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-              Our signals and risk management tools help traders pass prop firm challenges with an 78% success rate.
-            </p>
-            <Button className="btn-glow px-8 py-6 text-lg" asChild>
-              <Link to="/membership">Start Your Journey</Link>
+            <div>
+              <h2 className="text-2xl md:text-3xl tracking-tight mb-2">
+                <span className="font-light text-white/50">Ready to pass your</span>{' '}
+                <span className="font-semibold italic bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">challenge?</span>
+              </h2>
+              <p className="text-sm text-white/30 font-light">
+                TraderEdge Pro helps you stay disciplined and compliant.
+              </p>
+            </div>
+            <Button asChild className="rounded-full px-8 bg-purple-500 hover:bg-purple-400 text-white font-medium shrink-0">
+              <Link to="/membership">
+                Get Started
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
             </Button>
           </motion.div>
         </div>
-      </main>
+      </section>
 
       <Footer />
     </div>

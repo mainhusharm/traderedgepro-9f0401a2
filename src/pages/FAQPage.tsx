@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, ChevronDown, MessageCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import SEO from '@/components/common/SEO';
@@ -11,50 +13,33 @@ const faqs = [
     category: 'Getting Started',
     questions: [
       {
-        q: 'How do I get started with TraderEdge?',
-        a: 'Simply create a free account, complete the onboarding questionnaire to set up your trading preferences, and you\'ll immediately have access to our basic features. To unlock premium signals and advanced tools, upgrade to a paid plan.'
+        q: 'What exactly is TraderEdge Pro?',
+        a: 'TraderEdge Pro is a performance system for funded traders — not just a signals service. We combine AI-powered decision support, risk enforcement, psychology frameworks, and prop firm rule compliance into one platform.'
       },
       {
         q: 'What trading experience level do I need?',
-        a: 'TraderEdge is designed for all experience levels. Beginners can follow our signals directly, while advanced traders can use our analytics and AI tools to enhance their existing strategies.'
+        a: 'TraderEdge Pro is designed for traders who already understand the basics but struggle with consistency and discipline. If you keep blowing challenges due to emotional decisions — this system is built for you.'
       },
       {
-        q: 'Do I need a specific broker to use TraderEdge?',
+        q: 'Do I need a specific broker?',
         a: 'No, TraderEdge works with any broker. We provide signals and analysis - you execute trades on your preferred platform. We support MT4, MT5, and most major trading platforms.'
       },
     ]
   },
   {
-    category: 'Signals & Trading',
+    category: 'Signals & Performance',
     questions: [
       {
-        q: 'How accurate are your trading signals?',
-        a: 'Our signals have a historical win rate of approximately 75-85%, depending on market conditions. However, past performance does not guarantee future results. We recommend proper risk management on all trades.'
+        q: 'What kind of results can I expect?',
+        a: 'Results vary based on your execution and discipline. What we guarantee is a structured system that enforces risk management, prevents emotional trading, and keeps you compliant with prop firm rules.'
       },
       {
         q: 'How many signals do you provide daily?',
-        a: 'We typically provide 3-8 high-quality signals per day across Forex, Crypto, and Futures markets. We focus on quality over quantity - we only send signals when our AI identifies high-probability setups.'
+        a: 'We typically provide 3-8 high-quality signals per day across Forex and Gold markets. We focus on quality over quantity.'
       },
       {
-        q: 'Can I customize which signals I receive?',
-        a: 'Yes! You can filter signals by market (Forex, Crypto, Futures), currency pair, timeframe, and confidence level. You can also set notification preferences for different types of signals.'
-      },
-    ]
-  },
-  {
-    category: 'Prop Firm Features',
-    questions: [
-      {
-        q: 'Which prop firms do you support?',
-        a: 'We support all major prop firms including FTMO, Funded Next, MyForexFunds, The5ers, True Forex Funds, and many more. Our rules engine is customizable for any prop firm.'
-      },
-      {
-        q: 'How does the prop firm rules engine work?',
-        a: 'Our system automatically tracks your account metrics and alerts you before you approach any rule limits (daily drawdown, max drawdown, etc.). It also filters signals that might violate your specific prop firm\'s rules.'
-      },
-      {
-        q: 'Do you guarantee I will pass my prop firm challenge?',
-        a: 'While we provide high-quality signals and comprehensive tools to maximize your chances of success, trading always involves risk and we cannot guarantee specific results. Success depends on proper execution and market conditions.'
+        q: 'Why do most traders fail prop challenges?',
+        a: 'Most traders fail because of overtrading after a loss, increasing lot size emotionally, or breaking rules under pressure. TraderEdge Pro is built specifically to prevent these behavioral mistakes.'
       },
     ]
   },
@@ -66,29 +51,12 @@ const faqs = [
         a: 'We accept all major credit cards, PayPal, and cryptocurrency payments (ETH, SOL, USDT). All payments are processed securely.'
       },
       {
-        q: 'Can I cancel my subscription?',
-        a: 'No, all subscriptions are non-cancellable. Once you subscribe, you are committed for the billing period you selected. Please review our plans carefully before purchasing.'
+        q: 'Do you offer a free trial?',
+        a: 'Yes! We offer a 7-day free trial so you can experience the full platform before committing. You can cancel anytime during the trial with no charge.'
       },
       {
-        q: 'Do you offer refunds?',
-        a: 'No, we do not offer refunds. Due to the instant access nature of our digital products and trading signals, all sales are final. By subscribing, you acknowledge and accept this policy.'
-      },
-    ]
-  },
-  {
-    category: 'Technical',
-    questions: [
-      {
-        q: 'Is TraderEdge available on mobile?',
-        a: 'Yes! TraderEdge is fully responsive and works on all devices. We\'re also developing native mobile apps for iOS and Android, coming soon.'
-      },
-      {
-        q: 'How do I receive signal notifications?',
-        a: 'You can receive notifications via email, browser push notifications, and Telegram (Pro+ plan). Configure your preferences in your account settings.'
-      },
-      {
-        q: 'Is my data secure?',
-        a: 'Absolutely. We use bank-level encryption (SSL/TLS) for all data transmission and store sensitive information using industry-standard encryption. We never share your personal data with third parties.'
+        q: 'What is your refund policy?',
+        a: 'We offer a 7-day free trial so you can fully evaluate the platform before purchasing. If you\'re not seeing value, reach out to our support team.'
       },
     ]
   },
@@ -110,82 +78,98 @@ const FAQPage = () => {
     )
   })).filter(category => category.questions.length > 0);
 
-  // Generate FAQ Schema for rich snippets
   const allQuestions = faqs.flatMap(cat => cat.questions);
   const faqSchema = {
     '@type': 'FAQPage',
     mainEntity: allQuestions.map((item) => ({
       '@type': 'Question',
       name: item.q,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: item.a,
-      },
+      acceptedAnswer: { '@type': 'Answer', text: item.a },
     })),
   };
 
   return (
-    <div className="min-h-screen bg-[#020202]">
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/3 left-0 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <SEO
         title="Frequently Asked Questions | TraderEdge Pro"
         description="Find answers to common questions about TraderEdge Pro trading signals, prop firm features, pricing, and technical support."
-        keywords="TraderEdge FAQ, trading signals help, prop firm questions, trading support, funded trading FAQ"
+        keywords="TraderEdge FAQ, trading signals help, prop firm questions"
         canonicalUrl="https://traderedgepro.com/faq"
         schema={faqSchema}
       />
       <Header />
-      
-      {/* Hero */}
-      <section className="pt-32 pb-12 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.h1 
-            className="text-4xl md:text-5xl font-bold mb-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            Frequently Asked Questions
-          </motion.h1>
-          <motion.p 
-            className="text-xl text-muted-foreground mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            Find answers to common questions about TraderEdge
-          </motion.p>
 
-          {/* Search */}
-          <motion.div
-            className="relative max-w-xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <Input
-              placeholder="Search questions..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 h-12 text-lg"
-            />
-          </motion.div>
+      {/* Hero - Left aligned */}
+      <section className="relative pt-32 md:pt-40 pb-12 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-[1fr_300px] gap-8 items-end">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300/80 mb-6">
+                <MessageCircle className="w-3.5 h-3.5" />
+                Support
+              </span>
+
+              <h1 className="text-4xl sm:text-5xl md:text-6xl tracking-tight leading-[1.15] mb-5">
+                <span className="font-light text-white/50">Got</span>{' '}
+                <span className="font-semibold italic bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">questions?</span>
+                <br />
+                <span className="font-light text-white/50">We have</span>{' '}
+                <span className="font-semibold italic bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">answers.</span>
+              </h1>
+
+              <p className="text-base text-white/40 max-w-md leading-relaxed font-light">
+                Everything you need to know about TraderEdge Pro.
+              </p>
+            </motion.div>
+
+            {/* Search */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="relative"
+            >
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+              <Input
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 h-11 text-sm bg-white/[0.03] border-white/[0.08] rounded-lg focus:border-purple-500/30 focus:bg-white/[0.05] focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-white/30 transition-all duration-300 font-light"
+              />
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* FAQ Content */}
-      <section className="py-12 px-6">
-        <div className="max-w-4xl mx-auto space-y-8">
+      {/* FAQ Content - Two column layout */}
+      <section className="relative py-12 md:py-16 px-6">
+        <div className="max-w-6xl mx-auto">
           {filteredFaqs.map((category, catIndex) => (
             <motion.div
               key={category.category}
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: catIndex * 0.1 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: catIndex * 0.1, duration: 0.5 }}
+              className="grid md:grid-cols-[200px_1fr] gap-6 md:gap-16 mb-12 last:mb-0"
             >
-              <h2 className="text-2xl font-semibold mb-4 text-primary">
-                {category.category}
-              </h2>
-              <div className="space-y-3">
+              <div>
+                <h2 className="text-xs font-medium tracking-[0.2em] uppercase text-white/20 md:pt-5">
+                  {category.category}
+                </h2>
+              </div>
+
+              <div className="space-y-2">
                 {category.questions.map((item, qIndex) => {
                   const key = `${catIndex}-${qIndex}`;
                   const isOpen = openItems[key];
@@ -193,30 +177,90 @@ const FAQPage = () => {
                   return (
                     <div
                       key={key}
-                      className="rounded-xl border border-white/[0.08] overflow-hidden"
+                      className={`rounded-lg border transition-all duration-300 ${
+                        isOpen
+                          ? 'bg-white/[0.04] border-purple-500/20'
+                          : 'bg-white/[0.02] border-white/[0.05] hover:border-white/10'
+                      }`}
                     >
                       <button
                         onClick={() => toggleItem(key)}
-                        className="w-full flex items-center justify-between p-5 text-left hover:bg-white/[0.02] transition-colors"
+                        className="w-full flex items-center justify-between p-4 text-left"
                       >
-                        <span className="font-medium pr-4">{item.q}</span>
-                        {isOpen ? (
-                          <ChevronUp className="w-5 h-5 text-muted-foreground shrink-0" />
-                        ) : (
-                          <ChevronDown className="w-5 h-5 text-muted-foreground shrink-0" />
-                        )}
+                        <span className={`text-sm pr-4 transition-colors ${
+                          isOpen ? 'text-white font-medium' : 'text-white/60'
+                        }`}>
+                          {item.q}
+                        </span>
+                        <motion.div
+                          className="shrink-0"
+                          animate={{ rotate: isOpen ? 180 : 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <ChevronDown className={`w-4 h-4 transition-colors ${
+                            isOpen ? 'text-purple-400' : 'text-white/20'
+                          }`} />
+                        </motion.div>
                       </button>
-                      {isOpen && (
-                        <div className="px-5 pb-5 text-muted-foreground">
-                          {item.a}
-                        </div>
-                      )}
+
+                      <AnimatePresence>
+                        {isOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                            className="overflow-hidden"
+                          >
+                            <p className="px-4 pb-4 text-sm text-white/40 leading-relaxed font-light">
+                              {item.a}
+                            </p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   );
                 })}
               </div>
             </motion.div>
           ))}
+        </div>
+      </section>
+
+      {/* CTA - Compact inline */}
+      <section className="relative py-16 md:py-20 px-6 border-t border-white/[0.06]">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex flex-col md:flex-row md:items-center md:justify-between gap-6"
+          >
+            <div>
+              <h2 className="text-xl md:text-2xl tracking-tight mb-1">
+                <span className="font-light text-white/50">Still have</span>{' '}
+                <span className="font-semibold italic bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">questions?</span>
+              </h2>
+              <p className="text-sm text-white/30 font-light">
+                Our support team is here to help.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                asChild
+                variant="outline"
+                className="rounded-full px-6 bg-transparent border-white/10 hover:border-purple-500/30 hover:bg-white/5 text-white text-sm font-normal"
+              >
+                <Link to="/contact">Contact Support</Link>
+              </Button>
+              <Button
+                asChild
+                className="rounded-full px-6 bg-purple-500 hover:bg-purple-400 text-white text-sm font-medium"
+              >
+                <Link to="/membership">View Plans</Link>
+              </Button>
+            </div>
+          </motion.div>
         </div>
       </section>
 

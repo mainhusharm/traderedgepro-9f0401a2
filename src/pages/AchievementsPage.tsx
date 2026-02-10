@@ -433,15 +433,15 @@ const AchievementsPage = () => {
   const renderSection = (title: string, sectionBadges: TradingBadge[], icon: LucideIcon) => {
     const Icon = icon;
     const unlockedInSection = sectionBadges.filter(b => b.unlocked).length;
-    
+
     return (
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <Icon className="w-5 h-5 text-primary" />
+        <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
+          <h2 className="text-lg font-medium flex items-center gap-2 text-white">
+            <Icon className="w-5 h-5 text-purple-400" />
             {title}
           </h2>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-white/40 font-light">
             {unlockedInSection}/{sectionBadges.length} unlocked
           </span>
         </div>
@@ -454,21 +454,27 @@ const AchievementsPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#0A0A0B] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 left-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <Header />
-      
-      <main className="container mx-auto px-4 py-24">
+
+      <main className="relative max-w-6xl mx-auto px-6 pt-32 pb-20">
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
-          className="mb-6"
+          className="mb-6 text-white/40 hover:text-white/60"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
@@ -480,52 +486,54 @@ const AchievementsPage = () => {
           className="space-y-8"
         >
           {/* Header */}
-          <div className="text-center space-y-4">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
-              <Award className="w-8 h-8 text-primary" />
-            </div>
-            <h1 className="text-4xl font-bold">Achievements</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Track your trading progress and unlock badges as you reach new milestones
+          <div className="max-w-3xl mb-12">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300/80 mb-6">
+              <Award className="w-3.5 h-3.5" />
+              Your Progress
+            </span>
+            <h1 className="text-4xl sm:text-5xl tracking-tight leading-[1.15] mb-4">
+              <span className="font-light text-white/50">Your</span>{' '}
+              <span className="font-semibold italic bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">Achievements</span>
+            </h1>
+            <p className="text-base text-white/40 font-light max-w-xl">
+              Track your trading progress and unlock badges as you reach new milestones.
             </p>
           </div>
 
           {/* Overall Progress */}
-          <Card className="glass-card">
-            <CardContent className="p-6">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                <div className="text-center md:text-left">
-                  <h3 className="text-2xl font-bold">{unlockedCount}/{badges.length}</h3>
-                  <p className="text-muted-foreground">Badges Unlocked</p>
+          <div className="p-6 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="text-center md:text-left">
+                <h3 className="text-2xl font-semibold text-white">{unlockedCount}/{badges.length}</h3>
+                <p className="text-white/40 font-light">Badges Unlocked</p>
+              </div>
+              <div className="flex-1 max-w-md w-full">
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-white/40 font-light">Overall Progress</span>
+                  <span className="font-medium text-purple-400">{Math.round((unlockedCount / badges.length) * 100)}%</span>
                 </div>
-                <div className="flex-1 max-w-md w-full">
-                  <div className="flex justify-between text-sm mb-2">
-                    <span>Overall Progress</span>
-                    <span className="font-medium">{Math.round((unlockedCount / badges.length) * 100)}%</span>
-                  </div>
-                  <Progress value={(unlockedCount / badges.length) * 100} className="h-3" />
+                <Progress value={(unlockedCount / badges.length) * 100} className="h-3" />
+              </div>
+              <div className="grid grid-cols-4 gap-4 text-center">
+                <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.05]">
+                  <p className="text-lg font-semibold text-white">{stats.totalTrades}</p>
+                  <p className="text-xs text-white/30 font-light">Trades</p>
                 </div>
-                <div className="grid grid-cols-4 gap-4 text-center">
-                  <div>
-                    <p className="text-lg font-bold">{stats.totalTrades}</p>
-                    <p className="text-xs text-muted-foreground">Trades</p>
-                  </div>
-                  <div>
-                    <p className="text-lg font-bold">{stats.winRate.toFixed(0)}%</p>
-                    <p className="text-xs text-muted-foreground">Win Rate</p>
-                  </div>
-                  <div>
-                    <p className="text-lg font-bold">M{stats.currentMilestone}</p>
-                    <p className="text-xs text-muted-foreground">Milestone</p>
-                  </div>
-                  <div>
-                    <p className="text-lg font-bold">{stats.totalReferrals}</p>
-                    <p className="text-xs text-muted-foreground">Referrals</p>
-                  </div>
+                <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.05]">
+                  <p className="text-lg font-semibold text-purple-400">{stats.winRate.toFixed(0)}%</p>
+                  <p className="text-xs text-white/30 font-light">Win Rate</p>
+                </div>
+                <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.05]">
+                  <p className="text-lg font-semibold text-white">M{stats.currentMilestone}</p>
+                  <p className="text-xs text-white/30 font-light">Milestone</p>
+                </div>
+                <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.05]">
+                  <p className="text-lg font-semibold text-white">{stats.totalReferrals}</p>
+                  <p className="text-xs text-white/30 font-light">Referrals</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Badge Sections */}
           <div className="space-y-8">

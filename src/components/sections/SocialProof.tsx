@@ -137,10 +137,10 @@ const SocialProof = () => {
             Verified Results
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Real Performance, <span className="text-primary">No Fake Numbers</span>
+            Built for Traders Who <span className="text-primary">Demand Results</span>
           </h2>
           <p className="text-muted-foreground">
-            Every stat is pulled directly from our database. View our complete verified track record.
+            We show real numbers — not inflated claims. Every stat below is pulled directly from our database.
           </p>
         </motion.div>
 

@@ -17,9 +17,9 @@ const AntimatterHero = () => {
   const textOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
 
   const stats = [
-    { value: 87, suffix: '%', label: 'Win', sublabel: 'Rate' },
     { value: '24/7', label: 'AI', sublabel: 'Monitoring' },
     { value: 100, suffix: '%', label: 'Rule', sublabel: 'Compliance' },
+    { value: 'Pro', label: 'Grade', sublabel: 'Discipline' },
   ];
 
   return (
@@ -197,7 +197,7 @@ const AntimatterHero = () => {
             {/* Left side - description and CTA */}
             <div className="max-w-sm">
               <p className="text-muted-foreground text-sm md:text-base mb-5 leading-relaxed">
-                We empower traders with AI-powered signals that turn complex challenges into funded accounts and consistent payouts.
+                The performance system for serious prop firm traders. AI + Risk Discipline + Psychology — Trade with confidence, not emotion.
               </p>
               
               <motion.button 

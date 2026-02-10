@@ -50,12 +50,12 @@ const PricingSection = () => {
     },
     {
       id: 'starter',
-      name: 'Starter',
+      name: 'Starter Access',
       icon: Zap,
       price: 99,
       yearlyPrice: 79,
       period: 'month',
-      description: 'Perfect for new traders',
+      description: 'For traders preparing for prop firms',
       features: [
         'Up to 3 signals per day',
         'Basic AI reasoning',
@@ -70,12 +70,12 @@ const PricingSection = () => {
     },
     {
       id: 'pro',
-      name: 'Pro',
+      name: 'Funded Trader Core',
       icon: Star,
       price: 299,
       yearlyPrice: 239,
       period: 'month',
-      description: 'For serious traders',
+      description: 'The system serious traders use',
       features: [
         'Unlimited signals',
         '⭐ VIP Signals (3-4 Expert Review)',
@@ -102,12 +102,12 @@ const PricingSection = () => {
     },
     {
       id: 'enterprise',
-      name: 'Enterprise',
+      name: 'Trader Desk',
       icon: Crown,
       price: 899,
       yearlyPrice: 719,
       period: '3 months',
-      description: 'For trading teams & professionals',
+      description: 'Team accountability & leverage',
       features: [
         'Everything in Pro',
         '⭐ VIP Signals (Priority Delivery)',
@@ -163,10 +163,13 @@ const PricingSection = () => {
             Pricing
           </span>
           <h2 className="text-4xl md:text-5xl font-bold gradient-text mb-6">
-            Choose Your <span className="text-primary">Trading Edge</span>
+            Invest in Your <span className="text-primary">Trading Future</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">
-            Select the plan that fits your trading goals. All paid plans include our core AI technology.
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-4">
+            One blown prop challenge costs you more than an entire year of Trader Edge Pro.
+          </p>
+          <p className="text-muted-foreground/70 text-sm max-w-xl mx-auto mb-8">
+            Stop losing accounts to emotional decisions. Our performance system pays for itself after preventing just one failed challenge.
           </p>
 
           {/* Billing toggle */}

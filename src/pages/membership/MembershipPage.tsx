@@ -40,12 +40,12 @@ const plans = [
   },
   {
     id: 'starter',
-    name: 'Starter',
+    name: 'Starter Access',
     icon: Zap,
     price: 99,
     yearlyPrice: 79,
     period: 'month',
-    description: 'Perfect for new traders',
+    description: 'For traders preparing for prop firms',
     features: [
       'Up to 3 signals per day',
       'Basic AI reasoning',
@@ -60,12 +60,12 @@ const plans = [
   },
   {
     id: 'pro',
-    name: 'Pro',
+    name: 'Funded Trader Core',
     icon: Star,
     price: 299,
     yearlyPrice: 239,
     period: 'month',
-    description: 'For serious traders',
+    description: 'The system serious traders use',
     features: [
       'Unlimited signals',
       '⭐ VIP Signals (3-4 Expert Review)',
@@ -92,12 +92,12 @@ const plans = [
   },
   {
     id: 'enterprise',
-    name: 'Enterprise',
+    name: 'Trader Desk',
     icon: Crown,
     price: 899,
     yearlyPrice: 719,
     period: '3 months',
-    description: 'For trading teams & professionals',
+    description: 'Team accountability & leverage',
     features: [
       'Everything in Pro',
       '⭐ VIP Signals (Priority Delivery)',
@@ -421,46 +421,61 @@ const MembershipPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 left-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <Header />
-      
-      <main className="container mx-auto px-4 py-20 pt-32">
-        {/* Header */}
+
+      <main className="relative max-w-7xl mx-auto px-6 pt-32 pb-20">
+        {/* Header - Premium */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
+          className="max-w-3xl mb-20"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm mb-6">
-            <Rocket className="w-4 h-4" />
-            Choose Your Plan
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Choose Your <span className="text-primary">Trading Edge</span>
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300/80 mb-6">
+            <Coins className="w-3.5 h-3.5" />
+            Pricing
+          </span>
+          <h1 className="text-4xl md:text-6xl tracking-tight leading-[1.15] mb-6">
+            <span className="font-light text-white/50">One price.</span>
+            <br />
+            <span className="font-semibold italic bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">Everything included.</span>
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Select the plan that fits your trading goals. All paid plans include our core AI technology.
+          <p className="text-lg text-white/40 max-w-xl mb-10 font-light">
+            One blown prop challenge costs more than a year of TraderEdge Pro.{' '}
+            <span className="text-white/60 font-normal">Invest in discipline.</span>
           </p>
 
-          {/* Billing Toggle */}
-          <div className="flex items-center justify-center gap-4 mt-8">
-            <span className={billingPeriod === 'monthly' ? 'text-foreground' : 'text-muted-foreground'}>
-              Monthly
-            </span>
+          {/* Billing Toggle - Minimal */}
+          <div className="inline-flex items-center gap-4 p-1 rounded-full border border-white/10">
             <button
-              onClick={() => setBillingPeriod(billingPeriod === 'monthly' ? 'yearly' : 'monthly')}
-              className="relative w-14 h-7 bg-white/10 rounded-full transition-colors"
+              onClick={() => setBillingPeriod('monthly')}
+              className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
+                billingPeriod === 'monthly'
+                  ? 'bg-white text-black'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
             >
-              <div
-                className={`absolute top-1 w-5 h-5 bg-primary rounded-full transition-all ${
-                  billingPeriod === 'yearly' ? 'left-8' : 'left-1'
-                }`}
-              />
+              Monthly
             </button>
-            <span className={billingPeriod === 'yearly' ? 'text-foreground' : 'text-muted-foreground'}>
+            <button
+              onClick={() => setBillingPeriod('yearly')}
+              className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+                billingPeriod === 'yearly'
+                  ? 'bg-white text-black'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
               Yearly
-              <span className="ml-2 text-xs text-success">Save 20%</span>
-            </span>
+              <span className={`text-xs ${billingPeriod === 'yearly' ? 'text-green-600' : 'text-green-400'}`}>
+                -20%
+              </span>
+            </button>
           </div>
         </motion.div>
 
@@ -746,196 +761,164 @@ const MembershipPage = () => {
           }
         `}</style>
 
-        {/* VIP Signals Promotion */}
+        {/* Premium Benefits */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="mt-16 max-w-4xl mx-auto"
+          className="mt-32 max-w-5xl mx-auto"
         >
-          <Card className="bg-gradient-to-br from-amber-500/10 via-purple-500/10 to-primary/10 border-amber-500/30">
-            <CardContent className="p-8">
-              <div className="flex flex-col md:flex-row items-center gap-8">
-                <div className="flex-shrink-0">
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500 to-purple-500 flex items-center justify-center">
-                    <Crown className="w-10 h-10 text-white" />
-                  </div>
+          <span className="text-xs font-medium tracking-[0.2em] uppercase text-white/20 mb-12 block">
+            Premium Benefits
+          </span>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="p-6 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-amber-500/20 transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                  <Crown className="w-5 h-5 text-amber-400" />
                 </div>
-                <div className="flex-1 text-center md:text-left">
-                  <h3 className="text-2xl font-bold mb-2 flex items-center justify-center md:justify-start gap-2">
-                    <Star className="w-5 h-5 text-amber-500" />
-                    VIP Signals - Higher Accuracy
-                  </h3>
-                  <p className="text-muted-foreground mb-4">
-                    Our VIP signals are reviewed by <span className="text-amber-500 font-semibold">3-4 professional traders</span> before being sent to you. 
-                    This multi-expert consensus approach ensures higher accuracy and confidence in every trade recommendation.
-                  </p>
-                  <div className="flex flex-wrap gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-success" />
-                      <span>Multi-Expert Review</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-success" />
-                      <span>Higher Win Rate</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-success" />
-                      <span>Detailed Consensus Notes</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex-shrink-0">
-                  <Badge className="bg-gradient-to-r from-amber-500 to-purple-500 text-white px-4 py-2">
-                    Pro & Enterprise Only
-                  </Badge>
-                </div>
+                <span className="text-xs px-2 py-1 rounded-full border border-amber-500/30 text-amber-400">Pro & Enterprise</span>
               </div>
-            </CardContent>
-          </Card>
+              <h3 className="text-xl font-medium text-white mb-2">VIP Signals</h3>
+              <p className="text-white/40 font-light leading-relaxed">
+                Every VIP signal is reviewed by 3-4 professional traders before delivery. Multi-expert consensus ensures higher confidence.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-purple-500/20 transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+                  <Users className="w-5 h-5 text-purple-400" />
+                </div>
+                <span className="text-xs px-2 py-1 rounded-full border border-purple-500/30 text-purple-400">Exclusive</span>
+              </div>
+              <h3 className="text-xl font-medium text-white mb-2">1-on-1 Guidance</h3>
+              <p className="text-white/40 font-light leading-relaxed">
+                Get personalized mentorship from our trading experts. Private sessions, strategy review, and tailored advice.
+              </p>
+            </div>
+          </div>
         </motion.div>
 
-        {/* 1-on-1 Guidance Promotion */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45 }}
-          className="mt-8 max-w-4xl mx-auto"
-        >
-          <Card className="bg-gradient-to-br from-primary/10 via-blue-500/10 to-cyan-500/10 border-primary/30">
-            <CardContent className="p-8">
-              <div className="flex flex-col md:flex-row items-center gap-8">
-                <div className="flex-shrink-0">
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-cyan-500 flex items-center justify-center">
-                    <Users className="w-10 h-10 text-white" />
-                  </div>
-                </div>
-                <div className="flex-1 text-center md:text-left">
-                  <h3 className="text-2xl font-bold mb-2">1-on-1 Expert Guidance</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Get personalized mentorship from our trading experts. Discuss your strategy, review your trades, 
-                    and receive tailored advice to improve your trading performance.
-                  </p>
-                  <div className="flex flex-wrap gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-success" />
-                      <span>Private Sessions</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-success" />
-                      <span>Strategy Review</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-success" />
-                      <span>Risk Management Tips</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex-shrink-0">
-                  <Badge className="bg-gradient-to-r from-primary to-cyan-500 text-white px-4 py-2">
-                    Pro & Enterprise
-                  </Badge>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Disclaimer */}
+        {/* Feature Comparison - Clean Table */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="mt-8 max-w-4xl mx-auto"
+          className="mt-32"
         >
-          <Card className="bg-muted/30 border-muted">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-3">
-                <Shield className="w-5 h-5 text-muted-foreground mt-0.5" />
-                <div className="text-sm text-muted-foreground">
-                  <p className="font-semibold mb-1">Important Disclaimer</p>
-                  <p>
-                    Trading involves substantial risk of loss. We are <span className="font-medium">not responsible</span> for any profits or losses 
-                    that may result from following our signals. Results depend on market conditions, your risk management, and execution. 
-                    Losses are a natural part of trading – stay disciplined, manage your risk, and stay strong. Past performance does not guarantee future results.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+          <div className="max-w-5xl mx-auto mb-16">
+            <span className="text-xs font-medium tracking-[0.2em] uppercase text-white/20 mb-4 block">
+              Compare Plans
+            </span>
+            <h2 className="text-3xl md:text-4xl tracking-tight">
+              <span className="font-light text-white/50">Everything included,</span>
+              <br />
+              <span className="font-semibold italic bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">at a glance.</span>
+            </h2>
+          </div>
 
-        {/* Feature Comparison - Expanded */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="mt-20"
-        >
-          <h2 className="text-3xl font-bold text-center mb-4">Compare All Features</h2>
-          <p className="text-center text-muted-foreground mb-8">See exactly what's included in each plan</p>
-          
-          <div className="space-y-8 max-w-6xl mx-auto">
-            {featureCategories.map((category) => (
-              <Card key={category.name} className="bg-card/50 border-white/[0.08] overflow-hidden">
-                <CardHeader className="py-4 bg-white/5">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <category.icon className="w-5 h-5 text-primary" />
-                    {category.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-white/10">
-                          <th className="text-left py-3 px-4 font-medium text-sm">Feature</th>
-                          <th className="text-center py-3 px-4 font-medium text-sm w-[120px]">
-                            <span className="text-green-500">Kickstarter</span>
-                          </th>
-                          <th className="text-center py-3 px-4 font-medium text-sm w-[120px]">
-                            <span className="text-red-400">Starter</span>
-                          </th>
-                          <th className="text-center py-3 px-4 font-medium text-sm w-[120px]">
-                            <span className="text-primary">Pro</span>
-                          </th>
-                          <th className="text-center py-3 px-4 font-medium text-sm w-[120px]">
-                            <span className="text-purple-400">Enterprise</span>
-                          </th>
+          <div className="max-w-6xl mx-auto space-y-8">
+            {featureCategories.map((category, catIndex) => (
+              <motion.div
+                key={category.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ delay: catIndex * 0.05 }}
+              >
+                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+                  <category.icon className="w-5 h-5 text-primary" />
+                  <h3 className="font-medium">{category.name}</h3>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="text-xs font-medium tracking-widest uppercase text-muted-foreground">
+                        <th className="text-left py-3 pr-4 w-1/3">Feature</th>
+                        <th className="text-center py-3 px-2 w-[100px]">Free</th>
+                        <th className="text-center py-3 px-2 w-[100px]">Starter</th>
+                        <th className="text-center py-3 px-2 w-[100px]">Pro</th>
+                        <th className="text-center py-3 px-2 w-[100px]">Enterprise</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {category.features.map((feature, idx) => (
+                        <tr key={feature.name} className="border-t border-white/[0.04]">
+                          <td className="py-4 pr-4 text-sm">{feature.name}</td>
+                          <td className="py-4 px-2 text-center text-sm text-muted-foreground">{feature.k}</td>
+                          <td className="py-4 px-2 text-center text-sm text-muted-foreground">{feature.s}</td>
+                          <td className="py-4 px-2 text-center text-sm text-primary font-medium">{feature.p}</td>
+                          <td className="py-4 px-2 text-center text-sm text-muted-foreground">{feature.e}</td>
                         </tr>
-                      </thead>
-                      <tbody>
-                        {category.features.map((feature, idx) => (
-                          <tr key={feature.name} className={`border-b border-white/5 ${idx % 2 === 0 ? 'bg-white/[0.02]' : ''}`}>
-                            <td className="py-3 px-4 text-sm">{feature.name}</td>
-                            <td className="py-3 px-4 text-center text-sm text-muted-foreground">{feature.k}</td>
-                            <td className="py-3 px-4 text-center text-sm text-muted-foreground">{feature.s}</td>
-                            <td className="py-3 px-4 text-center text-sm font-medium text-primary">{feature.p}</td>
-                            <td className="py-3 px-4 text-center text-sm text-purple-400">{feature.e}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </motion.div>
             ))}
           </div>
         </motion.div>
 
-        {/* FAQ Link */}
+        {/* Trust Strip */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="text-center mt-16"
+          className="mt-32 max-w-5xl mx-auto"
         >
-          <p className="text-muted-foreground">
-            Have questions? Check our{' '}
-            <Link to="/faq" className="text-primary hover:underline">FAQ</Link>
-            {' '}or{' '}
-            <Link to="/contact" className="text-primary hover:underline">contact us</Link>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-8 border-y border-white/10">
+            {[
+              { label: '7-day free trial', value: 'Try risk-free' },
+              { label: 'Instant access', value: 'Start immediately' },
+              { label: 'Cancel anytime', value: 'No lock-in' },
+            ].map((item) => (
+              <div key={item.label} className="text-center md:text-left">
+                <p className="text-sm font-medium mb-1">{item.label}</p>
+                <p className="text-xs text-muted-foreground">{item.value}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Disclaimer - Minimal */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.65 }}
+          className="mt-16 max-w-3xl mx-auto text-center"
+        >
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Trading involves substantial risk of loss. We are not responsible for any profits or losses
+            that may result from following our signals. Past performance does not guarantee future results.
           </p>
+        </motion.div>
+
+        {/* Footer CTA */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+          className="mt-32 max-w-5xl mx-auto"
+        >
+          <div className="p-8 rounded-xl bg-white/[0.02] border border-white/[0.05] flex flex-col md:flex-row items-center justify-between gap-8">
+            <div>
+              <p className="text-white/40 font-light mb-1">Questions?</p>
+              <h2 className="text-2xl tracking-tight">
+                <span className="font-light text-white/50">We're here to</span>{' '}
+                <span className="font-semibold italic bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">help.</span>
+              </h2>
+            </div>
+            <div className="flex gap-4">
+              <Button asChild variant="outline" size="lg" className="rounded-full px-8 bg-white/[0.02] border-white/[0.08] hover:bg-white/[0.05] hover:border-purple-500/30">
+                <Link to="/faq">View FAQ</Link>
+              </Button>
+              <Button asChild size="lg" className="rounded-full px-8 bg-purple-500 hover:bg-purple-400 text-white">
+                <Link to="/contact">Contact Us</Link>
+              </Button>
+            </div>
+          </div>
         </motion.div>
       </main>
 

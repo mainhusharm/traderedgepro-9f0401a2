@@ -2,242 +2,304 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import { Ban, AlertTriangle, HelpCircle, Mail, Shield } from 'lucide-react';
+import { CheckCircle, Shield, Clock, HelpCircle, Mail, AlertCircle, Sparkles } from 'lucide-react';
 
 const RefundPolicyPage = () => {
   return (
-    <div className="min-h-screen bg-[#020202]">
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 left-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <Header />
-      
-      <section className="pt-32 pb-20 px-6">
-        <div className="max-w-4xl mx-auto">
+
+      {/* Hero */}
+      <section className="relative pt-32 md:pt-40 pb-12 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="max-w-3xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300/80 mb-6">
+                <Shield className="w-3.5 h-3.5" />
+                Customer Protection
+              </span>
+
+              <h1 className="text-4xl sm:text-5xl md:text-6xl tracking-tight leading-[1.15] mb-5">
+                <span className="font-light text-white/50">Refund</span>{' '}
+                <span className="font-semibold italic bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">Policy</span>
+              </h1>
+
+              <p className="text-sm text-white/30 font-light">
+                Last updated: February 10, 2026
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7-Day Guarantee Banner - HIGHLIGHTED */}
+      <section className="relative px-6 mb-8">
+        <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="p-8 md:p-10 rounded-2xl bg-gradient-to-br from-green-500/20 via-emerald-500/10 to-green-500/5 border border-green-500/30 relative overflow-hidden"
           >
-            <h1 className="text-4xl font-bold mb-4">Refund Policy</h1>
-            <p className="text-muted-foreground mb-8">Last updated: January 9, 2026</p>
+            {/* Glow effect */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-green-500/20 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl" />
 
-            {/* Main No Refund Banner */}
-            <div className="p-8 rounded-2xl bg-destructive/10 border-2 border-destructive/50 mb-8 text-center">
-              <Ban className="w-16 h-16 text-destructive mx-auto mb-4" />
-              <h2 className="text-3xl font-bold text-destructive mb-4">NO REFUNDS</h2>
-              <p className="text-xl text-foreground">
-                All sales are final. No refunds, cancellations, or chargebacks.
+            <div className="relative z-10 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-green-500/20 border border-green-500/30 mb-6">
+                <Sparkles className="w-8 h-8 text-green-400" />
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-green-300 mb-3">
+                7-Day Satisfaction Guarantee
+              </h2>
+              <p className="text-lg text-white/70 max-w-2xl mx-auto mb-6">
+                We're confident in the value we provide. If you're not completely satisfied with our services,
+                request a full refund within <strong className="text-green-300">7 days</strong> of your purchase.
               </p>
-            </div>
-
-            <div className="space-y-8">
-              {/* Why No Refunds */}
-              <section className="p-6 rounded-xl bg-white/5 border border-white/10">
-                <h2 className="text-2xl font-semibold mb-4">Why We Cannot Offer Refunds</h2>
-                <p className="text-muted-foreground mb-4">
-                  TraderEdge provides <strong>instant-access digital services</strong>. Unlike physical products, 
-                  our services cannot be "returned" once delivered. Here's why:
-                </p>
-                <ul className="space-y-3 text-muted-foreground">
-                  <li className="flex items-start gap-3">
-                    <span className="text-primary font-bold">1.</span>
-                    <div>
-                      <strong>Immediate Delivery:</strong> Your subscription is activated within seconds of payment. 
-                      You immediately gain access to all trading signals, tools, and features.
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-primary font-bold">2.</span>
-                    <div>
-                      <strong>Service Consumed:</strong> Trading signals are time-sensitive. Once you receive a signal 
-                      and can act on it, the service has been fully delivered.
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-primary font-bold">3.</span>
-                    <div>
-                      <strong>Cannot Be Undone:</strong> We cannot "take back" the signals you've received or the 
-                      knowledge you've gained from our platform.
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-primary font-bold">4.</span>
-                    <div>
-                      <strong>Abuse Prevention:</strong> Without this policy, bad actors could subscribe, copy our 
-                      signals, then request a refund - essentially stealing our intellectual property.
-                    </div>
-                  </li>
-                </ul>
-              </section>
-
-              {/* What Happens When You Subscribe */}
-              <section className="p-6 rounded-xl bg-primary/5 border border-primary/20">
-                <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                  <Shield className="w-6 h-6 text-primary" />
-                  What Happens When You Subscribe
-                </h2>
-                <ol className="space-y-4 text-muted-foreground">
-                  <li className="flex items-start gap-3">
-                    <span className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold shrink-0">1</span>
-                    <div>
-                      <strong>Payment Processed:</strong> Your payment is processed securely.
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold shrink-0">2</span>
-                    <div>
-                      <strong>Instant Access:</strong> Your account is immediately activated with full access to your plan's features.
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold shrink-0">3</span>
-                    <div>
-                      <strong>Service Begins:</strong> You can log in, view signals, use tools, and access all features.
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold shrink-0">4</span>
-                    <div>
-                      <strong>Delivery Complete:</strong> The moment you access your dashboard, service delivery is complete.
-                    </div>
-                  </li>
-                </ol>
-              </section>
-
-              {/* Not Grounds for Refund */}
-              <section className="p-6 rounded-xl bg-risk/5 border border-risk/20">
-                <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2 text-risk">
-                  <AlertTriangle className="w-6 h-6" />
-                  NOT Grounds for Refund
-                </h2>
-                <p className="text-muted-foreground mb-4">The following are NOT valid reasons for requesting a refund:</p>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <span className="text-risk">✗</span>
-                    "I didn't read the terms" - Terms are clearly displayed before purchase
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-risk">✗</span>
-                    "I changed my mind" - This is a final sale
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-risk">✗</span>
-                    "The signals didn't make me money" - Trading results depend on execution and market conditions
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-risk">✗</span>
-                    "I don't use the service anymore" - You received what you paid for
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-risk">✗</span>
-                    "I forgot to cancel" - You are responsible for managing your subscription
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-risk">✗</span>
-                    "Someone else used my card" - Contact your bank about unauthorized use
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-risk">✗</span>
-                    "I expected something different" - All features are clearly described
-                  </li>
-                </ul>
-              </section>
-
-              {/* Disputes Warning */}
-              <section className="p-6 rounded-xl bg-destructive/10 border-2 border-destructive/30">
-                <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2 text-destructive">
-                  <AlertTriangle className="w-6 h-6" />
-                  Warning About Fraudulent Disputes
-                </h2>
-                <p className="text-muted-foreground mb-4">
-                  Filing a credit card chargeback or PayPal dispute after receiving our services is considered <strong>FRAUD</strong>.
-                </p>
-                <p className="text-muted-foreground mb-4">
-                  We maintain comprehensive records to defend against fraudulent claims:
-                </p>
-                <ul className="space-y-2 text-muted-foreground mb-4">
-                  <li>• Your terms acceptance timestamp and IP address</li>
-                  <li>• Every login with date, time, and device information</li>
-                  <li>• Every signal you received with delivery confirmation</li>
-                  <li>• Dashboard views and feature usage</li>
-                  <li>• Payment receipts and confirmation emails</li>
-                </ul>
-                <p className="text-foreground font-semibold">
-                  Consequences: Account termination, blacklisting, legal action for costs and damages.
-                </p>
-              </section>
-
-              {/* FAQ */}
-              <section className="p-6 rounded-xl bg-white/5 border border-white/10">
-                <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
-                  <HelpCircle className="w-6 h-6 text-primary" />
-                  Frequently Asked Questions
-                </h2>
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-2">Can I get a refund if I cancel immediately?</h3>
-                    <p className="text-muted-foreground">
-                      No. Once payment is processed and your account is activated, no refunds are available - 
-                      even if you cancel seconds later. The service has already been delivered.
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-2">What if I have technical issues?</h3>
-                    <p className="text-muted-foreground">
-                      Contact our support team. We will resolve any technical issues, but technical problems 
-                      are not grounds for refund. We will ensure you receive the service you paid for.
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-2">Can I cancel my subscription?</h3>
-                    <p className="text-muted-foreground">
-                      Yes, you can cancel anytime from your dashboard. This stops future billing, but 
-                      no refund is provided for the current billing period. Access continues until expiration.
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-2">What if the signals lose money?</h3>
-                    <p className="text-muted-foreground">
-                      Trading involves risk. We provide signals based on our analysis, but results depend on 
-                      market conditions and your execution. Trading losses are never grounds for refund.
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-2">Is there a trial period?</h3>
-                    <p className="text-muted-foreground">
-                      We occasionally offer trial coupons for new users. Check our website or contact support 
-                      if you'd like to try before committing to a full subscription.
-                    </p>
-                  </div>
+              <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
+                <div className="flex items-center gap-2 text-green-300">
+                  <CheckCircle className="w-5 h-5" />
+                  <span>No questions asked</span>
                 </div>
-              </section>
-
-              {/* Contact Before Purchase */}
-              <section className="p-6 rounded-xl bg-success/5 border border-success/20">
-                <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2 text-success">
-                  <Mail className="w-6 h-6" />
-                  Questions Before Purchasing?
-                </h2>
-                <p className="text-muted-foreground mb-4">
-                  If you have ANY questions about our services, features, or this refund policy, 
-                  please contact us <strong>BEFORE</strong> making a purchase:
-                </p>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li>📧 Email: <a href="mailto:support@traderedgepro.com" className="text-primary hover:underline">support@traderedgepro.com</a></li>
-                  <li>💬 Live Chat: Available on our website</li>
-                </ul>
-                <p className="text-muted-foreground mt-4">
-                  We're happy to answer questions and help you decide if TraderEdge is right for you. 
-                  Once you purchase, however, our no-refund policy applies.
-                </p>
-              </section>
-
-              {/* Final Statement */}
-              <div className="text-center p-8 rounded-xl bg-muted/20">
-                <p className="text-lg text-muted-foreground">
-                  By completing your purchase, you confirm that you have read, understood, and agree to this 
-                  Refund Policy and our <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link>.
-                </p>
+                <div className="flex items-center gap-2 text-green-300">
+                  <CheckCircle className="w-5 h-5" />
+                  <span>Full refund</span>
+                </div>
+                <div className="flex items-center gap-2 text-green-300">
+                  <CheckCircle className="w-5 h-5" />
+                  <span>Processed within 48 hours</span>
+                </div>
               </div>
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Content */}
+      <section className="relative py-8 md:py-12 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-[200px_1fr] gap-8 md:gap-16">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+            >
+              <span className="text-xs font-medium tracking-[0.2em] uppercase text-white/20">
+                Details
+              </span>
+            </motion.div>
+
+            <div className="max-w-2xl space-y-8">
+              {/* How It Works */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="p-6 rounded-xl bg-purple-500/5 border border-purple-500/10"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <Clock className="w-5 h-5 text-purple-400" />
+                  <h2 className="text-xl font-medium text-white">How the 7-Day Guarantee Works</h2>
+                </div>
+                <ol className="space-y-4">
+                  {[
+                    { step: '1', title: 'Subscribe & Explore', desc: 'Sign up for any TraderEdge Pro plan and explore all features.' },
+                    { step: '2', title: 'Test Our Services', desc: 'Use our trading signals, AI tools, risk management features, and dashboard for up to 7 days.' },
+                    { step: '3', title: 'Not Satisfied?', desc: 'If our services don\'t meet your expectations, contact us within 7 days of purchase.' },
+                    { step: '4', title: 'Get Your Refund', desc: 'We\'ll process your full refund within 48 hours. No hassle, no questions.' },
+                  ].map((item) => (
+                    <li key={item.step} className="flex items-start gap-4">
+                      <span className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-300 text-sm font-medium shrink-0">
+                        {item.step}
+                      </span>
+                      <div>
+                        <strong className="text-white/80 font-medium">{item.title}</strong>
+                        <p className="text-white/40 font-light text-sm mt-1">{item.desc}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </motion.div>
+
+              {/* What's Covered */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="p-6 rounded-xl bg-white/[0.02] border border-white/[0.06]"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <h2 className="text-xl font-medium text-white">What's Covered Under Our Guarantee</h2>
+                </div>
+                <ul className="space-y-3">
+                  {[
+                    'All subscription plans (Starter, Pro, Enterprise)',
+                    'First-time purchases',
+                    'Renewals within the 7-day window',
+                    'Annual subscriptions (prorated if applicable)',
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3 text-white/50 font-light">
+                      <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+
+              {/* Eligibility Requirements */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="p-6 rounded-xl bg-white/[0.02] border border-white/[0.06]"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <Shield className="w-5 h-5 text-purple-400" />
+                  <h2 className="text-xl font-medium text-white">Eligibility Requirements</h2>
+                </div>
+                <p className="text-white/40 font-light mb-4">
+                  To be eligible for a refund, please ensure:
+                </p>
+                <ul className="space-y-3">
+                  {[
+                    'Request is made within 7 days of your purchase date',
+                    'This is your first refund request (one per customer)',
+                    'You contact us via our official support channels',
+                    'Your account is in good standing (no violations)',
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3 text-white/40 font-light">
+                      <span className="w-1.5 h-1.5 rounded-full bg-purple-400/60 mt-2 shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+
+              {/* After 7 Days */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="p-6 rounded-xl bg-amber-500/5 border border-amber-500/10"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <AlertCircle className="w-5 h-5 text-amber-400" />
+                  <h2 className="text-xl font-medium text-amber-300">After the 7-Day Period</h2>
+                </div>
+                <p className="text-white/40 font-light mb-4">
+                  After the 7-day satisfaction period, refunds may only be considered in cases of:
+                </p>
+                <ul className="space-y-2">
+                  {[
+                    'Documented technical issues that prevent service access',
+                    'Duplicate charges or billing errors',
+                    'Service delivery failures on our end',
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3 text-white/40 font-light">
+                      <span className="text-amber-400">•</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-white/30 font-light text-sm mt-4">
+                  Trading performance or personal dissatisfaction after the 7-day period is not grounds for refund,
+                  as you've had ample time to evaluate our services.
+                </p>
+              </motion.div>
+
+              {/* FAQ */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="p-6 rounded-xl bg-white/[0.02] border border-white/[0.06]"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <HelpCircle className="w-5 h-5 text-purple-400" />
+                  <h2 className="text-xl font-medium text-white">Frequently Asked Questions</h2>
+                </div>
+                <div className="space-y-6">
+                  {[
+                    {
+                      q: 'How do I request a refund?',
+                      a: 'Simply email support@traderedgepro.com with your account email and "Refund Request" in the subject line. We\'ll process it within 48 hours.'
+                    },
+                    {
+                      q: 'When does the 7-day period start?',
+                      a: 'The 7-day period begins from the date of your successful payment, regardless of when you first log in.'
+                    },
+                    {
+                      q: 'Will I lose access immediately after requesting a refund?',
+                      a: 'Yes, once your refund is processed, your account will be deactivated. Make sure to export any data you need beforehand.'
+                    },
+                    {
+                      q: 'Can I get a refund and then resubscribe later?',
+                      a: 'Yes, you can resubscribe anytime. However, the 7-day guarantee only applies to your first purchase.'
+                    },
+                  ].map((item, i) => (
+                    <div key={i}>
+                      <h3 className="font-medium text-white mb-2">{item.q}</h3>
+                      <p className="text-white/40 font-light text-sm">{item.a}</p>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* How to Request */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="p-6 rounded-xl bg-green-500/5 border border-green-500/10"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <Mail className="w-5 h-5 text-green-400" />
+                  <h2 className="text-xl font-medium text-green-300">How to Request a Refund</h2>
+                </div>
+                <p className="text-white/40 font-light mb-4">
+                  Contact our support team within 7 days of your purchase:
+                </p>
+                <div className="space-y-3">
+                  <p className="text-white/50 font-light">
+                    <strong className="text-white/70">Email:</strong>{' '}
+                    <a href="mailto:support@traderedgepro.com" className="text-purple-400 hover:underline">
+                      support@traderedgepro.com
+                    </a>
+                  </p>
+                  <p className="text-white/50 font-light">
+                    <strong className="text-white/70">Subject:</strong> Refund Request - [Your Email]
+                  </p>
+                  <p className="text-white/50 font-light">
+                    <strong className="text-white/70">Response Time:</strong> Within 24 hours
+                  </p>
+                </div>
+              </motion.div>
+
+              {/* Final Statement */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-center py-8"
+              >
+                <p className="text-white/40 font-light">
+                  By completing your purchase, you acknowledge that you have read and agree to this Refund Policy and our{' '}
+                  <Link to="/terms" className="text-purple-400 hover:underline">Terms of Service</Link>.
+                </p>
+              </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 

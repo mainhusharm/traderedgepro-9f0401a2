@@ -18,6 +18,8 @@ import WhyWereDifferent from '@/components/sections/WhyWereDifferent';
 import SignalFeed from '@/components/sections/SignalFeed';
 import RiskCalculator from '@/components/sections/RiskCalculator';
 import HowItWorks from '@/components/sections/HowItWorks';
+import ComparisonSection from '@/components/sections/ComparisonSection';
+import LeadCapture from '@/components/sections/LeadCapture';
 import CommunitySection from '@/components/sections/CommunitySection';
 import PricingSection from '@/components/sections/PricingSection';
 import FAQSection from '@/components/sections/FAQSection';
@@ -108,10 +110,10 @@ const AntimatterLanding = () => {
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'Is this an EA or Signal service?',
+        name: 'What is TraderEdge Pro?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: "TraderEdge Pro is a signal service powered by AI. Unlike EAs, our signals don't auto-trade—you receive recommendations with full AI reasoning, and you decide whether to execute.",
+          text: "TraderEdge Pro is a performance system for funded traders — combining AI decision support, risk enforcement, and psychology frameworks. You stay in control while our system ensures disciplined trading.",
         },
       },
       {
@@ -119,7 +121,7 @@ const AntimatterLanding = () => {
         name: 'Does this violate Prop Firm rules?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: "No. TraderEdge Pro is 100% compliant with all major prop firm rules. You're manually executing trades based on our signals—there's no account sharing or automated trading.",
+          text: "No. TraderEdge Pro is 100% compliant with all major prop firm rules. You're manually executing trades — there's no account sharing or automated trading that could violate terms.",
         },
       },
       {
@@ -127,15 +129,15 @@ const AntimatterLanding = () => {
         name: "What's the minimum account size?",
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Our signals work with any account size. Our AI calculates optimal position sizes based on your specific risk parameters.',
+          text: 'Our system works with any account size. The AI calculates optimal position sizes based on your specific risk parameters and prop firm rules.',
         },
       },
       {
         '@type': 'Question',
-        name: "What's your win rate?",
+        name: "Why do most traders fail prop challenges?",
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Our verified win rate is 87% across all signals over the past 12 months with full transparency in our public track record.',
+          text: 'Most traders fail due to emotional decisions — overtrading after losses, breaking rules under pressure, inconsistent risk management. TraderEdge Pro is built to prevent these behavioral mistakes.',
         },
       },
     ],
@@ -144,9 +146,9 @@ const AntimatterLanding = () => {
   return (
     <>
       <SEO
-        title="Pass Your Prop Firm Challenge with AI | TraderEdge Pro"
-        description="Get a funded trading account with AI precision. Pass your FTMO challenge with 87% win rate trading signals, prop firm drawdown protection, and 24/7 AI coaching."
-        keywords="prop firm challenge, pass prop firm challenge, FTMO challenge, funded trading account, trading signals, AI trading, prop firm drawdown protection, get funded trading"
+        title="The Performance System for Funded Traders | TraderEdge Pro"
+        description="Stop blowing prop firm challenges. TraderEdge Pro combines AI decision support, risk discipline, and psychology frameworks to help you pass challenges and stay funded."
+        keywords="prop firm challenge, pass prop firm challenge, FTMO challenge, funded trading account, trading discipline, AI trading, prop firm rules, get funded trading, trading psychology"
         canonicalUrl="https://traderedgepro.com"
         schema={faqSchema}
       />
@@ -205,6 +207,11 @@ const AntimatterLanding = () => {
               <RiskCalculator />
             </div>
             
+            {/* Comparison Section */}
+            <div data-reveal className="antimatter-section">
+              <ComparisonSection />
+            </div>
+
             {/* How It Works */}
             <div data-reveal className="antimatter-section">
               <HowItWorks />
@@ -215,6 +222,11 @@ const AntimatterLanding = () => {
               <CommunitySection />
             </div>
             
+            {/* Lead Capture */}
+            <div data-reveal className="antimatter-section">
+              <LeadCapture />
+            </div>
+
             {/* Pricing */}
             <div data-reveal data-stagger-cards className="antimatter-section">
               <PricingSection />

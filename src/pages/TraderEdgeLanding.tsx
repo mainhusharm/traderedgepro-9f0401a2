@@ -40,8 +40,10 @@ const SceneLoader = () => (
 const TraderEdgeLanding = () => {
   const scrollProgressRef = useRef(0);
   const mainRef = useRef<HTMLDivElement>(null);
+  const videoShowcaseRef = useRef<HTMLDivElement>(null);
   const [isIntroComplete, setIsIntroComplete] = useState(false);
   const [isSceneReady, setIsSceneReady] = useState(false);
+  const [isSceneVisible, setIsSceneVisible] = useState(true);
 
   useEffect(() => {
     // Scene ready after brief delay
@@ -58,6 +60,44 @@ const TraderEdgeLanding = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Use IntersectionObserver to detect when VideoShowcase leaves viewport
+  useEffect(() => {
+    const element = videoShowcaseRef.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // Show sphere when VideoShowcase is intersecting (visible)
+          // Hide sphere when VideoShowcase is not intersecting AND has scrolled past (top < 0)
+          const isAboveViewport = entry.boundingClientRect.bottom < 0;
+          setIsSceneVisible(!isAboveViewport);
+        });
+      },
+      {
+        threshold: 0,
+      }
+    );
+
+    observer.observe(element);
+
+    // Also add a scroll listener as backup
+    const handleScrollVisibility = () => {
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        const isAboveViewport = rect.bottom < 0;
+        setIsSceneVisible(!isAboveViewport);
+      }
+    };
+
+    window.addEventListener('scroll', handleScrollVisibility, { passive: true });
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', handleScrollVisibility);
+    };
+  }, [isIntroComplete]);
 
   // GSAP entrance animations after intro
   useEffect(() => {
@@ -104,7 +144,7 @@ const TraderEdgeLanding = () => {
       <div className="relative min-h-screen bg-[#020202] overflow-x-hidden">
         {/* Fixed 3D Background - Lazy Loaded */}
         <Suspense fallback={<SceneLoader />}>
-          <Scene scrollProgressRef={scrollProgressRef} />
+          <Scene scrollProgressRef={scrollProgressRef} isVisible={isSceneVisible} />
         </Suspense>
         
         {/* Scroll Following Line */}
@@ -141,9 +181,11 @@ const TraderEdgeLanding = () => {
             
             <GlowingDivider />
             
-            <Reveal3DSection delay={0.1}>
-              <VideoShowcase />
-            </Reveal3DSection>
+            <div ref={videoShowcaseRef}>
+              <Reveal3DSection delay={0.1}>
+                <VideoShowcase />
+              </Reveal3DSection>
+            </div>
             
             <GlowingDivider />
             

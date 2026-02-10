@@ -10,9 +10,9 @@ const Hero = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   
   const stats = [
-    { value: '87%', label: 'Win Rate', icon: Target },
     { value: '24/7', label: 'AI Monitoring', icon: Zap },
     { value: '100%', label: 'Rule Compliance', icon: Shield },
+    { value: 'Pro', label: 'Grade Discipline', icon: Target },
   ];
 
   useEffect(() => {

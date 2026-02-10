@@ -62,6 +62,7 @@ import PropFirmComparisonPage from "./pages/PropFirmComparisonPage";
 import ProfilePage from "./pages/ProfilePage";
 import AchievementsPage from "./pages/AchievementsPage";
 import SignalHistoryPage from "./pages/SignalHistoryPage";
+import TrackRecordPage from "./pages/TrackRecordPage";
 import NotificationCenterPage from "./pages/NotificationCenterPage";
 import AgentLoginPage from "./pages/agent/AgentLoginPage";
 import AgentMainDashboard from "./pages/agent/AgentMainDashboard";
@@ -152,7 +153,8 @@ const App = () => {
                 <Route path="/privacy-policy" element={<PrivacyPage />} />
                 <Route path="/refund-policy" element={<RefundPolicyPage />} />
                 <Route path="/faq" element={<FAQPage />} />
-                
+                <Route path="/track-record" element={<TrackRecordPage />} />
+
                 {/* Blog Routes */}
                 <Route path="/blog" element={<BlogPage />} />
                 <Route path="/blog/:slug" element={<BlogPostPage />} />

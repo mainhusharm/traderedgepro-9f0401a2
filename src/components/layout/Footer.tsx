@@ -21,6 +21,7 @@ const Footer = () => {
     { label: 'Blog', href: '/blog' },
     { label: 'FAQ', href: '/faq' },
     { label: 'Contact', href: '/contact' },
+    { label: 'Track Record', href: '/track-record' },
   ];
 
   const dashboardLinks = [

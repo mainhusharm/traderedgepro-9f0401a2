@@ -5,11 +5,18 @@ import NeuralNetwork from './NeuralNetwork';
 
 interface SceneProps {
   scrollProgressRef: React.MutableRefObject<number>;
+  isVisible?: boolean;
 }
 
-const Scene = ({ scrollProgressRef }: SceneProps) => {
+const Scene = ({ scrollProgressRef, isVisible = true }: SceneProps) => {
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none">
+    <div
+      className="fixed inset-0 z-0 pointer-events-none transition-all duration-700 ease-in-out"
+      style={{
+        opacity: isVisible ? 1 : 0,
+        visibility: isVisible ? 'visible' : 'hidden',
+      }}
+    >
       <Canvas
         camera={{ position: [0, 0, 6], fov: 45 }}
         dpr={[1, 2]}

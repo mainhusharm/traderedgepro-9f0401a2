@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
-import { Bot, Mail, Lock, User, ArrowRight, Phone, Shield, Check } from 'lucide-react';
+import { Bot, Mail, Lock, User, ArrowRight, Shield, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

@@ -112,10 +112,10 @@ const PremiumLandingPage = () => {
   ];
 
   const stats = [
-    { value: '87%', label: 'Win Rate', sublabel: 'Last 90 days' },
-    { value: '2.4R', label: 'Avg. Return', sublabel: 'Per trade' },
-    { value: '5K+', label: 'Active Traders', sublabel: 'Worldwide' },
-    { value: '$2.1M', label: 'Profits Generated', sublabel: 'This month' },
+    { value: '24/7', label: 'AI Monitoring', sublabel: 'Never sleeps' },
+    { value: '100%', label: 'Rule Compliance', sublabel: 'Always enforced' },
+    { value: 'Pro', label: 'Grade System', sublabel: 'Discipline first' },
+    { value: 'Live', label: 'Risk Control', sublabel: 'Real-time' },
   ];
 
   const steps = [

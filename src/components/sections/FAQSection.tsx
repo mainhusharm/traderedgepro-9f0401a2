@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, HelpCircle, Shield, CreditCard, Settings, type LucideIcon } from 'lucide-react';
+import { ChevronDown, HelpCircle, Shield, CreditCard, Settings, Brain, type LucideIcon } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
 interface FAQItem {
@@ -19,8 +19,8 @@ const FAQSection = () => {
       category: 'Product',
       icon: HelpCircle,
       color: 'text-blue-400',
-      question: 'Is this an EA or Signal service?',
-      answer: 'TraderEdge Pro is a signal service powered by AI. Unlike EAs, our signals don\'t auto-trade—you receive recommendations with full AI reasoning, and you decide whether to execute. This keeps you in full control while leveraging our advanced market analysis.',
+      question: 'What exactly is TraderEdge Pro?',
+      answer: 'TraderEdge Pro is a performance system for funded traders — not just a signals service. We combine AI-powered decision support, risk enforcement, psychology frameworks, and prop firm rule compliance into one platform. You stay in full control of every trade while our system ensures you trade with discipline, not emotion.',
     },
     {
       category: 'Compliance',
@@ -41,7 +41,7 @@ const FAQSection = () => {
       icon: CreditCard,
       color: 'text-amber-400',
       question: 'What is your cancellation and refund policy?',
-      answer: 'All sales are final. Due to the nature of digital products and instant access to premium trading signals, we do not offer cancellations or refunds. Please review our plans carefully before subscribing.',
+      answer: 'We offer a 7-day free trial so you can experience the full platform before committing. You can cancel anytime during the trial with no charge. After the trial, subscriptions are billed according to your chosen plan. We stand behind our product — if you\'re not seeing value, reach out to our support team.',
     },
     {
       category: 'Product',
@@ -54,8 +54,15 @@ const FAQSection = () => {
       category: 'Compliance',
       icon: Shield,
       color: 'text-emerald-400',
-      question: 'What\'s your win rate?',
-      answer: 'Our verified win rate is 87% across all signals over the past 12 months. However, results vary based on execution timing and which signals you choose to take. We provide full transparency with our public track record and performance analytics.',
+      question: 'What kind of results can I expect?',
+      answer: 'Results vary based on your execution, discipline, and which signals you choose to take. What we guarantee is a structured system that enforces risk management, prevents emotional trading, and keeps you compliant with prop firm rules. We provide full transparency with our public track record — real numbers, no inflated claims.',
+    },
+    {
+      category: 'Psychology',
+      icon: Brain,
+      color: 'text-pink-400',
+      question: 'Why do most traders fail prop challenges?',
+      answer: 'Most traders don\'t fail because of bad entries — they fail because of overtrading after a loss, increasing lot size emotionally, or breaking rules under pressure. This isn\'t a strategy problem, it\'s a structure problem. TraderEdge Pro is built specifically to prevent these behavioral mistakes that cost you funded accounts.',
     },
   ];
 

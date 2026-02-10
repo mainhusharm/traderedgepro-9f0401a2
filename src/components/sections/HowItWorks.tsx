@@ -41,7 +41,7 @@ const HowItWorks = () => {
         <motion.div className="text-center mb-20 max-w-2xl mx-auto" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">How It Works</span>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Three Steps to <span className="text-primary">Get Funded</span></h2>
-          <p className="text-muted-foreground">From setup to funded trader in as little as 2 weeks.</p>
+          <p className="text-muted-foreground">A structured path from challenge to consistent payouts.</p>
         </motion.div>
 
         <div className="relative max-w-4xl mx-auto">

@@ -6,8 +6,8 @@ import { useSubscription } from '@/lib/context/SubscriptionContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
-  User, Mail, Phone, MapPin, Building2, Shield, 
-  CreditCard, Users, Settings, LogOut, Check, 
+  User, Mail, MapPin, Building2, Shield,
+  CreditCard, Users, Settings, LogOut, Check,
   X, Edit2, Save, Loader2, Crown, Zap, Star, Gift, Bell
 } from 'lucide-react';
 import Header from '@/components/layout/Header';
@@ -29,7 +29,6 @@ import ReferralClickStats from '@/components/referrals/ReferralClickStats';
 interface Profile {
   first_name: string | null;
   last_name: string | null;
-  phone: string | null;
   country: string | null;
   company: string | null;
   avatar_url: string | null;
@@ -79,7 +78,6 @@ const ProfilePage = () => {
         setProfile({
           first_name: profileData.first_name,
           last_name: profileData.last_name,
-          phone: profileData.phone,
           country: profileData.country,
           company: profileData.company,
           avatar_url: profileData.avatar_url,
@@ -87,7 +85,6 @@ const ProfilePage = () => {
         setEditedProfile({
           first_name: profileData.first_name,
           last_name: profileData.last_name,
-          phone: profileData.phone,
           country: profileData.country,
           company: profileData.company,
           avatar_url: profileData.avatar_url,
@@ -130,7 +127,6 @@ const ProfilePage = () => {
         .update({
           first_name: editedProfile.first_name,
           last_name: editedProfile.last_name,
-          phone: editedProfile.phone,
           country: editedProfile.country,
           company: editedProfile.company,
         })
@@ -176,8 +172,8 @@ const ProfilePage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-[#0A0A0B] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
       </div>
     );
   }
@@ -185,10 +181,16 @@ const ProfilePage = () => {
   const PlanIcon = getPlanIcon(membership?.planName);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 left-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <Header />
-      
-      <main className="container mx-auto px-4 py-20 pt-32 max-w-5xl">
+
+      <main className="relative max-w-5xl mx-auto px-6 pt-32 pb-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -196,16 +198,16 @@ const ProfilePage = () => {
           {/* Profile Header */}
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
             <div className="flex items-center gap-4">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-3xl font-bold text-white">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-purple-300 flex items-center justify-center text-3xl font-bold text-white">
                 {profile?.first_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'}
               </div>
               <div>
-                <h1 className="text-2xl font-bold">
-                  {profile?.first_name && profile?.last_name 
+                <h1 className="text-2xl font-semibold text-white">
+                  {profile?.first_name && profile?.last_name
                     ? `${profile.first_name} ${profile.last_name}`
                     : 'Your Profile'}
                 </h1>
-                <p className="text-muted-foreground">{user?.email}</p>
+                <p className="text-white/40 font-light">{user?.email}</p>
                 {membership && (
                   <Badge className={`mt-2 ${getPlanColor(membership.planName)}`}>
                     <PlanIcon className="w-3 h-3 mr-1" />
@@ -214,7 +216,7 @@ const ProfilePage = () => {
                 )}
               </div>
             </div>
-            <Button variant="outline" onClick={handleLogout}>
+            <Button variant="outline" onClick={handleLogout} className="bg-white/[0.02] border-white/[0.08] hover:bg-white/[0.05] hover:border-white/[0.15] text-white/60">
               <LogOut className="w-4 h-4 mr-2" />
               Sign Out
             </Button>
@@ -242,11 +244,11 @@ const ProfilePage = () => {
 
             {/* Profile Tab */}
             <TabsContent value="profile">
-              <Card className="glass-card">
+              <Card className="bg-white/[0.02] border-white/[0.05]">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle>Personal Information</CardTitle>
-                    <CardDescription>Manage your account details</CardDescription>
+                    <CardTitle className="text-white">Personal Information</CardTitle>
+                    <CardDescription className="text-white/40">Manage your account details</CardDescription>
                   </div>
                   {editing ? (
                     <div className="flex gap-2">
@@ -312,22 +314,6 @@ const ProfilePage = () => {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number</Label>
-                      {editing ? (
-                        <Input
-                          id="phone"
-                          value={editedProfile?.phone || ''}
-                          onChange={(e) => setEditedProfile(prev => prev ? {...prev, phone: e.target.value} : null)}
-                          placeholder="Enter phone number"
-                        />
-                      ) : (
-                        <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
-                          <Phone className="w-4 h-4 text-muted-foreground" />
-                          <span>{profile?.phone || 'Not set'}</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="space-y-2">
                       <Label htmlFor="country">Country</Label>
                       {editing ? (
                         <Input
@@ -368,8 +354,8 @@ const ProfilePage = () => {
             <TabsContent value="subscription">
               <div className="space-y-6">
                 {/* Current Plan Card */}
-                <Card className="glass-card overflow-hidden">
-                  <div className={`h-2 ${membership?.status === 'active' ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-muted'}`} />
+                <Card className="bg-white/[0.02] border-white/[0.05] overflow-hidden">
+                  <div className={`h-2 ${membership?.status === 'active' ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-white/5'}`} />
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <div>

@@ -277,41 +277,55 @@ const SignalHistoryPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 left-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <Header />
-      
-      <main className="pt-24 pb-20">
-        <div className="container mx-auto px-4 max-w-7xl">
+
+      <main className="relative pt-32 pb-20">
+        <div className="max-w-6xl mx-auto px-6">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
+            className="mb-12"
           >
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-3 mb-6">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/dashboard')}
-                className="text-muted-foreground"
+                className="text-white/40 hover:text-white/60"
               >
                 <ChevronLeft className="w-4 h-4 mr-1" />
                 Back to Dashboard
               </Button>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <History className="w-6 h-6 text-primary" />
-              </div>
+
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
               <div>
-                <h1 className="text-3xl font-bold">Signal History</h1>
-                <p className="text-muted-foreground">View and analyze your past trading signals</p>
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300/80 mb-6">
+                  <History className="w-3.5 h-3.5" />
+                  Trading History
+                </span>
+
+                <h1 className="text-4xl sm:text-5xl tracking-tight leading-[1.15] mb-3">
+                  <span className="font-light text-white/50">Signal</span>{' '}
+                  <span className="font-semibold italic bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">History</span>
+                </h1>
+                <p className="text-base text-white/40 font-light">
+                  View and analyze your past trading signals.
+                </p>
               </div>
-              
+
               {/* Export Buttons */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
+                  <Button variant="outline" className="gap-2 bg-white/[0.02] border-white/[0.08] hover:bg-white/[0.05] hover:border-purple-500/30">
                     <Download className="w-4 h-4" />
                     Export
                   </Button>
@@ -337,27 +351,27 @@ const SignalHistoryPage = () => {
             transition={{ delay: 0.1 }}
             className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8"
           >
-            <div className="glass-card p-4 rounded-xl text-center">
-              <p className="text-2xl font-bold">{stats.total}</p>
-              <p className="text-xs text-muted-foreground">Total Signals</p>
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] text-center hover:border-purple-500/20 transition-all duration-300">
+              <p className="text-2xl font-semibold text-white">{stats.total}</p>
+              <p className="text-xs text-white/30 font-light">Total Signals</p>
             </div>
-            <div className="glass-card p-4 rounded-xl text-center">
-              <p className="text-2xl font-bold text-success">{stats.wins}</p>
-              <p className="text-xs text-muted-foreground">Wins</p>
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] text-center hover:border-green-500/20 transition-all duration-300">
+              <p className="text-2xl font-semibold text-green-400">{stats.wins}</p>
+              <p className="text-xs text-white/30 font-light">Wins</p>
             </div>
-            <div className="glass-card p-4 rounded-xl text-center">
-              <p className="text-2xl font-bold text-risk">{stats.losses}</p>
-              <p className="text-xs text-muted-foreground">Losses</p>
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] text-center hover:border-red-500/20 transition-all duration-300">
+              <p className="text-2xl font-semibold text-red-400">{stats.losses}</p>
+              <p className="text-xs text-white/30 font-light">Losses</p>
             </div>
-            <div className="glass-card p-4 rounded-xl text-center">
-              <p className="text-2xl font-bold text-primary">{stats.winRate.toFixed(1)}%</p>
-              <p className="text-xs text-muted-foreground">Win Rate</p>
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] text-center hover:border-purple-500/20 transition-all duration-300">
+              <p className="text-2xl font-semibold text-purple-400">{stats.winRate.toFixed(1)}%</p>
+              <p className="text-xs text-white/30 font-light">Win Rate</p>
             </div>
-            <div className="glass-card p-4 rounded-xl text-center">
-              <p className={`text-2xl font-bold ${stats.totalPnl >= 0 ? 'text-success' : 'text-risk'}`}>
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] text-center hover:border-purple-500/20 transition-all duration-300">
+              <p className={`text-2xl font-semibold ${stats.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                 {stats.totalPnl >= 0 ? '+' : ''}${stats.totalPnl.toFixed(2)}
               </p>
-              <p className="text-xs text-muted-foreground">Total P&L</p>
+              <p className="text-xs text-white/30 font-light">Total P&L</p>
             </div>
           </motion.div>
 
@@ -366,13 +380,13 @@ const SignalHistoryPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="glass-card p-6 rounded-xl mb-6"
+            className="p-6 rounded-xl bg-white/[0.02] border border-white/[0.05] mb-6"
           >
             <div className="flex items-center gap-2 mb-4">
-              <Filter className="w-4 h-4 text-primary" />
-              <h3 className="font-semibold">Filters</h3>
+              <Filter className="w-4 h-4 text-purple-400" />
+              <h3 className="font-medium text-white">Filters</h3>
               {(outcomeFilter !== 'all' || symbolFilter || dateFrom || dateTo || typeFilter !== 'all') && (
-                <Button variant="ghost" size="sm" onClick={clearFilters} className="ml-auto text-muted-foreground">
+                <Button variant="ghost" size="sm" onClick={clearFilters} className="ml-auto text-white/40 hover:text-white/60">
                   <X className="w-4 h-4 mr-1" />
                   Clear
                 </Button>
@@ -447,23 +461,23 @@ const SignalHistoryPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="glass-card rounded-xl overflow-hidden"
+            className="rounded-xl bg-white/[0.02] border border-white/[0.05] overflow-hidden"
           >
-            <div className="p-4 border-b border-white/[0.05] flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">
+            <div className="p-4 border-b border-white/[0.06] flex items-center justify-between">
+              <p className="text-sm text-white/40 font-light">
                 Showing {signals.length} of {totalCount} signals
               </p>
             </div>
 
             {isLoading ? (
               <div className="flex justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
               </div>
             ) : signals.length === 0 ? (
               <div className="text-center py-12">
-                <History className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                <p className="text-muted-foreground">No signals found</p>
-                <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters</p>
+                <History className="w-12 h-12 mx-auto mb-4 text-white/20" />
+                <p className="text-white/40 font-light">No signals found</p>
+                <p className="text-sm text-white/30 mt-1">Try adjusting your filters</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
