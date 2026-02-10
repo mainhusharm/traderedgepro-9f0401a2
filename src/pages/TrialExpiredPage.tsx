@@ -18,30 +18,33 @@ const TrialExpiredPage = () => {
 
   const plans = [
     {
-      name: 'Starter',
+      id: 'starter',
+      name: 'Starter Access',
       price: 99,
       yearlyPrice: 79,
       period: 'month',
-      description: 'Perfect for new traders',
+      description: 'For traders preparing for prop firms',
       features: ['Up to 3 signals/day', 'Basic AI reasoning', 'Risk calculator', 'Email notifications'],
       color: 'cyan',
     },
     {
-      name: 'Pro',
+      id: 'pro',
+      name: 'Funded Trader Core',
       price: 299,
       yearlyPrice: 239,
       period: 'month',
-      description: 'For serious traders',
+      description: 'The system serious traders use',
       features: ['Unlimited signals', 'VIP Signals', 'AI Trading Coach (Nexus)', '1-on-1 Guidance', 'Priority Support'],
       popular: true,
       color: 'primary',
     },
     {
-      name: 'Enterprise',
+      id: 'enterprise',
+      name: 'Trader Desk',
       price: 899,
       yearlyPrice: 719,
       period: '3 months',
-      description: 'For trading teams & pros',
+      description: 'Team accountability & leverage',
       features: ['Everything in Pro', 'MT5 automation', 'Unlimited 1-on-1 Guidance', '24/7 Priority support', 'Team Dashboard'],
       color: 'purple',
     },
@@ -205,7 +208,7 @@ const TrialExpiredPage = () => {
                             ? 'bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-500/90 hover:to-violet-500/90 text-white'
                             : 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-500/90 hover:to-blue-500/90 text-white'
                         }`}
-                        onClick={() => navigate(`/payment-flow?plan=${plan.name.toLowerCase()}`)}
+                        onClick={() => navigate(`/payment-flow?plan=${plan.id}&price=${plan.price}&billing=monthly`)}
                       >
                         <Sparkles className="w-3.5 h-3.5 mr-1.5" />
                         Upgrade
