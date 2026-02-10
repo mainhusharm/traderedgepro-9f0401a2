@@ -14,6 +14,7 @@ const Footer = () => {
     { label: 'MT5 Bots', href: '/mt5-bots' },
     { label: 'Prop Firms', href: '/prop-comparison' },
     { label: 'Futures', href: '/futures' },
+    { label: 'Risk Plan', href: '/risk-management-plan' },
   ];
 
   const resourceLinks = [
@@ -22,6 +23,8 @@ const Footer = () => {
     { label: 'FAQ', href: '/faq' },
     { label: 'Contact', href: '/contact' },
     { label: 'Track Record', href: '/track-record' },
+    { label: 'Case Studies', href: '/case-studies' },
+    { label: 'Submit Story', href: '/submit-story' },
   ];
 
   const dashboardLinks = [
@@ -29,6 +32,7 @@ const Footer = () => {
     { label: 'Signals', href: '/signal-history' },
     { label: 'Achievements', href: '/achievements' },
     { label: 'Profile', href: '/profile' },
+    { label: 'Affiliates', href: '/affiliates' },
   ];
 
   const legalLinks = [

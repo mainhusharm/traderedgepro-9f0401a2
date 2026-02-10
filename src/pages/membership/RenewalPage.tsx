@@ -217,24 +217,34 @@ const RenewalPage = () => {
   const currentPlanIndex = membership ? plans.findIndex(p => p.name === membership.planName) : -1;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/3 left-0 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <Header />
-      
-      <main className="container mx-auto px-4 py-20 pt-32 max-w-4xl">
+
+      <main className="relative container mx-auto px-4 py-20 pt-32 max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm mb-6">
-            {isUpgrade ? <ArrowUp className="w-4 h-4" /> : <RefreshCw className="w-4 h-4" />}
-            {isUpgrade ? 'Upgrade Your Plan' : 'Renew Your Subscription'}
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            {isUpgrade ? 'Upgrade to Get More Features' : 'Continue Your Trading Journey'}
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300/80 mb-6">
+            {isUpgrade ? <ArrowUp className="w-3.5 h-3.5" /> : <RefreshCw className="w-3.5 h-3.5" />}
+            {isUpgrade ? 'Upgrade Your Plan' : 'Renew Subscription'}
+          </span>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl tracking-tight leading-[1.15] mb-5">
+            <span className="font-light text-white/50">{isUpgrade ? 'Upgrade to' : 'Continue your'}</span>
+            <br />
+            <span className="font-semibold italic bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">
+              {isUpgrade ? 'more features.' : 'trading journey.'}
+            </span>
           </h1>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            {isUpgrade 
+          <p className="text-base text-white/40 max-w-md mx-auto leading-relaxed font-light">
+            {isUpgrade
               ? 'Unlock more powerful features and take your trading to the next level.'
               : "Don't lose access to your premium features. Renew now and keep trading with confidence."}
           </p>

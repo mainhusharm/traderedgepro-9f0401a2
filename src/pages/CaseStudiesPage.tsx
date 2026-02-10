@@ -69,37 +69,58 @@ const CaseStudiesPage = () => {
   const hasContent = caseStudies.length > 0 || testimonials.length > 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/3 left-0 w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <Header />
-      
-      <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4">
-          {/* Hero Section */}
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <Badge variant="outline" className="mb-4 text-primary border-primary">
-              <Trophy className="w-3 h-3 mr-1" />
-              Success Stories
-            </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Real Traders, Real Results
-            </h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-              Discover how traders like you passed their prop firm challenges and got funded 
-              with TraderEdge AI. These are verified success stories from our community.
-            </p>
-            
-            {/* CTA to submit story */}
-            <Button asChild size="lg" className="gap-2">
-              <Link to="/submit-story">
-                <Star className="w-4 h-4" />
-                Share Your Success Story
-              </Link>
-            </Button>
-          </motion.div>
+
+      {/* Hero - Left aligned */}
+      <section className="relative pt-32 md:pt-40 pb-12 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-[1fr_auto] gap-8 items-end">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300/80 mb-6">
+                <Trophy className="w-3.5 h-3.5" />
+                Success Stories
+              </span>
+
+              <h1 className="text-4xl sm:text-5xl md:text-6xl tracking-tight leading-[1.15] mb-5">
+                <span className="font-light text-white/50">Real traders,</span>
+                <br />
+                <span className="font-semibold italic bg-gradient-to-r from-amber-400 to-orange-300 bg-clip-text text-transparent">real results.</span>
+              </h1>
+
+              <p className="text-base text-white/40 max-w-md leading-relaxed font-light">
+                Discover how traders passed their prop firm challenges and got funded with TraderEdge Pro.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <Button asChild className="rounded-full px-6 bg-amber-500 hover:bg-amber-400 text-black">
+                <Link to="/submit-story">
+                  <Star className="w-4 h-4 mr-2" />
+                  Share Your Story
+                </Link>
+              </Button>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      <main className="relative pb-20 px-6">
+        <div className="max-w-6xl mx-auto">
 
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

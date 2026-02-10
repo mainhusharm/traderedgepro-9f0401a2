@@ -194,30 +194,47 @@ const AffiliateLinksPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/3 left-0 w-[400px] h-[400px] bg-green-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <Header />
-      
-      <main className="pt-32 pb-20">
-        <div className="container mx-auto px-6">
-          {/* Hero */}
-          <motion.div 
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm mb-6">
-              <Gift className="w-4 h-4" />
-              Kickstarter Program + Affiliate
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Get <span className="gradient-text">FREE Access</span>
-              <br />Via Affiliate Purchase
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              Buy a funded account through our partner links and get 30 days of TraderEdge Pro free. 
-              Or earn 30%+ commission by referring others!
-            </p>
-          </motion.div>
+
+      {/* Hero - Left aligned */}
+      <section className="relative pt-32 md:pt-40 pb-12 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="max-w-3xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-xs text-green-300/80 mb-6">
+                <Gift className="w-3.5 h-3.5" />
+                Kickstarter + Affiliate
+              </span>
+
+              <h1 className="text-4xl sm:text-5xl md:text-6xl tracking-tight leading-[1.15] mb-5">
+                <span className="font-light text-white/50">Get</span>{' '}
+                <span className="font-semibold italic bg-gradient-to-r from-green-400 to-emerald-300 bg-clip-text text-transparent">FREE Access</span>
+                <br />
+                <span className="font-light text-white/50">via affiliate.</span>
+              </h1>
+
+              <p className="text-base text-white/40 max-w-md leading-relaxed font-light">
+                Buy a funded account through our partner links and get 30 days of TraderEdge Pro free.
+                Or earn 30%+ commission by referring others.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      <main className="relative pb-20 px-6">
+        <div className="max-w-6xl mx-auto">
 
           {/* Prop Firm Request Form - Right after Hero */}
           <div className="mb-12 max-w-3xl mx-auto">

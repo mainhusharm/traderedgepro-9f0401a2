@@ -54,26 +54,25 @@ const BlogPostPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <main className="pt-32 pb-20 flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        </main>
-        <Footer />
+      <div className="min-h-screen bg-[#0A0A0B] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-purple-400" />
       </div>
     );
   }
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+        <div className="fixed inset-0 pointer-events-none">
+          <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        </div>
         <Header />
-        <main className="pt-32 pb-20">
-          <div className="container mx-auto px-6 text-center">
-            <h1 className="text-4xl font-bold mb-4">Article Not Found</h1>
-            <p className="text-muted-foreground mb-8">The article you're looking for doesn't exist.</p>
+        <main className="relative pt-32 md:pt-40 pb-20 px-6">
+          <div className="max-w-6xl mx-auto text-center">
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">Article Not Found</h1>
+            <p className="text-white/40 mb-8">The article you're looking for doesn't exist.</p>
             <Link to="/blog">
-              <Button className="btn-glow">
+              <Button className="rounded-full px-6 bg-purple-500 hover:bg-purple-400 text-white">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Blog
               </Button>
@@ -107,7 +106,13 @@ const BlogPostPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/3 left-0 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <SEO
         title={post.title}
         description={post.meta_description || post.excerpt || 'Read this article on TraderEdge Pro'}
@@ -125,8 +130,8 @@ const BlogPostPage = () => {
       />
       <Header />
       
-      <main className="pt-32 pb-20">
-        <article className="container mx-auto px-6 max-w-4xl">
+      <main className="relative pt-32 md:pt-40 pb-20 px-6">
+        <article className="max-w-4xl mx-auto">
           {/* Back Link */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}

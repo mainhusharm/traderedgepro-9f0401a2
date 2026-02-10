@@ -99,28 +99,30 @@ const SubmitStoryPage = () => {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+        <div className="fixed inset-0 pointer-events-none">
+          <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-green-500/8 rounded-full blur-[150px]" />
+        </div>
         <Header />
-        <main className="pt-24 pb-16">
-          <div className="container mx-auto px-4">
+        <main className="relative pt-32 md:pt-40 pb-20 px-6">
+          <div className="max-w-md mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="max-w-md mx-auto text-center"
             >
-              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-500/20 flex items-center justify-center">
-                <CheckCircle className="w-10 h-10 text-green-500" />
+              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-600/10 border border-green-500/20 flex items-center justify-center">
+                <CheckCircle className="w-10 h-10 text-green-400" />
               </div>
-              <h1 className="text-2xl font-bold text-foreground mb-4">Thank You!</h1>
-              <p className="text-muted-foreground mb-8">
-                Your success story has been submitted for review. Once approved, it will appear 
+              <h1 className="text-2xl font-bold mb-4 bg-gradient-to-r from-green-400 to-emerald-300 bg-clip-text text-transparent">Thank You!</h1>
+              <p className="text-white/40 mb-8 font-light">
+                Your success story has been submitted for review. Once approved, it will appear
                 on our case studies page to inspire other traders.
               </p>
               <div className="flex gap-4 justify-center">
-                <Button onClick={() => navigate('/case-studies')}>
+                <Button onClick={() => navigate('/case-studies')} className="rounded-full px-6 bg-green-500 hover:bg-green-400 text-black">
                   View Success Stories
                 </Button>
-                <Button variant="outline" onClick={() => navigate('/')}>
+                <Button variant="outline" onClick={() => navigate('/')} className="rounded-full px-6 bg-transparent border-white/10 hover:border-green-500/30 hover:bg-white/5 text-white">
                   Back to Home
                 </Button>
               </div>
@@ -133,31 +135,49 @@ const SubmitStoryPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/3 left-0 w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <Header />
-      
-      <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4">
+
+      {/* Hero - Left aligned */}
+      <section className="relative pt-32 md:pt-40 pb-12 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="max-w-2xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300/80 mb-6">
+                <Trophy className="w-3.5 h-3.5" />
+                Share Your Journey
+              </span>
+
+              <h1 className="text-3xl sm:text-4xl md:text-5xl tracking-tight leading-[1.15] mb-5">
+                <span className="font-light text-white/50">Submit your</span>{' '}
+                <span className="font-semibold italic bg-gradient-to-r from-amber-400 to-orange-300 bg-clip-text text-transparent">success story</span>
+              </h1>
+
+              <p className="text-base text-white/40 max-w-md mx-auto leading-relaxed font-light">
+                Got funded? Passed a challenge? We'd love to feature your story to inspire other traders.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      <main className="relative pb-20 px-6">
+        <div className="max-w-2xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-2xl mx-auto"
+            transition={{ delay: 0.1 }}
           >
-            {/* Header */}
-            <div className="text-center mb-8">
-              <Badge variant="outline" className="mb-4 text-primary border-primary">
-                <Trophy className="w-3 h-3 mr-1" />
-                Share Your Journey
-              </Badge>
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Submit Your Success Story
-              </h1>
-              <p className="text-muted-foreground">
-                Got funded? Passed a challenge? We'd love to hear about your journey and 
-                feature your story to inspire other traders.
-              </p>
-            </div>
-
             {/* Form */}
             <Card>
               <CardHeader>

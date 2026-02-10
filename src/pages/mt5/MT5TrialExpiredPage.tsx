@@ -39,26 +39,38 @@ const MT5TrialExpiredPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden flex flex-col">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/3 left-0 w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <MT5Header />
-      
-      <main className="flex-1 container mx-auto px-4 py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-5xl mx-auto text-center"
-        >
-          {/* Trial Ended Banner */}
-          <div className="mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-muted mb-6">
-              <Clock className="w-10 h-10 text-muted-foreground" />
-            </div>
-            <h1 className="text-4xl font-bold mb-4">Your MT5 Bot Trial Has Ended</h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              We hope you enjoyed exploring the MT5 Bot platform! To get your custom trading bot 
-              developed, choose a plan below.
+
+      <main className="relative flex-1 px-6 py-16">
+        <div className="max-w-5xl mx-auto">
+          {/* Hero - Left aligned */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-3xl mb-12"
+          >
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300/80 mb-6">
+              <Clock className="w-3.5 h-3.5" />
+              Trial Ended
+            </span>
+
+            <h1 className="text-4xl sm:text-5xl md:text-6xl tracking-tight leading-[1.15] mb-5">
+              <span className="font-light text-white/50">Your MT5 trial has</span>
+              <br />
+              <span className="font-semibold italic bg-gradient-to-r from-amber-400 to-orange-300 bg-clip-text text-transparent">ended.</span>
+            </h1>
+
+            <p className="text-base text-white/40 max-w-md leading-relaxed font-light">
+              We hope you enjoyed exploring the MT5 Bot platform. Choose a plan to get your custom bot developed.
             </p>
-          </div>
+          </motion.div>
 
           {/* Features You Tried */}
           <Card className="mb-12 bg-card/50 backdrop-blur-sm border-border/50">
@@ -143,7 +155,7 @@ const MT5TrialExpiredPage = () => {
               Need Help? Contact Support
             </Button>
           </div>
-        </motion.div>
+        </div>
       </main>
 
       <Footer />

@@ -151,12 +151,12 @@ export default function TreasureHuntRevealPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0B]">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
         >
-          <Sparkles className="w-12 h-12 text-primary" />
+          <Sparkles className="w-12 h-12 text-purple-400" />
         </motion.div>
       </div>
     );
@@ -165,8 +165,14 @@ export default function TreasureHuntRevealPage() {
   const revealDate = config ? new Date(config.reveal_date) : new Date();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
-      {/* Animated background */}
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden relative">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-amber-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/3 left-0 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px]" />
+      </div>
+
+      {/* Animated sparkles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(20)].map((_, i) => (
           <motion.div
@@ -197,29 +203,30 @@ export default function TreasureHuntRevealPage() {
         <Button
           variant="ghost"
           onClick={() => navigate("/treasure-hunt")}
-          className="mb-8 gap-2"
+          className="mb-8 gap-2 text-white/60 hover:text-white"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Hunt
         </Button>
 
-        {/* Header */}
+        {/* Header - Premium Style */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <motion.h1 
-            className="text-4xl md:text-6xl font-black mb-4"
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring" }}
-          >
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600">
-              🏆 Winner Reveal
-            </span>
-          </motion.h1>
-          <p className="text-lg text-muted-foreground">
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300/80 mb-6">
+            <Trophy className="w-3.5 h-3.5" />
+            Winner Announcement
+          </span>
+
+          <h1 className="text-4xl sm:text-5xl md:text-6xl tracking-tight leading-[1.15] mb-5">
+            <span className="font-light text-white/50">Treasure hunt</span>
+            <br />
+            <span className="font-semibold italic bg-gradient-to-r from-amber-400 to-orange-300 bg-clip-text text-transparent">winners revealed.</span>
+          </h1>
+
+          <p className="text-base text-white/40 max-w-md mx-auto leading-relaxed font-light">
             The treasure hunt champions are about to be announced!
           </p>
         </motion.div>

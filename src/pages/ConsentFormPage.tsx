@@ -48,16 +48,27 @@ const ConsentFormPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/3 left-0 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px]" />
+      </div>
+
+      <div className="relative max-w-2xl mx-auto p-6 pt-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 text-center"
         >
-          <Shield className="w-16 h-16 text-primary mx-auto mb-4" />
-          <h1 className="text-3xl font-bold mb-2">Legal Agreements</h1>
-          <p className="text-muted-foreground">Please review and accept the following terms to access trading signals</p>
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/20 mb-6">
+            <Shield className="w-10 h-10 text-purple-400" />
+          </div>
+          <h1 className="text-3xl md:text-4xl tracking-tight mb-3">
+            <span className="font-light text-white/50">Legal</span>{' '}
+            <span className="font-semibold italic bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">Agreements</span>
+          </h1>
+          <p className="text-white/40 font-light">Please review and accept the following terms to access trading signals</p>
         </motion.div>
 
         <div className="space-y-6">

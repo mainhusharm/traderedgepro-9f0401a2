@@ -82,23 +82,26 @@ const RiskManagementPlanPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0B]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400" />
       </div>
     );
   }
 
   if (!plan) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-6">
-        <Card className="max-w-md border-border/50">
+      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0B] p-6">
+        <div className="fixed inset-0 pointer-events-none">
+          <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        </div>
+        <Card className="max-w-md border-white/10 bg-white/[0.02]">
           <CardContent className="p-8 text-center">
-            <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center mx-auto mb-4">
-              <AlertTriangle className="w-6 h-6 text-amber-500" />
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-600/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4">
+              <AlertTriangle className="w-8 h-8 text-amber-400" />
             </div>
-            <h2 className="text-xl font-semibold mb-2">No Trading Plan Found</h2>
-            <p className="text-sm text-muted-foreground mb-6">Complete the questionnaire to generate your personalized risk management plan.</p>
-            <Button onClick={() => navigate('/questionnaire')} className="w-full">
+            <h2 className="text-xl font-semibold mb-2 text-white">No Trading Plan Found</h2>
+            <p className="text-sm text-white/40 mb-6 font-light">Complete the questionnaire to generate your personalized risk management plan.</p>
+            <Button onClick={() => navigate('/questionnaire')} className="w-full rounded-full bg-purple-500 hover:bg-purple-400 text-white">
               Complete Questionnaire
             </Button>
           </CardContent>
@@ -108,7 +111,12 @@ const RiskManagementPlanPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/3 left-0 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px]" />
+      </div>
       <div className="max-w-5xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
