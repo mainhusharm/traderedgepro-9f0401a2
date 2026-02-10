@@ -10,18 +10,13 @@ interface SceneProps {
 
 const Scene = ({ scrollProgressRef, isVisible = true }: SceneProps) => {
   return (
-    <div
-      className="fixed inset-0 z-0 pointer-events-none transition-all duration-700 ease-in-out"
-      style={{
-        opacity: isVisible ? 1 : 0,
-        visibility: isVisible ? 'visible' : 'hidden',
-      }}
-    >
+    <div className="fixed inset-0 z-0 pointer-events-none">
       <Canvas
         camera={{ position: [0, 0, 6], fov: 45 }}
         dpr={[1, 2]}
-        gl={{ 
-          antialias: true, 
+        frameloop={isVisible ? 'always' : 'demand'}
+        gl={{
+          antialias: true,
           alpha: true,
           powerPreference: "high-performance"
         }}

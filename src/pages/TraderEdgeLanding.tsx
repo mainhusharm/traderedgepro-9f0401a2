@@ -25,7 +25,6 @@ import CommunitySection from '@/components/sections/CommunitySection';
 import RiskDisclaimer from '@/components/sections/RiskDisclaimer';
 import CookieConsentBanner from '@/components/common/CookieConsentBanner';
 import LaunchGiveawayPopup from '@/components/marketing/LaunchGiveawayPopup';
-import LaunchOfferBanner from '@/components/marketing/LaunchOfferBanner';
 
 // Lazy load 3D Scene for performance
 const Scene = lazy(() => import('@/components/canvas/Scene'));
@@ -65,20 +64,35 @@ const TraderEdgeLanding = () => {
   useEffect(() => {
     const handleScrollVisibility = () => {
       const element = videoShowcaseRef.current;
-      if (!element) return;
 
-      const rect = element.getBoundingClientRect();
-      // Hide sphere when the bottom of VideoShowcase goes above 50% of viewport height
-      // This triggers the hide when you've scrolled past most of the section
-      const shouldHide = rect.bottom < window.innerHeight * 0.5;
-      setIsSceneVisible(!shouldHide);
+      // Fallback: use scroll percentage if ref not available
+      const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        // Hide sphere when VideoShowcase section's bottom reaches 30% of viewport from top
+        // This triggers earlier, right as you finish scrolling past the section
+        const shouldHide = rect.bottom < window.innerHeight * 0.3;
+        setIsSceneVisible(!shouldHide);
+      } else {
+        // Fallback: hide after scrolling ~30% of the page (where VideoShowcase typically ends)
+        setIsSceneVisible(scrollPercent < 0.30);
+      }
     };
 
-    // Run once on mount
+    // Run immediately
     handleScrollVisibility();
 
+    // Add scroll listener
     window.addEventListener('scroll', handleScrollVisibility, { passive: true });
-    return () => window.removeEventListener('scroll', handleScrollVisibility);
+
+    // Also run after a delay to ensure DOM is ready
+    const timer = setTimeout(handleScrollVisibility, 500);
+
+    return () => {
+      window.removeEventListener('scroll', handleScrollVisibility);
+      clearTimeout(timer);
+    };
   }, [isIntroComplete]);
 
   // GSAP entrance animations after intro
@@ -124,26 +138,29 @@ const TraderEdgeLanding = () => {
       </AnimatePresence>
 
       <div className="relative min-h-screen bg-[#020202] overflow-x-hidden">
-        {/* Fixed 3D Background - Lazy Loaded, conditionally rendered */}
-        {isSceneVisible && (
+        {/* Fixed 3D Background - Lazy Loaded, visibility controlled via CSS */}
+        <div
+          style={{
+            opacity: isSceneVisible ? 1 : 0,
+            visibility: isSceneVisible ? 'visible' : 'hidden',
+            transition: 'opacity 0.5s ease-out, visibility 0.5s ease-out',
+          }}
+        >
           <Suspense fallback={<SceneLoader />}>
             <Scene scrollProgressRef={scrollProgressRef} isVisible={isSceneVisible} />
           </Suspense>
-        )}
+        </div>
         
         {/* Scroll Following Line */}
         {isIntroComplete && <ScrollFollowingLine />}
         
         {/* Content */}
-        <div 
+        <div
           ref={mainRef}
           className={`relative z-10 transition-opacity duration-500 ${isIntroComplete ? 'opacity-100' : 'opacity-0'}`}
         >
           <Header />
-          
-          {/* Launch Offer Banner */}
-          <LaunchOfferBanner />
-          
+
           <main>
             <Hero />
             

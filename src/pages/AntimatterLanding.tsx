@@ -25,14 +25,15 @@ import PricingSection from '@/components/sections/PricingSection';
 import FAQSection from '@/components/sections/FAQSection';
 import CTASection from '@/components/sections/CTASection';
 import RiskDisclaimer from '@/components/sections/RiskDisclaimer';
-import LaunchOfferBanner from '@/components/marketing/LaunchOfferBanner';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const AntimatterLanding = () => {
   const mainRef = useRef<HTMLDivElement>(null);
+  const videoShowcaseRef = useRef<HTMLDivElement>(null);
   const scrollProgressRef = useRef(0);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isSphereVisible, setIsSphereVisible] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -48,6 +49,33 @@ const AntimatterLanding = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Track scroll position to hide sphere after VideoShowcase section
+  useEffect(() => {
+    const handleScrollVisibility = () => {
+      const element = videoShowcaseRef.current;
+      const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        // Hide sphere when VideoShowcase section's bottom reaches 30% of viewport from top
+        const shouldHide = rect.bottom < window.innerHeight * 0.3;
+        setIsSphereVisible(!shouldHide);
+      } else {
+        // Fallback: hide after scrolling ~30% of the page
+        setIsSphereVisible(scrollPercent < 0.30);
+      }
+    };
+
+    handleScrollVisibility();
+    window.addEventListener('scroll', handleScrollVisibility, { passive: true });
+    const timer = setTimeout(handleScrollVisibility, 500);
+
+    return () => {
+      window.removeEventListener('scroll', handleScrollVisibility);
+      clearTimeout(timer);
+    };
+  }, [isLoaded]);
 
   // GSAP scroll-triggered animations
   useEffect(() => {
@@ -154,7 +182,16 @@ const AntimatterLanding = () => {
       />
       {/* Dark background - matches Antimatter */}
         <div className="relative min-h-screen bg-[#0a0a0f] overflow-x-hidden">
-        <AntimatterParticleSphere scrollProgressRef={scrollProgressRef} />
+        {/* 3D Sphere - visibility controlled based on scroll position */}
+        <div
+          style={{
+            opacity: isSphereVisible ? 1 : 0,
+            visibility: isSphereVisible ? 'visible' : 'hidden',
+            transition: 'opacity 0.5s ease-out, visibility 0.5s ease-out',
+          }}
+        >
+          <AntimatterParticleSphere scrollProgressRef={scrollProgressRef} />
+        </div>
         
         {/* Content */}
         <motion.div 
@@ -164,10 +201,7 @@ const AntimatterLanding = () => {
           animate={{ opacity: isLoaded ? 1 : 0 }}
         >
           <Header />
-          
-          {/* Launch Offer Banner */}
-          <LaunchOfferBanner />
-          
+
           <main>
             {/* Hero Section */}
             <AntimatterHero />
@@ -188,7 +222,7 @@ const AntimatterLanding = () => {
             </div>
             
             {/* Video Showcase */}
-            <div data-reveal className="antimatter-section">
+            <div ref={videoShowcaseRef} data-reveal className="antimatter-section">
               <VideoShowcase />
             </div>
             

@@ -801,25 +801,26 @@ const MembershipPage = () => {
           </div>
         </motion.div>
 
-        {/* Feature Comparison - Clean Table */}
+        {/* Feature Comparison - Premium Glass Table */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
           className="mt-32"
         >
-          <div className="max-w-5xl mx-auto mb-16">
-            <span className="text-xs font-medium tracking-[0.2em] uppercase text-white/20 mb-4 block">
+          <div className="max-w-5xl mx-auto mb-16 text-center">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300/80 mb-6">
+              <BarChart3 className="w-3.5 h-3.5" />
               Compare Plans
             </span>
-            <h2 className="text-3xl md:text-4xl tracking-tight">
+            <h2 className="text-3xl md:text-5xl tracking-tight">
               <span className="font-light text-white/50">Everything included,</span>
               <br />
               <span className="font-semibold italic bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">at a glance.</span>
             </h2>
           </div>
 
-          <div className="max-w-6xl mx-auto space-y-8">
+          <div className="max-w-6xl mx-auto space-y-10">
             {featureCategories.map((category, catIndex) => (
               <motion.div
                 key={category.name}
@@ -827,34 +828,92 @@ const MembershipPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ delay: catIndex * 0.05 }}
+                className="relative"
               >
-                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
-                  <category.icon className="w-5 h-5 text-primary" />
-                  <h3 className="font-medium">{category.name}</h3>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="text-xs font-medium tracking-widest uppercase text-muted-foreground">
-                        <th className="text-left py-3 pr-4 w-1/3">Feature</th>
-                        <th className="text-center py-3 px-2 w-[100px]">Free</th>
-                        <th className="text-center py-3 px-2 w-[100px]">Starter</th>
-                        <th className="text-center py-3 px-2 w-[100px]">Pro</th>
-                        <th className="text-center py-3 px-2 w-[100px]">Enterprise</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {category.features.map((feature, idx) => (
-                        <tr key={feature.name} className="border-t border-white/[0.04]">
-                          <td className="py-4 pr-4 text-sm">{feature.name}</td>
-                          <td className="py-4 px-2 text-center text-sm text-muted-foreground">{feature.k}</td>
-                          <td className="py-4 px-2 text-center text-sm text-muted-foreground">{feature.s}</td>
-                          <td className="py-4 px-2 text-center text-sm text-primary font-medium">{feature.p}</td>
-                          <td className="py-4 px-2 text-center text-sm text-muted-foreground">{feature.e}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                {/* Glass card container */}
+                <div className="relative rounded-2xl overflow-hidden">
+                  {/* Gradient border */}
+                  <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-purple-500/20 via-white/10 to-purple-500/20 opacity-60" />
+
+                  <div className="relative bg-white/[0.02] backdrop-blur-xl rounded-2xl p-6">
+                    {/* Category header */}
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/20 flex items-center justify-center">
+                        <category.icon className="w-5 h-5 text-purple-400" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-white">{category.name}</h3>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr>
+                            <th className="text-left py-4 pr-4 w-1/3">
+                              <span className="text-xs font-medium tracking-widest uppercase text-white/30">Feature</span>
+                            </th>
+                            <th className="text-center py-4 px-2 min-w-[100px]">
+                              <div className="inline-flex flex-col items-center gap-1">
+                                <span className="text-xs font-semibold text-green-400">Free</span>
+                              </div>
+                            </th>
+                            <th className="text-center py-4 px-2 min-w-[100px]">
+                              <div className="inline-flex flex-col items-center gap-1">
+                                <span className="text-xs font-semibold text-cyan-400">Starter</span>
+                              </div>
+                            </th>
+                            <th className="text-center py-4 px-2 min-w-[100px]">
+                              <div className="inline-flex flex-col items-center gap-1 px-3 py-1 rounded-full bg-primary/20 border border-primary/30">
+                                <span className="text-xs font-bold text-primary">Pro</span>
+                              </div>
+                            </th>
+                            <th className="text-center py-4 px-2 min-w-[100px]">
+                              <div className="inline-flex flex-col items-center gap-1">
+                                <span className="text-xs font-semibold text-purple-400">Enterprise</span>
+                              </div>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {category.features.map((feature, idx) => (
+                            <tr
+                              key={feature.name}
+                              className={`border-t border-white/[0.05] transition-colors hover:bg-white/[0.02] ${
+                                idx % 2 === 0 ? 'bg-white/[0.01]' : ''
+                              }`}
+                            >
+                              <td className="py-4 pr-4">
+                                <span className="text-sm text-white/80">{feature.name}</span>
+                              </td>
+                              <td className="py-4 px-2 text-center">
+                                <span className={`text-sm ${feature.k === '❌' ? 'text-white/20' : 'text-white/50'}`}>
+                                  {feature.k}
+                                </span>
+                              </td>
+                              <td className="py-4 px-2 text-center">
+                                <span className={`text-sm ${feature.s === '❌' ? 'text-white/20' : 'text-white/50'}`}>
+                                  {feature.s}
+                                </span>
+                              </td>
+                              <td className="py-4 px-2 text-center">
+                                <span className={`text-sm font-medium ${
+                                  feature.p.includes('✅') ? 'text-primary' : 'text-primary/80'
+                                }`}>
+                                  {feature.p}
+                                </span>
+                              </td>
+                              <td className="py-4 px-2 text-center">
+                                <span className={`text-sm ${
+                                  feature.e.includes('✅') ? 'text-purple-400' : 'text-white/50'
+                                }`}>
+                                  {feature.e}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -870,9 +929,9 @@ const MembershipPage = () => {
         >
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-8 border-y border-white/10">
             {[
-              { label: '7-day free trial', value: 'Try risk-free' },
-              { label: 'Instant access', value: 'Start immediately' },
-              { label: 'Cancel anytime', value: 'No lock-in' },
+              { label: 'Try for Free', value: 'Kickstarter plan available' },
+              { label: 'Instant Access', value: 'Start trading immediately' },
+              { label: '7-Day Cancellation', value: 'Full refund, no questions asked' },
             ].map((item) => (
               <div key={item.label} className="text-center md:text-left">
                 <p className="text-sm font-medium mb-1">{item.label}</p>
