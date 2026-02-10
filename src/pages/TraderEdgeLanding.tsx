@@ -61,42 +61,24 @@ const TraderEdgeLanding = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Use IntersectionObserver to detect when VideoShowcase leaves viewport
+  // Track scroll position to hide sphere after VideoShowcase section
   useEffect(() => {
-    const element = videoShowcaseRef.current;
-    if (!element) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          // Show sphere when VideoShowcase is intersecting (visible)
-          // Hide sphere when VideoShowcase is not intersecting AND has scrolled past (top < 0)
-          const isAboveViewport = entry.boundingClientRect.bottom < 0;
-          setIsSceneVisible(!isAboveViewport);
-        });
-      },
-      {
-        threshold: 0,
-      }
-    );
-
-    observer.observe(element);
-
-    // Also add a scroll listener as backup
     const handleScrollVisibility = () => {
-      if (element) {
-        const rect = element.getBoundingClientRect();
-        const isAboveViewport = rect.bottom < 0;
-        setIsSceneVisible(!isAboveViewport);
-      }
+      const element = videoShowcaseRef.current;
+      if (!element) return;
+
+      const rect = element.getBoundingClientRect();
+      // Hide sphere when the bottom of VideoShowcase goes above 50% of viewport height
+      // This triggers the hide when you've scrolled past most of the section
+      const shouldHide = rect.bottom < window.innerHeight * 0.5;
+      setIsSceneVisible(!shouldHide);
     };
+
+    // Run once on mount
+    handleScrollVisibility();
 
     window.addEventListener('scroll', handleScrollVisibility, { passive: true });
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('scroll', handleScrollVisibility);
-    };
+    return () => window.removeEventListener('scroll', handleScrollVisibility);
   }, [isIntroComplete]);
 
   // GSAP entrance animations after intro
@@ -142,10 +124,12 @@ const TraderEdgeLanding = () => {
       </AnimatePresence>
 
       <div className="relative min-h-screen bg-[#020202] overflow-x-hidden">
-        {/* Fixed 3D Background - Lazy Loaded */}
-        <Suspense fallback={<SceneLoader />}>
-          <Scene scrollProgressRef={scrollProgressRef} isVisible={isSceneVisible} />
-        </Suspense>
+        {/* Fixed 3D Background - Lazy Loaded, conditionally rendered */}
+        {isSceneVisible && (
+          <Suspense fallback={<SceneLoader />}>
+            <Scene scrollProgressRef={scrollProgressRef} isVisible={isSceneVisible} />
+          </Suspense>
+        )}
         
         {/* Scroll Following Line */}
         {isIntroComplete && <ScrollFollowingLine />}
