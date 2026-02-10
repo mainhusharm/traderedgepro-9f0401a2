@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Compass, Anchor, Gem } from "lucide-react";
+import { MapPin, Compass, Anchor, Gem, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
 import { TreasureHuntEntry } from "@/components/treasure-hunt/TreasureHuntEntry";
 import { TreasureHuntProgress } from "@/components/treasure-hunt/TreasureHuntProgress";
@@ -70,17 +72,17 @@ export default function TreasureHuntPage() {
 
   const checkExistingEntry = async () => {
     const savedEmail = localStorage.getItem("treasure_hunt_email");
-    
+
     if (savedEmail) {
       const { data, error } = await supabase
         .from("treasure_hunt_entries")
         .select("*")
         .eq("email", savedEmail)
         .maybeSingle();
-      
+
       if (data && !error) {
         setEntryData(data as EntryData);
-        
+
         if (data.announcement_status === "announced" && data.is_winner) {
           setGameState("winner");
         } else if (data.completed_at) {
@@ -104,7 +106,7 @@ export default function TreasureHuntPage() {
       .not("completed_at", "is", null)
       .order("completed_at", { ascending: true })
       .limit(10);
-    
+
     if (data) {
       setLeaderboard(data.map((entry, index) => ({
         position: index + 1,
@@ -122,7 +124,7 @@ export default function TreasureHuntPage() {
         .select("*")
         .eq("email", email)
         .maybeSingle();
-      
+
       if (existing) {
         toast.error("This email has already entered the hunt!");
         return;
@@ -133,13 +135,13 @@ export default function TreasureHuntPage() {
         .insert({ email, twitter_handle: twitterHandle, partner_followed: true, traderedge_followed: true, current_stage: 1 })
         .select()
         .single();
-      
+
       if (error) throw error;
-      
+
       localStorage.setItem("treasure_hunt_email", email);
       setEntryData(data as EntryData);
       setGameState("stage1");
-      toast.success("Let the hunt begin! 🏴‍☠️");
+      toast.success("Let the hunt begin!");
     } catch (err) {
       console.error("Error starting hunt:", err);
       toast.error("Failed to start. Please try again.");
@@ -174,7 +176,7 @@ export default function TreasureHuntPage() {
       completed_at: new Date().toISOString(),
       current_stage: 4,
     }).eq("id", entryData?.id);
-    
+
     setEntryData(prev => prev ? { ...prev, completed_at: new Date().toISOString(), current_stage: 4 } : null);
     setGameState("awaiting");
     fetchLeaderboard();
@@ -186,78 +188,276 @@ export default function TreasureHuntPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0B]">
         <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}>
-          <Compass className="w-12 h-12 text-primary" />
+          <Compass className="w-12 h-12 text-amber-400" />
         </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div animate={{ x: [0, 100, 0], y: [0, -50, 0] }} transition={{ repeat: Infinity, duration: 20, ease: "linear" }} className="absolute top-20 left-10 opacity-10">
-          <Anchor className="w-40 h-40 text-primary" />
+    <div className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 left-0 w-[500px] h-[500px] bg-amber-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px]" />
+      </div>
+
+      {/* Floating decorative elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          animate={{ x: [0, 50, 0], y: [0, -30, 0] }}
+          transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+          className="absolute top-40 left-10 opacity-5"
+        >
+          <Anchor className="w-32 h-32 text-amber-400" />
         </motion.div>
-        <motion.div animate={{ x: [0, -80, 0], y: [0, 60, 0] }} transition={{ repeat: Infinity, duration: 25, ease: "linear" }} className="absolute bottom-20 right-10 opacity-10">
-          <MapPin className="w-32 h-32 text-primary" />
+        <motion.div
+          animate={{ x: [0, -40, 0], y: [0, 40, 0] }}
+          transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
+          className="absolute bottom-40 right-10 opacity-5"
+        >
+          <MapPin className="w-24 h-24 text-amber-400" />
         </motion.div>
-        <motion.div animate={{ rotate: [0, 360] }} transition={{ repeat: Infinity, duration: 30, ease: "linear" }} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5">
-          <Gem className="w-96 h-96 text-amber-400" />
+        <motion.div
+          animate={{ rotate: [0, 360] }}
+          transition={{ repeat: Infinity, duration: 60, ease: "linear" }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.02]"
+        >
+          <Gem className="w-[600px] h-[600px] text-amber-400" />
         </motion.div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-8 md:py-16">
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8 md:mb-12">
-          <motion.h1 className="text-4xl md:text-6xl font-black mb-4" initial={{ scale: 0.9 }} animate={{ scale: 1 }} transition={{ type: "spring" }}>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600">🏴‍☠️ Treasure Hunt</span>
-          </motion.h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Complete 3 trading challenges to claim the treasure!<br />
-            <span className="text-primary font-semibold">@TraderEdgePro × @{CONFIG.partnerHandle}</span>
-          </p>
-        </motion.div>
+      <Header />
 
-        <div className="flex justify-center mb-8">
-          <TreasureHuntPrizeCounter totalPrizes={CONFIG.totalPrizes} onCountChange={setPrizesRemaining} />
+      {/* Hero - Left aligned like FAQ */}
+      <section className="relative pt-32 md:pt-40 pb-12 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-[1fr_auto] gap-8 items-end">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300/80 mb-6">
+                <Sparkles className="w-3.5 h-3.5" />
+                Limited Time Event
+              </span>
+
+              <h1 className="text-4xl sm:text-5xl md:text-6xl tracking-tight leading-[1.15] mb-5">
+                <span className="font-light text-white/50">The</span>{' '}
+                <span className="font-semibold italic bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 bg-clip-text text-transparent">Treasure</span>
+                <br />
+                <span className="font-semibold italic bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 bg-clip-text text-transparent">Hunt</span>
+              </h1>
+
+              <p className="text-base text-white/40 max-w-md leading-relaxed font-light">
+                Complete 3 trading challenges to claim the treasure.
+                <br />
+                <span className="text-amber-400/80">@TraderEdgePro × @{CONFIG.partnerHandle}</span>
+              </p>
+            </motion.div>
+
+            {/* Prize Counter */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <TreasureHuntPrizeCounter totalPrizes={CONFIG.totalPrizes} onCountChange={setPrizesRemaining} />
+            </motion.div>
+          </div>
         </div>
+      </section>
 
-        <AnimatePresence mode="wait">
-          {gameState === "entry" && <TreasureHuntEntry key="entry" onStart={handleStart} prizesRemaining={prizesRemaining} partnerHandle={CONFIG.partnerHandle} />}
+      {/* Game Content - Two column layout */}
+      <section className="relative py-12 md:py-16 px-6">
+        <div className="max-w-6xl mx-auto">
+          <AnimatePresence mode="wait">
+            {gameState === "entry" && (
+              <motion.div
+                key="entry"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="grid md:grid-cols-[200px_1fr] gap-6 md:gap-16"
+              >
+                <div>
+                  <h2 className="text-xs font-medium tracking-[0.2em] uppercase text-white/20 md:pt-5">
+                    Enter Hunt
+                  </h2>
+                </div>
+                <div>
+                  <TreasureHuntEntry
+                    onStart={handleStart}
+                    prizesRemaining={prizesRemaining}
+                    partnerHandle={CONFIG.partnerHandle}
+                  />
+                </div>
+              </motion.div>
+            )}
 
-          {(gameState === "stage1" || gameState === "stage2" || gameState === "stage3") && (
-            <div key="stages" className="space-y-8">
-              <TreasureHuntProgress currentStage={gameState === "stage1" ? 1 : gameState === "stage2" ? 2 : 3} />
-              {gameState === "stage1" && <TreasureHuntStage1 onComplete={handleStage1Complete} onUseHint={handleUseHint} hintsUsed={entryData?.hints_used || 0} />}
-              {gameState === "stage2" && <TreasureHuntStage2 onComplete={handleStage2Complete} />}
-              {gameState === "stage3" && <TreasureHuntStage3 onComplete={handleStage3Complete} />}
-            </div>
-          )}
+            {(gameState === "stage1" || gameState === "stage2" || gameState === "stage3") && (
+              <motion.div
+                key="stages"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="grid md:grid-cols-[200px_1fr] gap-6 md:gap-16"
+              >
+                <div>
+                  <h2 className="text-xs font-medium tracking-[0.2em] uppercase text-white/20 md:pt-5">
+                    Stage {gameState === "stage1" ? 1 : gameState === "stage2" ? 2 : 3}
+                  </h2>
+                </div>
+                <div className="space-y-8">
+                  <TreasureHuntProgress currentStage={gameState === "stage1" ? 1 : gameState === "stage2" ? 2 : 3} />
+                  {gameState === "stage1" && (
+                    <TreasureHuntStage1
+                      onComplete={handleStage1Complete}
+                      onUseHint={handleUseHint}
+                      hintsUsed={entryData?.hints_used || 0}
+                    />
+                  )}
+                  {gameState === "stage2" && <TreasureHuntStage2 onComplete={handleStage2Complete} />}
+                  {gameState === "stage3" && <TreasureHuntStage3 onComplete={handleStage3Complete} />}
+                </div>
+              </motion.div>
+            )}
 
-          {gameState === "awaiting" && entryData && (
-            <TreasureHuntAwaitingResults key="awaiting" twitterHandle={entryData.twitter_handle} partnerHandle={CONFIG.partnerHandle} revealDate={revealDate} onRevealComplete={() => checkExistingEntry()} />
-          )}
+            {gameState === "awaiting" && entryData && (
+              <motion.div
+                key="awaiting"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="grid md:grid-cols-[200px_1fr] gap-6 md:gap-16"
+              >
+                <div>
+                  <h2 className="text-xs font-medium tracking-[0.2em] uppercase text-white/20 md:pt-5">
+                    Results
+                  </h2>
+                </div>
+                <div>
+                  <TreasureHuntAwaitingResults
+                    twitterHandle={entryData.twitter_handle}
+                    partnerHandle={CONFIG.partnerHandle}
+                    revealDate={revealDate}
+                    onRevealComplete={() => checkExistingEntry()}
+                  />
+                </div>
+              </motion.div>
+            )}
 
-          {gameState === "winner" && entryData && (
-            <TreasureHuntWinner key="winner" position={entryData.winner_position || 1} twitterHandle={entryData.twitter_handle} partnerHandle={CONFIG.partnerHandle} prizes={CONFIG.prizes} discountCode={entryData.discount_code} />
-          )}
+            {gameState === "winner" && entryData && (
+              <motion.div
+                key="winner"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="grid md:grid-cols-[200px_1fr] gap-6 md:gap-16"
+              >
+                <div>
+                  <h2 className="text-xs font-medium tracking-[0.2em] uppercase text-white/20 md:pt-5">
+                    Winner
+                  </h2>
+                </div>
+                <div>
+                  <TreasureHuntWinner
+                    position={entryData.winner_position || 1}
+                    twitterHandle={entryData.twitter_handle}
+                    partnerHandle={CONFIG.partnerHandle}
+                    prizes={CONFIG.prizes}
+                    discountCode={entryData.discount_code}
+                  />
+                </div>
+              </motion.div>
+            )}
 
-          {gameState === "honorable" && entryData && (
-            <TreasureHuntHonorableMention key="honorable" twitterHandle={entryData.twitter_handle} partnerHandle={CONFIG.partnerHandle} discountCode={CONFIG.discountCode} />
-          )}
-        </AnimatePresence>
+            {gameState === "honorable" && entryData && (
+              <motion.div
+                key="honorable"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="grid md:grid-cols-[200px_1fr] gap-6 md:gap-16"
+              >
+                <div>
+                  <h2 className="text-xs font-medium tracking-[0.2em] uppercase text-white/20 md:pt-5">
+                    Thank You
+                  </h2>
+                </div>
+                <div>
+                  <TreasureHuntHonorableMention
+                    twitterHandle={entryData.twitter_handle}
+                    partnerHandle={CONFIG.partnerHandle}
+                    discountCode={CONFIG.discountCode}
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </section>
 
-        {gameState !== "entry" && leaderboard.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mt-12 max-w-lg mx-auto">
-            <TreasureHuntLeaderboard entries={leaderboard} />
+      {/* Leaderboard - Two column layout */}
+      {gameState !== "entry" && leaderboard.length > 0 && (
+        <section className="relative py-12 px-6">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="grid md:grid-cols-[200px_1fr] gap-6 md:gap-16"
+            >
+              <div>
+                <h2 className="text-xs font-medium tracking-[0.2em] uppercase text-white/20 md:pt-5">
+                  Leaderboard
+                </h2>
+              </div>
+              <div>
+                <TreasureHuntLeaderboard entries={leaderboard} />
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* Footer CTA */}
+      <section className="relative py-16 md:py-20 px-6 border-t border-white/[0.06]">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="text-center"
+          >
+            <p className="text-sm text-white/30 font-light">
+              A collaboration between{" "}
+              <a
+                href="https://x.com/TraderEdgePro"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-400/80 hover:text-amber-400 transition-colors"
+              >
+                @TraderEdgePro
+              </a>{" "}
+              ×{" "}
+              <a
+                href={`https://x.com/${CONFIG.partnerHandle}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-400/80 hover:text-amber-400 transition-colors"
+              >
+                @{CONFIG.partnerHandle}
+              </a>
+            </p>
           </motion.div>
-        )}
+        </div>
+      </section>
 
-        <motion.footer initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-16 text-center text-sm text-muted-foreground">
-          <p>A collaboration between <a href="https://x.com/TraderEdgePro" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">@TraderEdgePro</a> × <a href={`https://x.com/${CONFIG.partnerHandle}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">@{CONFIG.partnerHandle}</a></p>
-        </motion.footer>
-      </div>
+      <Footer />
     </div>
   );
 }
