@@ -78,7 +78,7 @@ const PricingSection = () => {
       description: 'The system serious traders use',
       features: [
         'Unlimited signals',
-        '⭐ VIP Signals (3-4 Expert Review)',
+        'VIP Signals (3-4 Expert Reviewed)',
         'Full AI reasoning & analysis',
         'Real-time push notifications',
         'Advanced risk management',
@@ -110,8 +110,8 @@ const PricingSection = () => {
       description: 'Team accountability & leverage',
       features: [
         'Everything in Pro',
-        '⭐ VIP Signals (Priority Delivery)',
-        '⭐ 1-on-1 Expert Guidance (Unlimited)',
+        'VIP Signals (Priority Delivery)',
+        '1-on-1 Expert Guidance (Unlimited)',
         'Team Dashboard (up to 5 users)',
         'Custom Signal Parameters',
         'MT5 automation integration',
@@ -452,6 +452,11 @@ const PricingSection = () => {
                       <>
                         <Gift className="w-4 h-4 mr-2" />
                         Get Started Free
+                      </>
+                    ) : plan.id === 'enterprise' ? (
+                      <>
+                        <Crown className="w-4 h-4 mr-2" />
+                        Apply for Access
                       </>
                     ) : (
                       <>

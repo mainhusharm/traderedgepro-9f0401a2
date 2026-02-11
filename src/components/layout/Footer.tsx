@@ -9,12 +9,12 @@ const socialLinks = [
 
 const Footer = () => {
   const productLinks = [
+    { label: 'Our Approach', href: '/methodology' },
     { label: 'Features', href: '/features' },
     { label: 'Pricing', href: '/membership' },
     { label: 'MT5 Bots', href: '/mt5-bots' },
     { label: 'Prop Firms', href: '/prop-comparison' },
-    { label: 'Futures', href: '/futures' },
-    { label: 'Risk Plan', href: '/risk-management-plan' },
+    { label: 'Results', href: '/case-studies' },
   ];
 
   const resourceLinks = [

@@ -79,10 +79,10 @@ const Header = () => {
   }, []);
 
   const navItems = [
+    { label: 'Our Approach', href: '/methodology' },
     { label: 'Features', href: '/features' },
+    { label: 'Results', href: '/case-studies' },
     { label: 'Pricing', href: '/membership' },
-    { label: 'MT5 Bots', href: '/mt5-bots' },
-    { label: 'Prop Firms', href: '/prop-comparison' },
     { label: 'FAQ', href: '/faq' },
   ];
 

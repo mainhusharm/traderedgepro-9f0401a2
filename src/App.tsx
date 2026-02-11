@@ -79,6 +79,7 @@ import ManagerDashboard from "./pages/manager/ManagerDashboard";
 import AccountantDashboard from "./pages/accountant/AccountantDashboard";
 
 import CaseStudiesPage from "./pages/CaseStudiesPage";
+import MethodologyPage from "./pages/MethodologyPage";
 import SubmitStoryPage from "./pages/SubmitStoryPage";
 import AntimatterLanding from "./pages/AntimatterLanding";
 import TreasureHuntPage from "./pages/TreasureHuntPage";
@@ -166,6 +167,8 @@ const App = () => {
                 {/* Social Proof & Success Stories */}
                 <Route path="/case-studies" element={<CaseStudiesPage />} />
                 <Route path="/submit-story" element={<SubmitStoryPage />} />
+                <Route path="/methodology" element={<MethodologyPage />} />
+                <Route path="/our-approach" element={<MethodologyPage />} />
                 
                 {/* Treasure Hunt Giveaway */}
                 <Route path="/treasure-hunt" element={<TreasureHuntPage />} />
