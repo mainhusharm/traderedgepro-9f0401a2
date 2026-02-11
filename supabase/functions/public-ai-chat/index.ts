@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 // Gemini API configuration - using the standard REST API
-const GEMINI_MODEL = 'gemini-2.0-flash';
+const GEMINI_MODEL = 'gemini-2.5-flash';
 
 // Agent configurations - ZOE talks like a human, not an AI
 const AGENT_CONFIG: Record<string, { 

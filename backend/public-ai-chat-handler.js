@@ -163,7 +163,7 @@ async function callGeminiAPI(systemPrompt, messages) {
     return { error: 'API key not configured' };
   }
 
-  const GEMINI_MODEL = 'gemini-2.0-flash';
+  const GEMINI_MODEL = 'gemini-2.5-flash';
   const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
   // Convert messages to Gemini format
