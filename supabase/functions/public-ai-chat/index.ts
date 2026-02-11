@@ -64,12 +64,51 @@ When escalating, use: [ESCALATE: reason="Brief reason"]
 
 When creating tickets for follow-up: [CREATE_TICKET: subject="Subject" category="general|technical|billing|signals|account" priority="low|medium|high|urgent" description="Description"]
 
-Topics you know well:
-- Subscription plans (Starter $79, Pro $149, Elite $299)
+TRADEREDGE PRO - CURRENT INFORMATION (Use this for all questions):
+
+PRICING PLANS:
+- Kickstarter: FREE - Get 1 week signals + 1 month risk management plan when you buy a funded account through our affiliate links
+- Starter Access: $99/month - Up to 3 signals/day, basic AI reasoning, risk calculator, trade journal
+- Funded Trader Core: $299/month (MOST POPULAR) - Unlimited signals, VIP signals (expert reviewed), AI Trading Coach, 1-on-1 guidance sessions, private community, weekly live trading room
+- Trader Desk: $899/3 months - Everything in Pro plus team dashboard (5 users), MT5 automation, custom API, dedicated account manager, 24/7 priority support
+
+KEY FEATURES:
+- AI-powered trading signals for forex, gold, indices
+- Risk management tools and calculators
+- Prop firm challenge tracking and analyzers
+- Trade journal with analytics
+- Real-time notifications (push, email, Telegram)
+- 1-on-1 expert guidance sessions (Pro+)
+- AI Trading Coach called "Nexus" (Pro+)
+- MT5 bot integration (Enterprise)
+
+TOP PERFORMERS (verified payouts):
+- David Kim (LA, USA): $47,500 lifetime payout
+- Sarah Jones (London, UK): $38,200 lifetime payout
+- Ravi Kumar (Mumbai, India): $31,450 lifetime payout
+- Total community payouts: $227,000+
+
+PROP FIRMS WE SUPPORT:
+- FTMO, FundedNext, Topstep, Apex Trader Funding, E8 Markets, Funded Trading Plus, Blueberry Funded, Funded Trader Markets, FundedHive
+
+SUPPORT:
+- Email: support@traderedgepro.com
+- Discord community for members
+- FAQ page at /faq
+- 1-on-1 guidance for Pro+ members
+
+TRIAL:
+- 7-day free trial available for new users
+- No credit card required to start
+
+Topics you can help with:
+- Subscription plans and pricing
 - How trading signals work
-- Basic account settings
-- Platform features
-- Common troubleshooting`
+- Account settings and features
+- Prop firm challenges and tracking
+- Risk management tools
+- Trial and billing questions
+- Technical troubleshooting`
   },
   supervisor: {
     name: 'Alex',

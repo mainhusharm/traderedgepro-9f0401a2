@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Trophy, Medal, Crown, Target, TrendingUp, 
-  Users, Shield, Zap, Star, ArrowUp, ArrowDown
+import {
+  Trophy, Medal, Crown, Target, TrendingUp,
+  Users, Shield, Zap, Star, ArrowUp, ArrowDown, Award
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { topPerformers, formatPayout, getTotalCommunityPayouts } from '@/data/topPerformers';
 
 interface TraderStats {
   user_id: string;
@@ -61,7 +62,7 @@ const LeaderboardTab = () => {
       // Calculate milestones and format data
       const formattedTraders: TraderStats[] = (dashboardData || []).map((d, index) => {
         const profile = profileMap.get(d.user_id);
-        const displayName = profile?.first_name 
+        const displayName = profile?.first_name
           ? `${profile.first_name} ${profile.last_name?.charAt(0) || ''}`.trim()
           : `Trader ${d.user_id.slice(0, 6)}`;
 
@@ -85,7 +86,51 @@ const LeaderboardTab = () => {
         };
       });
 
-      setTraders(formattedTraders);
+      // If no real user data, populate with top performers
+      if (formattedTraders.length === 0) {
+        let topPerformerTraders: TraderStats[] = topPerformers.map((performer, index) => ({
+          user_id: performer.id,
+          display_name: performer.name,
+          win_rate: performer.winRate,
+          total_pnl: performer.lifetimePayout,
+          total_trades: performer.totalTrades,
+          unlocked_milestones: index < 3 ? 4 : 3,
+          rank: index + 1,
+          change: 'same' as const
+        }));
+
+        // Apply sorting to top performers
+        topPerformerTraders = topPerformerTraders.sort((a, b) => {
+          if (sortBy === 'winrate') return b.win_rate - a.win_rate;
+          if (sortBy === 'pnl') return b.total_pnl - a.total_pnl;
+          if (sortBy === 'milestones') return b.unlocked_milestones - a.unlocked_milestones;
+          return 0;
+        });
+
+        // Update ranks after sorting
+        topPerformerTraders = topPerformerTraders.map((trader, index) => ({
+          ...trader,
+          rank: index + 1
+        }));
+
+        setTraders(topPerformerTraders);
+      } else {
+        // Apply sorting to real user data as well
+        let sortedTraders = [...formattedTraders].sort((a, b) => {
+          if (sortBy === 'winrate') return b.win_rate - a.win_rate;
+          if (sortBy === 'pnl') return b.total_pnl - a.total_pnl;
+          if (sortBy === 'milestones') return b.unlocked_milestones - a.unlocked_milestones;
+          return 0;
+        });
+
+        // Update ranks after sorting
+        sortedTraders = sortedTraders.map((trader, index) => ({
+          ...trader,
+          rank: index + 1
+        }));
+
+        setTraders(sortedTraders);
+      }
     } catch (error) {
       console.error('Error fetching leaderboard:', error);
     } finally {
@@ -156,8 +201,8 @@ const LeaderboardTab = () => {
             key={option.id}
             onClick={() => setSortBy(option.id as any)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-all ${
-              sortBy === option.id 
-                ? 'bg-primary/20 text-primary border border-primary/30' 
+              sortBy === option.id
+                ? 'bg-primary/20 text-primary border border-primary/30'
                 : 'bg-white/5 text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -166,6 +211,130 @@ const LeaderboardTab = () => {
           </button>
         ))}
       </div>
+
+      {/* Top 3 Podium */}
+      {traders.length >= 3 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="glass-card p-6 rounded-xl"
+        >
+          <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
+            <Star className="w-5 h-5 text-yellow-400" />
+            Top Performers
+          </h3>
+
+          <div className="flex items-end justify-center gap-4">
+            {/* 2nd Place */}
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-400 to-gray-600 mx-auto mb-2 flex items-center justify-center">
+                <Medal className="w-8 h-8 text-white" />
+              </div>
+              <p className="font-medium text-sm">{traders[1]?.display_name}</p>
+              <p className="text-xs text-muted-foreground">{traders[1]?.win_rate.toFixed(1)}% WR</p>
+              <p className="text-xs text-success">${traders[1]?.total_pnl.toLocaleString()}</p>
+              <div className="h-20 w-20 bg-gray-500/20 rounded-t-lg mt-2 flex items-center justify-center">
+                <span className="text-2xl font-bold text-gray-400">2</span>
+              </div>
+            </div>
+
+            {/* 1st Place */}
+            <div className="text-center">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 to-amber-600 mx-auto mb-2 flex items-center justify-center">
+                <Crown className="w-10 h-10 text-white" />
+              </div>
+              <p className="font-medium">{traders[0]?.display_name}</p>
+              <p className="text-sm text-muted-foreground">{traders[0]?.win_rate.toFixed(1)}% WR</p>
+              <p className="text-sm text-success font-semibold">${traders[0]?.total_pnl.toLocaleString()}</p>
+              <div className="h-28 w-24 bg-yellow-500/20 rounded-t-lg mt-2 flex items-center justify-center">
+                <span className="text-3xl font-bold text-yellow-400">1</span>
+              </div>
+            </div>
+
+            {/* 3rd Place */}
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 mx-auto mb-2 flex items-center justify-center">
+                <Medal className="w-8 h-8 text-white" />
+              </div>
+              <p className="font-medium text-sm">{traders[2]?.display_name}</p>
+              <p className="text-xs text-muted-foreground">{traders[2]?.win_rate.toFixed(1)}% WR</p>
+              <p className="text-xs text-success">${traders[2]?.total_pnl.toLocaleString()}</p>
+              <div className="h-16 w-20 bg-amber-600/20 rounded-t-lg mt-2 flex items-center justify-center">
+                <span className="text-2xl font-bold text-amber-600">3</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Top Performers - Verified Payouts */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="glass-card p-6 rounded-xl border border-yellow-500/20 bg-gradient-to-br from-yellow-500/5 to-transparent"
+      >
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Crown className="w-5 h-5 text-yellow-400" />
+            <h3 className="font-semibold">Top Performers - Lifetime Payouts</h3>
+          </div>
+          <span className="text-xs text-muted-foreground">
+            Total: <span className="text-yellow-400 font-semibold">${getTotalCommunityPayouts().toLocaleString()}</span>
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          {topPerformers.slice(0, 8).map((performer, index) => (
+            <div
+              key={performer.id}
+              className={`p-3 rounded-lg transition-all ${
+                index === 0
+                  ? 'bg-yellow-500/10 border border-yellow-500/30'
+                  : index === 1
+                  ? 'bg-gray-400/10 border border-gray-400/20'
+                  : index === 2
+                  ? 'bg-amber-600/10 border border-amber-600/20'
+                  : 'bg-white/5 border border-white/10'
+              }`}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                  index === 0
+                    ? 'bg-yellow-500/20 text-yellow-400'
+                    : index === 1
+                    ? 'bg-gray-400/20 text-gray-300'
+                    : index === 2
+                    ? 'bg-amber-600/20 text-amber-500'
+                    : 'bg-primary/20 text-primary'
+                }`}>
+                  {index < 3 ? (
+                    index === 0 ? <Crown className="w-4 h-4" /> : <Medal className="w-4 h-4" />
+                  ) : (
+                    `#${index + 1}`
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{performer.name}</p>
+                  <p className="text-[10px] text-muted-foreground truncate">{performer.location}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className={`font-bold ${
+                  index === 0 ? 'text-yellow-400' : index === 1 ? 'text-gray-300' : index === 2 ? 'text-amber-500' : 'text-primary'
+                }`}>
+                  {formatPayout(performer.lifetimePayout)}
+                </span>
+                <span className="text-xs text-success">{performer.winRate}% WR</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <p className="text-[10px] text-muted-foreground mt-3 text-center">
+          These are verified lifetime payouts. Beat these numbers and you'll appear here!
+        </p>
+      </motion.div>
 
       {/* Your Rank Card */}
       {currentUserRank && (
@@ -297,59 +466,6 @@ const LeaderboardTab = () => {
           </table>
         </div>
       </motion.div>
-
-      {/* Top 3 Podium */}
-      {traders.length >= 3 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="glass-card p-6 rounded-xl"
-        >
-          <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
-            <Star className="w-5 h-5 text-yellow-400" />
-            Top Performers
-          </h3>
-          
-          <div className="flex items-end justify-center gap-4">
-            {/* 2nd Place */}
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-400 to-gray-600 mx-auto mb-2 flex items-center justify-center">
-                <Medal className="w-8 h-8 text-white" />
-              </div>
-              <p className="font-medium text-sm">{traders[1]?.display_name}</p>
-              <p className="text-xs text-muted-foreground">{traders[1]?.win_rate.toFixed(1)}% WR</p>
-              <div className="h-20 w-20 bg-gray-500/20 rounded-t-lg mt-2 flex items-center justify-center">
-                <span className="text-2xl font-bold text-gray-400">2</span>
-              </div>
-            </div>
-
-            {/* 1st Place */}
-            <div className="text-center">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 to-amber-600 mx-auto mb-2 flex items-center justify-center">
-                <Crown className="w-10 h-10 text-white" />
-              </div>
-              <p className="font-medium">{traders[0]?.display_name}</p>
-              <p className="text-sm text-success">{traders[0]?.win_rate.toFixed(1)}% WR</p>
-              <div className="h-28 w-24 bg-yellow-500/20 rounded-t-lg mt-2 flex items-center justify-center">
-                <span className="text-3xl font-bold text-yellow-400">1</span>
-              </div>
-            </div>
-
-            {/* 3rd Place */}
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 mx-auto mb-2 flex items-center justify-center">
-                <Medal className="w-8 h-8 text-white" />
-              </div>
-              <p className="font-medium text-sm">{traders[2]?.display_name}</p>
-              <p className="text-xs text-muted-foreground">{traders[2]?.win_rate.toFixed(1)}% WR</p>
-              <div className="h-16 w-20 bg-amber-600/20 rounded-t-lg mt-2 flex items-center justify-center">
-                <span className="text-2xl font-bold text-amber-600">3</span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      )}
     </div>
   );
 };

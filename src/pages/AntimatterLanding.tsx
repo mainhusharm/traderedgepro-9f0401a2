@@ -25,6 +25,8 @@ import PricingSection from '@/components/sections/PricingSection';
 import FAQSection from '@/components/sections/FAQSection';
 import CTASection from '@/components/sections/CTASection';
 import RiskDisclaimer from '@/components/sections/RiskDisclaimer';
+import MT5BotsSection from '@/components/sections/MT5BotsSection';
+import PropFirmsSection from '@/components/sections/PropFirmsSection';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -250,10 +252,20 @@ const AntimatterLanding = () => {
             <div data-reveal className="antimatter-section">
               <HowItWorks />
             </div>
-            
+
+            {/* Prop Firms Comparison */}
+            <div data-reveal className="antimatter-section">
+              <PropFirmsSection />
+            </div>
+
             {/* Community */}
             <div data-reveal className="antimatter-section">
               <CommunitySection />
+            </div>
+
+            {/* MT5 Bots - Secondary Platform */}
+            <div data-reveal className="antimatter-section">
+              <MT5BotsSection />
             </div>
             
             {/* Lead Capture */}

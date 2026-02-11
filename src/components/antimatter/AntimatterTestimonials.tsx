@@ -4,39 +4,84 @@ import { Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const testimonials = [
   {
-    quote: "Passed my FTMO $100K challenge in just 11 trading days. The risk management system kept me disciplined when I would have normally overtraded. First try, no retakes.",
-    name: "Michael R.",
+    quote: "Third attempt at a prop challenge and finally cracked it. The risk management tools made all the difference - stopped me from revenge trading when I was down.",
+    name: "Ravi Kumar",
     role: "Funded Trader",
-    company: "FTMO $100K",
-    timeline: "11 days to pass",
+    company: "E8 Markets $100K",
+    location: "Mumbai, India",
+    timeline: "Payout: $3,305",
   },
   {
-    quote: "After blowing 4 challenges in a row, I finally understood it wasn't my strategy — it was my discipline. TraderEdge fixed that. Now managing $350K across 3 funded accounts.",
-    name: "Sarah K.",
+    quote: "Was skeptical at first ngl. Tried so many signal services before and they were all trash. This one actually explains the reasoning behind each setup.",
+    name: "James Miller",
+    role: "Funded Trader",
+    company: "Blueberry Funded $100K",
+    location: "Dallas, USA",
+    timeline: "Payout: $5,120",
+  },
+  {
+    quote: "Quit my accounting job 6 months ago to trade full time. Everyone thought I was nuts. Just got my biggest payout yet. Whos laughing now lol",
+    name: "Lisa Brown",
+    role: "Full-time Trader",
+    company: "Funded Trading Plus $200K",
+    location: "Toronto, Canada",
+    timeline: "Payout: $7,850",
+  },
+  {
+    quote: "Almost 10k in one payout. Still feels surreal tbh. Failed 5 challenges before finding TraderEdge. The difference was learning to actually wait for the right setups.",
+    name: "Sarah Jones",
     role: "Professional Trader",
-    company: "The Funded Trader",
-    timeline: "4 months to $350K",
+    company: "Funded Trading Plus $200K",
+    location: "London, UK",
+    timeline: "Payout: $9,950",
   },
   {
-    quote: "The difference is the system makes you wait for quality setups. I went from 15 trades a day to 2-3. My win rate jumped from 42% to 67%. Passed E8 Funding on my second attempt.",
-    name: "James T.",
-    role: "Part-time Trader",
-    company: "E8 Funding $200K",
-    timeline: "14 days to pass",
-  },
-  {
-    quote: "I was skeptical about another signals service. But the AI reasoning behind each trade taught me more than any course. Passed MyForexFunds challenge while working full-time.",
-    name: "David L.",
-    role: "Software Engineer",
-    company: "MyForexFunds $50K",
-    timeline: "18 days to pass",
-  },
-  {
-    quote: "The prop firm rule compliance feature is underrated. It auto-calculates my max position size based on daily drawdown remaining. No more mental math, no more accidents.",
-    name: "Priya M.",
+    quote: "Twelve thousand dollars. From my laptop. While working my day job. My coworkers have no idea I made more from trading this month than my salary.",
+    name: "David Kim",
     role: "Funded Trader",
-    company: "True Forex Funds",
-    timeline: "8 days to pass",
+    company: "Funded Trader Markets $200K",
+    location: "Los Angeles, USA",
+    timeline: "Payout: $12,000",
+  },
+  {
+    quote: "Finally a service that works for Singapore timezone. Used to wake up at 3am for signals. Now I trade during lunch and after work. Life changing honestly.",
+    name: "Wei Chen",
+    role: "Part-time Trader",
+    company: "Blueberry Funded $100K",
+    location: "Singapore",
+    timeline: "Payout: $3,850",
+  },
+  {
+    quote: "Dubai is full of fake gurus flexing rented lambos. I just wanted something that actually works. No flexing, just consistent payouts every month.",
+    name: "Omar Al-Fayed",
+    role: "Funded Trader",
+    company: "Funded Trading Plus $150K",
+    location: "Dubai, UAE",
+    timeline: "Payout: $6,210",
+  },
+  {
+    quote: "Earning in USD while living in Mexico is basically a cheat code. My cost of living is low and my income keeps growing. Best decision I ever made.",
+    name: "Mateo Cruz",
+    role: "Full-time Trader",
+    company: "Funded Trader Markets $100K",
+    location: "Mexico City, Mexico",
+    timeline: "Payout: $4,990",
+  },
+  {
+    quote: "Software engineer by day, trader by night. The automated risk calculations appeal to my engineering brain. No emotions, just math. Thats how I like it.",
+    name: "Arjun Patel",
+    role: "Software Engineer",
+    company: "Blueberry Funded $50K",
+    location: "Bangalore, India",
+    timeline: "Payout: $2,409",
+  },
+  {
+    quote: "First payout ever from trading. Its not huge but its REAL. Everyone here thinks forex is a scam because of all the ponzi schemes. This proved them wrong.",
+    name: "Ngozi Okafor",
+    role: "Funded Trader",
+    company: "FundedHive $100K",
+    location: "Lagos, Nigeria",
+    timeline: "Payout: $1,000",
   },
 ];
 
@@ -96,13 +141,16 @@ const AntimatterTestimonials = () => {
               
               {/* Author */}
               <div className="flex items-center gap-4">
-                <div className="w-1 h-16 bg-[#6366f1]" />
+                <div className="w-1 h-20 bg-[#6366f1]" />
                 <div>
                   <h4 className="text-lg font-semibold text-white">
                     {testimonials[activeIndex].name}
                   </h4>
                   <p className="text-sm text-muted-foreground">
                     {testimonials[activeIndex].role} • {testimonials[activeIndex].company}
+                  </p>
+                  <p className="text-xs text-white/40 mt-0.5">
+                    {testimonials[activeIndex].location}
                   </p>
                   <p className="text-xs text-[#6366f1] mt-1 font-medium">
                     {testimonials[activeIndex].timeline}

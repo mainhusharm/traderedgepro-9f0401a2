@@ -12,9 +12,10 @@ const Footer = () => {
     { label: 'Our Approach', href: '/methodology' },
     { label: 'Features', href: '/features' },
     { label: 'Pricing', href: '/membership' },
+    { label: 'Results', href: '/case-studies' },
     { label: 'MT5 Bots', href: '/mt5-bots' },
     { label: 'Prop Firms', href: '/prop-comparison' },
-    { label: 'Results', href: '/case-studies' },
+    { label: 'Risk Plan', href: '/risk-management-plan' },
   ];
 
   const resourceLinks = [

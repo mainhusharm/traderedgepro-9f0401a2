@@ -29,7 +29,7 @@ interface TradingBadge {
 const TradingBadges = () => {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
-  const previousUnlockedRef = useRef<Set<string>>(new Set());
+  const hasInitializedRef = useRef(false);
   const [stats, setStats] = useState({
     totalTrades: 0,
     winRate: 0,
@@ -39,6 +39,23 @@ const TradingBadges = () => {
     leaderboardPosition: 0,
   });
 
+  // Get celebrated badges from sessionStorage
+  const getCelebratedBadges = (): Set<string> => {
+    if (!user) return new Set();
+    const key = `celebrated_badges_${user.id}`;
+    const stored = sessionStorage.getItem(key);
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+  };
+
+  // Save celebrated badge to sessionStorage
+  const markBadgeCelebrated = (badgeId: string) => {
+    if (!user) return;
+    const key = `celebrated_badges_${user.id}`;
+    const celebrated = getCelebratedBadges();
+    celebrated.add(badgeId);
+    sessionStorage.setItem(key, JSON.stringify([...celebrated]));
+  };
+
   useEffect(() => {
     if (user) {
       fetchTradingStats();
@@ -47,16 +64,27 @@ const TradingBadges = () => {
 
   // Check for newly unlocked badges and show notifications
   const checkNewBadges = (badges: TradingBadge[]) => {
-    const currentUnlocked = new Set(badges.filter(b => b.unlocked).map(b => b.id));
-    
+    // Skip on first load to avoid showing confetti for already-unlocked badges
+    if (!hasInitializedRef.current) {
+      hasInitializedRef.current = true;
+      // On first load, mark all currently unlocked badges as celebrated
+      badges.forEach(badge => {
+        if (badge.unlocked) {
+          markBadgeCelebrated(badge.id);
+        }
+      });
+      return;
+    }
+
+    const celebratedBadges = getCelebratedBadges();
+
     badges.forEach(badge => {
-      if (badge.unlocked && !previousUnlockedRef.current.has(badge.id)) {
-        // New badge unlocked!
+      if (badge.unlocked && !celebratedBadges.has(badge.id)) {
+        // Truly new badge unlocked - not just a page reload!
+        markBadgeCelebrated(badge.id);
         showBadgeUnlockNotification(badge);
       }
     });
-
-    previousUnlockedRef.current = currentUnlocked;
   };
 
   const showBadgeUnlockNotification = async (badge: TradingBadge) => {

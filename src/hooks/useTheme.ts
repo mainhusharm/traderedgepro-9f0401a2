@@ -45,7 +45,7 @@ export const useTheme = () => {
     }
     return {
       theme: 'dark',
-      accentColor: 'cyan',
+      accentColor: 'purple',
       compactMode: false,
       showAnimations: true,
     };
