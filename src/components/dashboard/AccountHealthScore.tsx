@@ -418,17 +418,59 @@ export default function AccountHealthScore({ accountId, className }: AccountHeal
 
   if (!account || noAccount) {
     return (
-      <Card className={`${className} overflow-hidden`}>
-        <CardContent className="p-6">
-          <div className="text-center py-8">
-            <div className="relative w-24 h-24 mx-auto mb-4">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-muted to-muted/50 animate-pulse" />
-              <Shield className="absolute inset-0 m-auto w-10 h-10 text-muted-foreground/50" />
+      <Card className={`${className} overflow-hidden relative group`}>
+        {/* Premium gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-500/5" />
+
+        {/* Animated border glow on hover */}
+        <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-primary/30 via-purple-500/30 to-primary/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-sm" />
+
+        <CardContent className="p-8 relative">
+          <div className="text-center py-6">
+            {/* Premium animated icon container */}
+            <div className="relative w-28 h-28 mx-auto mb-6">
+              {/* Outer glow ring */}
+              <motion.div
+                className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/20 to-purple-500/20"
+                animate={{
+                  scale: [1, 1.1, 1],
+                  opacity: [0.3, 0.5, 0.3]
+                }}
+                transition={{ duration: 3, repeat: Infinity }}
+              />
+
+              {/* Inner glass container */}
+              <div className="absolute inset-2 rounded-full bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-sm border border-white/[0.1] flex items-center justify-center">
+                {/* Icon with gradient */}
+                <div className="relative">
+                  <Shield className="w-12 h-12 text-primary/60" />
+                  <motion.div
+                    className="absolute inset-0 w-12 h-12"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                  >
+                    <div className="absolute top-0 left-1/2 w-1 h-1 rounded-full bg-primary/50" />
+                  </motion.div>
+                </div>
+              </div>
+
+              {/* Decorative dots */}
+              <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-primary/30" />
+              <div className="absolute -bottom-1 -left-1 w-2 h-2 rounded-full bg-purple-500/30" />
             </div>
-            <p className="text-muted-foreground mb-2">No prop account found</p>
-            <p className="text-sm text-muted-foreground/70">
-              Add a prop firm account to track your health score
+
+            <h3 className="text-lg font-semibold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent mb-2">
+              No Prop Account Found
+            </h3>
+            <p className="text-sm text-muted-foreground mb-6 max-w-xs mx-auto">
+              Add a prop firm account to unlock your health score and track your trading performance
             </p>
+
+            {/* Premium CTA hint */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-purple-500/10 border border-primary/20">
+              <Zap className="w-4 h-4 text-primary" />
+              <span className="text-sm text-primary">Go to Settings to add account</span>
+            </div>
           </div>
         </CardContent>
       </Card>

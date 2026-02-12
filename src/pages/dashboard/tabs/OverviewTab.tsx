@@ -202,50 +202,69 @@ const OverviewTab = ({ dashboardData }: OverviewTabProps) => {
 
   return (
     <div className="space-y-8">
-      {/* Account Health & Quick Actions Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <AccountHealthScore accountId={selectedAccountId} />
-        </div>
-        <div className="space-y-4">
-          <DailyTradingChecklist accountId={selectedAccountId} />
-          <Button 
-            onClick={() => setShowEquityPrompt(true)}
-            className="w-full"
-            variant="outline"
-          >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Update Daily Equity
-          </Button>
-        </div>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stats Grid - Premium Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.label}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="glass-card p-6 rounded-xl"
+            whileHover={{ y: -3, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
+            className="relative group"
           >
-            <div className="flex items-center justify-between mb-4">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                stat.isPositive ? 'bg-success/10' : 'bg-risk/10'
-              }`}>
-                <stat.icon className={`w-5 h-5 ${stat.isPositive ? 'text-success' : 'text-risk'}`} />
+            {/* Outer glow on hover */}
+            <div className={`absolute -inset-[1px] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm ${
+              stat.isPositive ? 'bg-gradient-to-r from-success/30 to-emerald-500/30' : 'bg-gradient-to-r from-risk/30 to-red-500/30'
+            }`} />
+
+            <div className={`relative p-5 rounded-2xl border transition-all duration-300 overflow-hidden ${
+              stat.isPositive
+                ? 'bg-gradient-to-br from-[#0a120e] to-[#080c0a] border-success/20 hover:border-success/40'
+                : 'bg-gradient-to-br from-[#120a0a] to-[#0c0808] border-risk/20 hover:border-risk/40'
+            }`}>
+              {/* Top accent line */}
+              <div className={`absolute top-0 inset-x-0 h-px ${
+                stat.isPositive
+                  ? 'bg-gradient-to-r from-transparent via-success/40 to-transparent'
+                  : 'bg-gradient-to-r from-transparent via-risk/40 to-transparent'
+              }`} />
+
+              {/* Subtle corner glow */}
+              <div className={`absolute top-0 right-0 w-24 h-24 rounded-full blur-3xl opacity-20 ${
+                stat.isPositive ? 'bg-success' : 'bg-risk'
+              }`} />
+
+              {/* Shimmer effect on hover */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/[0.03] to-transparent" />
               </div>
-              {stat.change && (
-                <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-                  stat.isPositive ? 'bg-success/10 text-success' : 'bg-risk/10 text-risk'
-                }`}>
-                  {stat.change}
-                </span>
-              )}
+
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center shadow-lg ${
+                    stat.isPositive
+                      ? 'bg-gradient-to-br from-success/20 to-success/5 border border-success/30 shadow-success/10'
+                      : 'bg-gradient-to-br from-risk/20 to-risk/5 border border-risk/30 shadow-risk/10'
+                  }`}>
+                    <stat.icon className={`w-5 h-5 ${stat.isPositive ? 'text-success' : 'text-risk'}`} />
+                  </div>
+                  {stat.change && (
+                    <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-lg border ${
+                      stat.isPositive ? 'bg-success/10 text-success border-success/20' : 'bg-risk/10 text-risk border-risk/20'
+                    }`}>
+                      {stat.change}
+                    </span>
+                  )}
+                </div>
+                <p className={`text-2xl font-bold mb-1 ${
+                  (stat.label === 'Total P&L' || stat.label === 'Win Rate')
+                    ? stat.isPositive ? 'text-success' : 'text-risk'
+                    : 'bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent'
+                }`}>{stat.value}</p>
+                <p className="text-xs text-white/40 font-medium">{stat.label}</p>
+              </div>
             </div>
-            <p className="text-2xl font-bold mb-1">{stat.value}</p>
-            <p className="text-sm text-muted-foreground">{stat.label}</p>
           </motion.div>
         ))}
       </div>
@@ -258,101 +277,138 @@ const OverviewTab = ({ dashboardData }: OverviewTabProps) => {
         />
       )}
 
-      {/* Recent Activity, Account Summary & Risk Calculator - Single Column Landscape */}
-      <div className="grid grid-cols-1 gap-6">
+      {/* Recent Activity & Account Summary */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Activity */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="glass-card p-6 rounded-xl"
+          transition={{ delay: 0.3 }}
+          className="relative group"
         >
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-primary" />
-            Recent Activity
-          </h3>
-          {isLoadingActivity ? (
-            <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-            </div>
-          ) : recentActivity.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">No recent activity</p>
-              <p className="text-xs">Start trading to see your activity here</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {recentActivity.map((activity, index) => (
-                <div key={index} className="flex items-center justify-between py-3 border-b border-white/[0.05] last:border-0">
-                  <div className="flex items-center gap-4">
-                    <div className={`px-2 py-1 rounded text-xs font-medium ${
-                      activity.type === 'BUY' ? 'bg-success/10 text-success' : 'bg-risk/10 text-risk'
-                    }`}>
-                      {activity.type}
-                    </div>
-                    <div>
-                      <p className="font-medium">{activity.pair}</p>
-                      <p className="text-sm text-muted-foreground">{activity.action}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    {activity.pnl && (
-                      <p className={`font-medium ${activity.pnl.startsWith('+') ? 'text-success' : 'text-risk'}`}>{activity.pnl}</p>
-                    )}
-                    <p className="text-xs text-muted-foreground">{activity.time}</p>
+          {/* Outer glow on hover */}
+          <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-primary/20 via-blue-500/20 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
+
+          <div className="relative bg-gradient-to-br from-[#0c0c14] to-[#08080c] border border-white/[0.08] rounded-2xl p-6 hover:border-primary/30 transition-all duration-300 overflow-hidden">
+            {/* Top accent line */}
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+
+            <h3 className="text-base font-semibold mb-5 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 flex items-center justify-center shadow-lg shadow-primary/10">
+                <Clock className="w-5 h-5 text-primary" />
+              </div>
+              <span className="bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">Recent Activity</span>
+            </h3>
+            {isLoadingActivity ? (
+              <div className="flex justify-center py-10">
+                <div className="w-8 h-8 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
+              </div>
+            ) : recentActivity.length === 0 ? (
+              <div className="text-center py-10">
+                <div className="relative w-16 h-16 mx-auto mb-4">
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/10 to-blue-500/10 animate-pulse" />
+                  <div className="absolute inset-1 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center">
+                    <Activity className="w-6 h-6 text-white/30" />
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+                <p className="text-sm font-medium text-white/60">No recent activity</p>
+                <p className="text-xs mt-1.5 text-white/30">Start trading to see your activity here</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {recentActivity.map((activity, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between py-3 px-4 -mx-2 rounded-xl hover:bg-white/[0.03] transition-colors border border-transparent hover:border-white/[0.06]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`px-2.5 py-1.5 rounded-lg text-xs font-bold border ${
+                        activity.type === 'BUY'
+                          ? 'bg-success/15 text-success border-success/30'
+                          : 'bg-risk/15 text-risk border-risk/30'
+                      }`}>
+                        {activity.type}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-sm text-white">{activity.pair}</p>
+                        <p className="text-xs text-white/40">{activity.action}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      {activity.pnl && (
+                        <p className={`font-bold text-sm ${activity.pnl.startsWith('+') ? 'text-success' : 'text-risk'}`}>
+                          {activity.pnl}
+                        </p>
+                      )}
+                      <p className="text-xs text-white/30">{activity.time}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </motion.div>
 
         {/* Account Summary */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="glass-card p-6 rounded-xl"
+          transition={{ delay: 0.4 }}
+          className="relative group"
         >
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Wallet className="w-5 h-5 text-primary" />
-            Account Summary
-          </h3>
-          
-          <div className="space-y-4">
-            <div className="flex justify-between items-center py-3 border-b border-white/[0.05]">
-              <span className="text-muted-foreground">Prop Firm</span>
-              <span className="font-semibold">{dashboardData?.prop_firm || 'Not Set'}</span>
-            </div>
-            <div className="flex justify-between items-center py-3 border-b border-white/[0.05]">
-              <span className="text-muted-foreground">Account Type</span>
-              <span className="font-semibold">{dashboardData?.account_type || 'Not Set'}</span>
-            </div>
-            <div className="flex justify-between items-center py-3 border-b border-white/[0.05]">
-              <span className="text-muted-foreground">Account Size</span>
-              <span className="font-semibold">${(dashboardData?.account_size || 0).toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between items-center py-3 border-b border-white/[0.05]">
-              <span className="text-muted-foreground">Current Equity</span>
-              <span className="font-semibold text-success">${(dashboardData?.current_equity || 0).toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between items-center py-3">
-              <span className="text-muted-foreground">Daily P&L</span>
-              <span className={`font-semibold ${(dashboardData?.daily_pnl || 0) >= 0 ? 'text-success' : 'text-risk'}`}>
-                {(dashboardData?.daily_pnl || 0) >= 0 ? '+' : ''}${(dashboardData?.daily_pnl || 0).toFixed(2)}
-              </span>
-            </div>
-          </div>
+          {/* Outer glow on hover */}
+          <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-purple-500/20 via-violet-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
 
-          {/* Progress to Profit Target */}
-          <div className="mt-6 pt-4 border-t border-white/[0.05]">
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-muted-foreground">Progress to Profit Target</span>
-              <span className="font-medium">75%</span>
+          <div className="relative bg-gradient-to-br from-[#0c0a14] to-[#080810] border border-white/[0.08] rounded-2xl p-6 hover:border-purple-500/30 transition-all duration-300 overflow-hidden">
+            {/* Top accent line */}
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-purple-500/40 to-transparent" />
+
+            <h3 className="text-base font-semibold mb-5 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-500/5 border border-purple-500/30 flex items-center justify-center shadow-lg shadow-purple-500/10">
+                <Wallet className="w-5 h-5 text-purple-400" />
+              </div>
+              <span className="bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">Account Summary</span>
+            </h3>
+
+            <div className="space-y-1">
+              {[
+                { label: 'Prop Firm', value: dashboardData?.prop_firm || 'Not Set' },
+                { label: 'Account Type', value: dashboardData?.account_type || 'Not Set' },
+                { label: 'Account Size', value: `$${(dashboardData?.account_size || 0).toLocaleString()}` },
+                { label: 'Current Equity', value: `$${(dashboardData?.current_equity || 0).toLocaleString()}`, highlight: true },
+                { label: 'Daily P&L', value: `${(dashboardData?.daily_pnl || 0) >= 0 ? '+' : ''}$${(dashboardData?.daily_pnl || 0).toFixed(2)}`, isPositive: (dashboardData?.daily_pnl || 0) >= 0 },
+              ].map((item, index) => (
+                <div
+                  key={item.label}
+                  className="flex justify-between items-center py-3 px-4 -mx-2 rounded-xl hover:bg-white/[0.03] transition-colors border border-transparent hover:border-white/[0.06]"
+                >
+                  <span className="text-sm text-white/40">{item.label}</span>
+                  <span className={`font-semibold text-sm ${
+                    item.highlight ? 'text-success' : item.isPositive !== undefined ? (item.isPositive ? 'text-success' : 'text-risk') : 'text-white'
+                  }`}>{item.value}</span>
+                </div>
+              ))}
             </div>
-            <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-primary to-success rounded-full w-3/4 transition-all" />
+
+            {/* Progress to Profit Target */}
+            <div className="mt-6 pt-5 border-t border-white/[0.06]">
+              <div className="flex justify-between text-sm mb-3">
+                <span className="text-white/40">Progress to Profit Target</span>
+                <span className="font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">75%</span>
+              </div>
+              <div className="relative w-full h-2.5 bg-white/[0.05] rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: '75%' }}
+                  transition={{ duration: 1, delay: 0.5, ease: 'easeOut' }}
+                  className="h-full bg-gradient-to-r from-primary via-purple-500 to-violet-500 rounded-full relative"
+                >
+                  {/* Shimmer effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+                </motion.div>
+                {/* Glow under progress bar */}
+                <div className="absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-violet-500 rounded-full blur-lg opacity-30" style={{ width: '75%' }} />
+              </div>
             </div>
           </div>
         </motion.div>
@@ -362,15 +418,59 @@ const OverviewTab = ({ dashboardData }: OverviewTabProps) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
+          className="lg:col-span-2"
         >
           <RiskCalculatorWidget />
         </motion.div>
       </div>
 
-      {/* Market Hours & Economic Calendar - Single Column */}
-      <div className="grid grid-cols-1 gap-6">
-        <MarketHoursIndicator />
-        {planFeatures.performanceAnalytics && <EconomicCalendar />}
+      {/* Account Health & Daily Checklist Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <motion.div
+          className="lg:col-span-2"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+        >
+          <AccountHealthScore accountId={selectedAccountId} />
+        </motion.div>
+        <motion.div
+          className="space-y-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+        >
+          <DailyTradingChecklist accountId={selectedAccountId} />
+          <Button
+            onClick={() => setShowEquityPrompt(true)}
+            className="w-full relative overflow-hidden group bg-white/[0.03] border border-white/[0.08] hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
+            variant="outline"
+          >
+            <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent" />
+            <RefreshCw className="w-4 h-4 mr-2 group-hover:rotate-180 transition-transform duration-500" />
+            Update Daily Equity
+          </Button>
+        </motion.div>
+      </div>
+
+      {/* Market Hours & Economic Calendar - Premium styled section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+        >
+          <MarketHoursIndicator />
+        </motion.div>
+        {planFeatures.performanceAnalytics && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+          >
+            <EconomicCalendar />
+          </motion.div>
+        )}
       </div>
 
       {/* Pro Features - AI Market Scanner & Weekly Live Trading Room */}
@@ -381,8 +481,13 @@ const OverviewTab = ({ dashboardData }: OverviewTabProps) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
+              className="relative group"
             >
-              <AIMarketScanner />
+              {/* Premium glow effect */}
+              <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-primary/10 to-purple-500/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+              <div className="relative">
+                <AIMarketScanner />
+              </div>
             </motion.div>
           )}
           {planFeatures.weeklyLiveTradingRoom && (
@@ -390,26 +495,51 @@ const OverviewTab = ({ dashboardData }: OverviewTabProps) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
+              className="relative group"
             >
-              <WeeklyLiveTradingRoom />
+              {/* Premium glow effect */}
+              <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-amber-500/10 to-orange-500/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+              <div className="relative">
+                <WeeklyLiveTradingRoom />
+              </div>
             </motion.div>
           )}
         </div>
       )}
 
       {/* Trading Session Heatmap */}
-      <TradingSessionHeatmap />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.9 }}
+        className="relative group"
+      >
+        <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-indigo-500/5 to-cyan-500/5 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        <div className="relative">
+          <TradingSessionHeatmap />
+        </div>
+      </motion.div>
 
       {/* Personal Guidance Banner */}
-      <PersonalGuidanceBanner variant="full" />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.0 }}
+      >
+        <PersonalGuidanceBanner variant="full" />
+      </motion.div>
 
       {/* Trading Badges */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7 }}
+        transition={{ delay: 1.1 }}
+        className="relative group"
       >
-        <TradingBadges />
+        <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-amber-500/5 to-yellow-500/5 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        <div className="relative">
+          <TradingBadges />
+        </div>
       </motion.div>
     </div>
   );

@@ -914,11 +914,18 @@ const SignalsFeedTab = () => {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Activity className="w-5 h-5 text-primary" />
+          <div className="relative">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-purple-500/10 border border-primary/20 flex items-center justify-center">
+              <Activity className="w-5 h-5 text-primary" />
+            </div>
+            {/* Live indicator */}
+            <span className="absolute -top-1 -right-1 flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-success"></span>
+            </span>
           </div>
           <div>
-            <h2 className="text-xl font-bold">Live Signals Feed</h2>
+            <h2 className="text-xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">Live Signals Feed</h2>
             <p className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap">
               <span>AI-powered signals</span>
               <span>•</span>
@@ -1086,28 +1093,52 @@ const SignalsFeedTab = () => {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-card p-4 rounded-xl"
+          className="relative group"
         >
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium">Milestone Progress</span>
+          {/* Subtle glow */}
+          <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-primary/5 to-purple-500/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+          <div className="relative bg-white/[0.02] backdrop-blur-sm border border-white/[0.08] p-5 rounded-2xl overflow-hidden group-hover:border-white/[0.12] transition-colors">
+            {/* Top accent */}
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500/20 to-yellow-500/10 border border-amber-500/20 flex items-center justify-center">
+                  <Trophy className="w-4 h-4 text-amber-400" />
+                </div>
+                <span className="text-sm font-semibold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">Milestone Progress</span>
+              </div>
+              <span className="text-xs px-2 py-1 rounded-full bg-white/[0.05] border border-white/[0.1]">
+                <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent font-semibold">${totalPnl.toFixed(0)}</span>
+                <span className="text-muted-foreground"> / ${milestoneProgress.target.toFixed(0)}</span>
+              </span>
             </div>
-            <span className="text-xs text-muted-foreground">
-              ${totalPnl.toFixed(0)} / ${milestoneProgress.target.toFixed(0)} to unlock next
-            </span>
+
+            {/* Premium progress bar */}
+            <div className="relative">
+              <div className="h-3 bg-white/[0.05] rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-primary via-purple-500 to-amber-500 rounded-full relative"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${milestoneProgress.progress}%` }}
+                  transition={{ duration: 1.5, ease: 'easeOut' }}
+                >
+                  {/* Shimmer */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+                </motion.div>
+              </div>
+              {/* Glow under bar */}
+              <div
+                className="absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-amber-500 rounded-full blur-lg opacity-30"
+                style={{ width: `${milestoneProgress.progress}%` }}
+              />
+            </div>
+
+            <p className="text-xs text-muted-foreground mt-3">
+              <span className="text-primary font-medium">${milestoneProgress.remaining.toFixed(0)}</span> more profit to unlock next milestone
+            </p>
           </div>
-          <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-gradient-to-r from-primary to-accent"
-              initial={{ width: 0 }}
-              animate={{ width: `${milestoneProgress.progress}%` }}
-              transition={{ duration: 1, ease: 'easeOut' }}
-            />
-          </div>
-          <p className="text-xs text-muted-foreground mt-2">
-            ${milestoneProgress.remaining.toFixed(0)} more profit to unlock next milestone
-          </p>
         </motion.div>
       )}
 
@@ -1185,10 +1216,19 @@ const SignalsFeedTab = () => {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         ) : displaySignals.length === 0 ? (
-          <div className="glass-card p-12 rounded-xl text-center">
-            <Activity className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-            <p className="text-muted-foreground">No signals available</p>
-            <p className="text-sm text-muted-foreground mt-1">New signals will appear here when generated by the AI</p>
+          <div className="relative group">
+            {/* Premium empty state */}
+            <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-primary/20 via-purple-500/20 to-primary/20 opacity-50" />
+            <div className="relative bg-white/[0.02] backdrop-blur-sm border border-white/[0.08] p-12 rounded-2xl text-center">
+              <div className="relative w-16 h-16 mx-auto mb-4">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/20 to-purple-500/20 animate-pulse" />
+                <div className="absolute inset-2 rounded-full bg-white/[0.03] border border-white/[0.1] flex items-center justify-center">
+                  <Activity className="w-6 h-6 text-muted-foreground" />
+                </div>
+              </div>
+              <p className="text-lg font-medium bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">No signals available</p>
+              <p className="text-sm text-muted-foreground mt-2">New signals will appear here when generated by the AI</p>
+            </div>
           </div>
         ) : (
           displaySignals.map((signal, index) => {
@@ -1258,201 +1298,267 @@ const SignalsFeedTab = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className={`glass-card p-6 rounded-xl relative overflow-hidden border-2 ${
-                  hasSystemOutcome ? getOutcomeCardStyle() : 'border-transparent'
-                } ${isLocked ? 'opacity-60' : ''} ${isSignalTaken && !hasSystemOutcome ? 'opacity-70 grayscale-[30%]' : ''}`}
+                whileHover={{ y: -2, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
+                className={`relative group/card ${
+                  isLocked ? 'opacity-60' : ''
+                } ${isSignalTaken && !hasSystemOutcome ? 'opacity-75' : ''}`}
               >
-                {/* Taken Badge - only show if no system outcome */}
-                {isSignalTaken && !hasSystemOutcome && (
-                  <div className="absolute top-0 left-0 px-3 py-1 rounded-br-lg bg-muted/80 text-muted-foreground text-xs font-medium flex items-center gap-1.5">
-                    <CheckCircle className="w-3 h-3" />
-                    Used
-                  </div>
-                )}
-                {/* Outcome Badge - replaces taken badge when outcome exists */}
-                {/* Expired Badge */}
-                {isExpired && (
-                  <div className="absolute top-0 left-0 px-3 py-1 rounded-br-lg bg-muted/40 text-muted-foreground text-xs font-bold flex items-center gap-1.5">
-                    ⏱️ EXPIRED
-                  </div>
-                )}
-                {/* Outcome Badge - replaces taken badge when outcome exists */}
-                {hasSystemOutcome && outcomeLabel && !isExpired && (
-                  <div className={`absolute top-0 left-0 px-3 py-1 rounded-br-lg ${
-                    isWin ? 'bg-success/20' : isLoss ? 'bg-risk/20' : isBreakeven ? 'bg-yellow-500/20' : 'bg-muted/20'
-                  } ${outcomeLabel.color} text-xs font-bold flex items-center gap-1.5`}>
-                    {outcomeLabel.text}
-                    {signal.final_r_multiple !== undefined && signal.final_r_multiple !== null && (
-                      <span className="ml-1">({signal.final_r_multiple >= 0 ? '+' : ''}{signal.final_r_multiple.toFixed(2)}R)</span>
-                    )}
-                  </div>
-                )}
-                {/* VIP Badge */}
-                {signal.is_vip && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-amber-500 to-purple-500 text-white text-xs font-bold rounded-b-lg flex items-center gap-1.5">
-                    <Crown className="w-3 h-3" />
-                    VIP Signal
-                    {!hasVipAccess && <Lock className="w-3 h-3 ml-1" />}
-                  </div>
-                )}
-                {/* Milestone Badge */}
-                <div className={`absolute top-0 right-0 px-3 py-1 rounded-bl-lg ${milestoneConfig.bgColor} ${milestoneConfig.color} text-xs font-medium flex items-center gap-1.5`}>
-                  {isLocked ? <Lock className="w-3 h-3" /> : milestoneConfig.icon}
-                  {milestoneConfig.name}
-                </div>
+                {/* Outer glow effect */}
+                <div className={`absolute -inset-[1px] rounded-2xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 blur-sm ${
+                  hasSystemOutcome
+                    ? isWin ? 'bg-gradient-to-r from-success/30 to-emerald-500/30'
+                      : isLoss ? 'bg-gradient-to-r from-risk/30 to-red-500/30'
+                      : 'bg-gradient-to-r from-primary/20 to-purple-500/20'
+                    : signal.is_vip
+                      ? 'bg-gradient-to-r from-amber-500/30 via-yellow-500/20 to-amber-500/30'
+                      : 'bg-gradient-to-r from-primary/20 via-purple-500/20 to-primary/20'
+                }`} />
 
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-4">
-                    <div className={`px-4 py-2 rounded-lg text-sm font-bold ${
-                      signal.signal_type === 'BUY' 
-                        ? 'bg-success/20 text-success border border-success/30' 
-                        : 'bg-risk/20 text-risk border border-risk/30'
-                    }`}>
-                      {signal.signal_type === 'BUY' ? <TrendingUp className="w-4 h-4 inline mr-2" /> : <TrendingDown className="w-4 h-4 inline mr-2" />}
-                      {signal.signal_type}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-xl font-bold">{signal.symbol}</h3>
-                        {getTradeTypeLabel(signal.trade_type) && (
-                          <Badge variant="outline" className={`text-xs ${getTradeTypeColor(signal.trade_type)}`}>
-                            {getTradeTypeLabel(signal.trade_type)}
-                          </Badge>
-                        )}
+                {/* Card with gradient border effect */}
+                <div className={`relative overflow-hidden ${
+                  hasSystemOutcome
+                    ? isWin
+                      ? 'bg-gradient-to-br from-[#0a1a12] to-[#050f08] border border-success/40'
+                      : isLoss
+                        ? 'bg-gradient-to-br from-[#1a0a0a] to-[#0f0505] border border-risk/40'
+                        : isBreakeven
+                          ? 'bg-gradient-to-br from-[#1a1508] to-[#0f0d05] border border-yellow-500/40'
+                          : 'bg-gradient-to-br from-[#0c0c12] to-[#08080c] border border-white/10'
+                    : signal.is_vip
+                      ? 'bg-gradient-to-br from-[#1a1408] via-[#12100c] to-[#0f0a12] border border-amber-500/50'
+                      : 'bg-gradient-to-br from-[#0c0c12] to-[#08080c] border border-white/[0.08] hover:border-white/20'
+                } rounded-2xl transition-all duration-300`}>
+
+                  {/* Top accent line */}
+                  <div className={`absolute top-0 inset-x-0 h-px ${
+                    hasSystemOutcome
+                      ? isWin ? 'bg-gradient-to-r from-transparent via-success/50 to-transparent'
+                        : isLoss ? 'bg-gradient-to-r from-transparent via-risk/50 to-transparent'
+                        : 'bg-gradient-to-r from-transparent via-white/20 to-transparent'
+                      : signal.is_vip
+                        ? 'bg-gradient-to-r from-transparent via-amber-500/50 to-transparent'
+                        : 'bg-gradient-to-r from-transparent via-primary/30 to-transparent'
+                  }`} />
+
+                  {/* Top Header Bar */}
+                  <div className={`px-5 py-4 border-b flex items-center justify-between ${
+                    hasSystemOutcome
+                      ? isWin ? 'border-success/20 bg-success/[0.03]' : isLoss ? 'border-risk/20 bg-risk/[0.03]' : 'border-white/[0.06]'
+                      : signal.is_vip ? 'border-amber-500/20 bg-amber-500/[0.03]' : 'border-white/[0.06]'
+                  }`}>
+                    <div className="flex items-center gap-4">
+                      {/* Signal Type Indicator - Enhanced */}
+                      <div className={`relative flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm shadow-lg ${
+                        signal.signal_type === 'BUY'
+                          ? 'bg-gradient-to-r from-success to-emerald-600 text-white shadow-success/25'
+                          : 'bg-gradient-to-r from-risk to-red-600 text-white shadow-risk/25'
+                      }`}>
+                        {signal.signal_type === 'BUY' ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                        <span className="tracking-wide">{signal.signal_type}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
+
+                      {/* Symbol */}
+                      <div>
+                        <div className="flex items-center gap-2.5">
+                          <h3 className="text-xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{signal.symbol}</h3>
+                          {signal.is_vip && (
+                            <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-500 text-white text-[10px] font-bold uppercase shadow-lg shadow-amber-500/20">
+                              <Crown className="w-3 h-3" />
+                              VIP
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-white/40 mt-1">
                           <Clock className="w-3 h-3" />
-                          {formatToUserTimezone(signal.created_at, 'h:mm a')}
-                        </span>
-                        <span>•</span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {formatToUserTimezone(signal.created_at, 'MMM d, yyyy')}
-                        </span>
-                        <span className="text-muted-foreground/60">({formatRelativeTime(signal.created_at)})</span>
+                          <span>{formatToUserTimezone(signal.created_at, 'MMM d, h:mm a')}</span>
+                          <span className="text-white/20">•</span>
+                          <span className="text-white/50">{formatRelativeTime(signal.created_at)}</span>
+                        </div>
                       </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      {/* Trade Type Badge */}
+                      {getTradeTypeLabel(signal.trade_type) && (
+                        <span className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${getTradeTypeColor(signal.trade_type)}`}>
+                          {getTradeTypeLabel(signal.trade_type)}
+                        </span>
+                      )}
+                      {/* Confluence Score */}
+                      <ConfluenceScoreDisplay score={signal.confluence_score} size="sm" />
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 mt-6">
-                    <ConfluenceScoreDisplay score={signal.confluence_score} size="sm" />
-                  </div>
-                </div>
+                  {/* Status Badges Row */}
+                  {(hasSystemOutcome || isExpired || isSignalTaken) && (
+                    <div className="px-5 py-2 border-b border-white/5 flex items-center gap-2">
+                      {isExpired && (
+                        <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/40 text-xs font-medium">
+                          <Clock className="w-3 h-3" />
+                          Expired
+                        </span>
+                      )}
+                      {hasSystemOutcome && outcomeLabel && !isExpired && (
+                        <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border ${
+                          isWin ? 'bg-success/15 text-success border-success/30' : isLoss ? 'bg-risk/15 text-risk border-risk/30' : isBreakeven ? 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30' : 'bg-white/[0.06] text-white/50 border-white/[0.08]'
+                        }`}>
+                          {outcomeLabel.text}
+                          {signal.final_r_multiple !== undefined && signal.final_r_multiple !== null && (
+                            <span className="ml-1 opacity-70 font-semibold">({signal.final_r_multiple >= 0 ? '+' : ''}{signal.final_r_multiple.toFixed(2)}R)</span>
+                          )}
+                        </span>
+                      )}
+                      {isSignalTaken && !hasSystemOutcome && (
+                        <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/40 text-xs font-medium">
+                          <CheckCircle className="w-3 h-3 text-success/60" />
+                          Used
+                        </span>
+                      )}
+                      {/* Milestone */}
+                      <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ml-auto border ${milestoneConfig.bgColor} ${milestoneConfig.color} ${milestoneConfig.borderColor}`}>
+                        {isLocked ? <Lock className="w-3 h-3" /> : milestoneConfig.icon}
+                        {milestoneConfig.name}
+                      </span>
+                    </div>
+                  )}
 
-                {/* Collapsed view for closed signals - only show header above, hide rest */}
-                {hasSystemOutcome && !isClosedCardExpanded ? (
-                  <button
-                    onClick={toggleClosedCard}
-                    className="w-full text-center py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
-                  >
-                    <span>Trade closed • Tap to view details</span>
-                    <ChevronDown className="w-4 h-4" />
-                  </button>
-                ) : (
-                  <>
-                    {hasSystemOutcome && isClosedCardExpanded && (
+                  {/* Main Content */}
+                  <div className="p-6">
+                    {/* Collapsed view for closed signals */}
+                    {hasSystemOutcome && !isClosedCardExpanded ? (
                       <button
                         onClick={toggleClosedCard}
-                        className="w-full text-center py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1 mb-3"
+                        className="w-full text-center py-4 text-sm text-white/30 hover:text-white/60 hover:bg-white/[0.03] rounded-xl border border-transparent hover:border-white/[0.08] transition-all flex items-center justify-center gap-2"
                       >
-                        <span>Tap to collapse</span>
-                        <ChevronDown className="w-3 h-3 rotate-180" />
+                        <span>View trade details</span>
+                        <ChevronDown className="w-4 h-4" />
                       </button>
-                    )}
+                    ) : (
+                      <>
+                        {hasSystemOutcome && isClosedCardExpanded && (
+                          <button
+                            onClick={toggleClosedCard}
+                            className="w-full text-center py-2 mb-5 text-xs text-white/25 hover:text-white/50 rounded-lg transition-colors flex items-center justify-center gap-1"
+                          >
+                            <span>Hide details</span>
+                            <ChevronDown className="w-3 h-3 rotate-180" />
+                          </button>
+                        )}
 
-                {/* Price Levels */}
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div className="p-3 rounded-lg bg-white/5">
-                    <p className="text-xs text-muted-foreground mb-1">Entry Price</p>
-                    <p className="font-mono font-bold">{signal.entry_price}</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-risk/10">
-                    <p className="text-xs text-risk mb-1">Stop Loss</p>
-                    <p className="font-mono font-bold text-risk">{signal.stop_loss}</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-success/10">
-                    <p className="text-xs text-success mb-1">Take Profit</p>
-                    <p className="font-mono font-bold text-success">{signal.take_profit}</p>
-                  </div>
-                </div>
+                        {/* Price Levels - Premium Design */}
+                        <div className="grid grid-cols-3 gap-4 mb-6">
+                          {/* Entry Price */}
+                          <div className="relative p-4 rounded-xl bg-gradient-to-br from-white/[0.04] to-white/[0.01] border border-white/[0.08] group/price overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover/price:opacity-100 transition-opacity" />
+                            <p className="text-[10px] uppercase tracking-widest text-white/40 mb-2 font-medium">Entry</p>
+                            <p className="font-mono text-xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">{signal.entry_price}</p>
+                          </div>
+                          {/* Stop Loss */}
+                          <div className="relative p-4 rounded-xl bg-gradient-to-br from-risk/10 to-risk/[0.02] border border-risk/30 overflow-hidden">
+                            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-risk/50 to-transparent" />
+                            <p className="text-[10px] uppercase tracking-widest text-risk/60 mb-2 font-medium">Stop Loss</p>
+                            <p className="font-mono text-xl font-bold text-risk">{signal.stop_loss}</p>
+                          </div>
+                          {/* Take Profit */}
+                          <div className="relative p-4 rounded-xl bg-gradient-to-br from-success/10 to-success/[0.02] border border-success/30 overflow-hidden">
+                            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-success/50 to-transparent" />
+                            <p className="text-[10px] uppercase tracking-widest text-success/60 mb-2 font-medium">Take Profit</p>
+                            <p className="font-mono text-xl font-bold text-success">{signal.take_profit}</p>
+                          </div>
+                        </div>
 
-                {/* Lot Size & Risk/Reward Info */}
-                <div className="p-3 mb-4 rounded-lg bg-accent/5 border border-accent/10">
-                  <div className="flex items-center gap-3 flex-wrap mb-2">
-                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-accent/10 border border-accent/20">
-                      <Scale className="w-3.5 h-3.5 text-accent" />
-                      <span className="text-xs font-medium text-accent">{lotSize.toFixed(2)} {positionLabel === 'Contracts' ? 'contracts' : positionLabel === 'Position' ? 'units' : 'lots'}</span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">R:R <span className="text-primary font-semibold">1:{riskRewardRatio}</span></span>
-                    <span className="text-xs text-muted-foreground">{stopLossPips.toFixed(1)} {instrumentType === 'forex' ? 'pips' : instrumentType === 'futures' ? 'ticks' : 'pts'} SL</span>
-                    <span className="text-xs text-muted-foreground">{takeProfitPips.toFixed(1)} {instrumentType === 'forex' ? 'pips' : instrumentType === 'futures' ? 'ticks' : 'pts'} TP</span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">
-                      Risk: <span className="text-primary font-medium">${dollarAmount.toFixed(2)}</span> ({userRiskPercentage}%)
-                    </span>
-                    <div className="flex gap-3">
-                      <span className="text-success font-medium">+${potentialProfit.toFixed(2)}</span>
-                      <span className="text-risk font-medium">-${potentialLoss.toFixed(2)}</span>
-                    </div>
-                  </div>
-                  {calculationBreakdown && calculationBreakdown !== 'Invalid input data' && (
-                    <p className="text-[10px] text-muted-foreground/70 mt-1.5 font-mono break-all">
-                      {calculationBreakdown}
-                    </p>
-                  )}
-                </div>
+                        {/* Lot Size & Risk/Reward Info */}
+                        <div className="relative p-4 mb-6 rounded-xl bg-gradient-to-br from-white/[0.03] to-transparent border border-white/[0.08] overflow-hidden">
+                          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-primary/15 to-primary/5 border border-primary/30">
+                                <Scale className="w-4 h-4 text-primary" />
+                                <span className="text-sm font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">{lotSize.toFixed(2)} {positionLabel === 'Contracts' ? 'contracts' : positionLabel === 'Position' ? 'units' : 'lots'}</span>
+                              </div>
+                              <div className="px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.1]">
+                                <span className="text-xs text-white/40">R:R</span>
+                                <span className="text-sm font-bold text-white ml-1.5">1:{riskRewardRatio}</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4 text-xs">
+                              <span className="px-2 py-1 rounded-lg bg-risk/10 text-risk/80">{stopLossPips.toFixed(1)} {instrumentType === 'forex' ? 'pips' : instrumentType === 'futures' ? 'ticks' : 'pts'}</span>
+                              <span className="px-2 py-1 rounded-lg bg-success/10 text-success/80">{takeProfitPips.toFixed(1)} {instrumentType === 'forex' ? 'pips' : instrumentType === 'futures' ? 'ticks' : 'pts'}</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between pt-3 border-t border-white/[0.06]">
+                            <span className="text-sm text-white/50">
+                              Risk: <span className="text-white font-semibold">${dollarAmount.toFixed(2)}</span>
+                              <span className="text-white/30 ml-1.5 text-xs">({userRiskPercentage}%)</span>
+                            </span>
+                            <div className="flex gap-6">
+                              <span className="text-sm"><span className="text-white/40">Win:</span> <span className="text-success font-bold">+${potentialProfit.toFixed(2)}</span></span>
+                              <span className="text-sm"><span className="text-white/40">Loss:</span> <span className="text-risk font-bold">-${potentialLoss.toFixed(2)}</span></span>
+                            </div>
+                          </div>
+                          {calculationBreakdown && calculationBreakdown !== 'Invalid input data' && (
+                            <p className="text-[10px] text-white/15 mt-3 font-mono leading-relaxed">
+                              {calculationBreakdown}
+                            </p>
+                          )}
+                        </div>
 
-                {/* AI Reasoning */}
-                <div className="p-4 rounded-lg bg-primary/5 border border-primary/10 mb-4">
-                  <p className="text-xs text-primary mb-2 font-medium">🤖 Nexus AI Analysis</p>
-                  {isLocked ? (
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Lock className="w-4 h-4" />
-                      <span className="text-sm">Unlock {milestoneConfig.name} to view analysis</span>
-                    </div>
-                  ) : features.fullAiReasoning ? (
-                    <p className="text-sm text-muted-foreground">{signal.ai_reasoning}</p>
-                  ) : features.basicAiReasoning ? (
-                    <p className="text-sm text-muted-foreground">
-                      {signal.ai_reasoning?.slice(0, 100)}...
-                      <button 
-                        onClick={() => navigate('/membership')} 
-                        className="text-primary hover:underline ml-1"
-                      >
-                        Upgrade for full analysis
-                      </button>
-                    </p>
-                  ) : (
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Lock className="w-4 h-4" />
-                      <span className="text-sm">AI reasoning available on Starter plan and above</span>
-                    </div>
-                  )}
-                </div>
+                        {/* AI Reasoning */}
+                        <div className="relative p-4 rounded-xl bg-gradient-to-br from-primary/10 to-primary/[0.02] border border-primary/30 mb-6 overflow-hidden">
+                          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="w-7 h-7 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center">
+                              <Bot className="w-4 h-4 text-primary" />
+                            </div>
+                            <span className="text-xs font-bold text-primary uppercase tracking-widest">AI Analysis</span>
+                          </div>
+                          {isLocked ? (
+                            <div className="flex items-center gap-2 text-white/40">
+                              <Lock className="w-4 h-4" />
+                              <span className="text-sm">Unlock {milestoneConfig.name} to view analysis</span>
+                            </div>
+                          ) : features.fullAiReasoning ? (
+                            <p className="text-sm text-white/70 leading-relaxed">{signal.ai_reasoning}</p>
+                          ) : features.basicAiReasoning ? (
+                            <p className="text-sm text-white/70">
+                              {signal.ai_reasoning?.slice(0, 100)}...
+                              <button
+                                onClick={() => navigate('/membership')}
+                                className="text-primary hover:underline ml-1"
+                              >
+                                Upgrade for full analysis
+                              </button>
+                            </p>
+                          ) : (
+                            <div className="flex items-center gap-2 text-white/40">
+                              <Lock className="w-4 h-4" />
+                              <span className="text-sm">AI reasoning available on Starter plan and above</span>
+                            </div>
+                          )}
+                        </div>
 
-                {/* Chart Screenshot */}
-                {signal.image_url && !isLocked && (
-                  <div className="mb-4">
-                    <div className="flex items-center gap-1.5 mb-2">
-                      <ImageIcon className="w-3.5 h-3.5 text-primary" />
-                      <p className="text-xs text-primary font-medium">Chart Analysis</p>
-                    </div>
-                    <SignalImageDisplay 
-                      imageUrl={signal.image_url} 
-                      symbol={signal.symbol}
-                      className="rounded-lg border border-white/10"
-                    />
-                  </div>
-                )}
+                        {/* Chart Screenshot */}
+                        {signal.image_url && !isLocked && (
+                          <div className="mb-5">
+                            <div className="flex items-center gap-1.5 mb-2">
+                              <ImageIcon className="w-3.5 h-3.5 text-primary" />
+                              <span className="text-xs font-semibold text-primary uppercase tracking-wider">Chart</span>
+                            </div>
+                            <SignalImageDisplay
+                              imageUrl={signal.image_url}
+                              symbol={signal.symbol}
+                              className="rounded-xl border border-white/10"
+                            />
+                          </div>
+                        )}
 
-                {/* Agent Notes & Updates */}
-                {(signal.agent_notes || (signalComments[signal.id] && signalComments[signal.id].length > 0)) && (
-                  <div className="p-4 rounded-lg bg-amber-500/5 border border-amber-500/20 mb-4 space-y-2">
-                    <p className="text-xs text-amber-500 font-medium flex items-center gap-1.5">
-                      📢 Analyst Updates
-                    </p>
+                        {/* Agent Notes & Updates */}
+                        {(signal.agent_notes || (signalComments[signal.id] && signalComments[signal.id].length > 0)) && (
+                          <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 mb-5 space-y-2">
+                            <div className="flex items-center gap-2 mb-2">
+                              <AlertCircle className="w-4 h-4 text-amber-400" />
+                              <span className="text-xs font-semibold text-amber-400 uppercase tracking-wider">Analyst Updates</span>
+                            </div>
                     
                     {/* Agent Notes (latest important note) */}
                     {signal.agent_notes && (
@@ -1625,122 +1731,127 @@ const SignalsFeedTab = () => {
                   </div>
                 )}
 
-                {/* User's Personal Trade Outcome Display */}
-                {tradeResult && (
-                  <div className={`mb-4 p-3 rounded-lg ${
-                    tradeResult.outcome === 'target_hit' ? 'bg-success/20 border border-success/30' :
-                    tradeResult.outcome === 'stop_loss_hit' ? 'bg-risk/20 border border-risk/30' :
-                    'bg-yellow-500/20 border border-yellow-500/30'
-                  }`}>
-                    <div className="flex items-center justify-between">
-                      <span className={`font-medium flex items-center gap-2 ${
-                        tradeResult.outcome === 'target_hit' ? 'text-success' :
-                        tradeResult.outcome === 'stop_loss_hit' ? 'text-risk' :
-                        'text-yellow-400'
-                      }`}>
-                        <CheckCircle className="w-4 h-4" />
-                        Your Result: {tradeResult.outcome === 'target_hit' ? '✅ Won' :
-                         tradeResult.outcome === 'stop_loss_hit' ? '❌ Lost' :
-                         tradeResult.outcome === 'breakeven' ? '⚖️ Breakeven' : '💰 Custom'}
-                      </span>
-                      <span className={`font-bold ${tradeResult.pnl >= 0 ? 'text-success' : 'text-risk'}`}>
-                        {tradeResult.pnl >= 0 ? '+' : ''}${tradeResult.pnl.toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                )}
+                        {/* User's Personal Trade Outcome Display */}
+                        {tradeResult && (
+                          <div className={`mb-5 p-4 rounded-xl ${
+                            tradeResult.outcome === 'target_hit' ? 'bg-success/10 border border-success/30' :
+                            tradeResult.outcome === 'stop_loss_hit' ? 'bg-risk/10 border border-risk/30' :
+                            'bg-yellow-500/10 border border-yellow-500/30'
+                          }`}>
+                            <div className="flex items-center justify-between">
+                              <span className={`font-semibold flex items-center gap-2 text-sm ${
+                                tradeResult.outcome === 'target_hit' ? 'text-success' :
+                                tradeResult.outcome === 'stop_loss_hit' ? 'text-risk' :
+                                'text-yellow-400'
+                              }`}>
+                                <CheckCircle className="w-4 h-4" />
+                                Your Result: {tradeResult.outcome === 'target_hit' ? 'Won' :
+                                 tradeResult.outcome === 'stop_loss_hit' ? 'Lost' :
+                                 tradeResult.outcome === 'breakeven' ? 'Breakeven' : 'Custom'}
+                              </span>
+                              <span className={`text-lg font-bold ${tradeResult.pnl >= 0 ? 'text-success' : 'text-risk'}`}>
+                                {tradeResult.pnl >= 0 ? '+' : ''}${tradeResult.pnl.toFixed(2)}
+                              </span>
+                            </div>
+                          </div>
+                        )}
 
-                {/* Action Buttons */}
-                <div className="space-y-3">
-                  {isSignalTaken ? (
-                    <div className="space-y-2">
-                      <div className="p-3 rounded-lg bg-muted/20 border border-muted/30 text-center">
-                        <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-                          <CheckCircle className="w-4 h-4" />
-                          Signal already used
-                        </p>
-                      </div>
-                      {(signal.outcome && signal.outcome !== 'pending') && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setReplaySignal(signal)}
-                          className="w-full border-primary/30 text-primary hover:bg-primary/10"
-                        >
-                          <Play className="w-4 h-4 mr-2" />
-                          View Trade Replay
-                        </Button>
-                      )}
-                    </div>
-                  ) : isLocked ? (
-                    <Button
-                      variant="outline"
-                      className={`w-full ${milestoneConfig.borderColor} ${milestoneConfig.color}`}
-                      disabled
-                    >
-                      <Lock className="w-4 h-4 mr-2" />
-                      Locked - {milestoneConfig.name}
-                    </Button>
-                  ) : !canTakeMoreSignals ? (
-                    <Button
-                      onClick={() => navigate('/membership')}
-                      variant="outline"
-                      className="w-full border-warning/30 text-warning hover:bg-warning/10"
-                    >
-                      <Crown className="w-4 h-4 mr-2" />
-                      Upgrade for More Signals
-                    </Button>
-                  ) : (
-                    <>
-                      {/* Trade Outcome Buttons */}
-                      <div className="flex flex-wrap gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => handleMarkOutcome(signal, 'target_hit', potentialProfit)}
-                          className="bg-gradient-to-r from-success to-green-600 hover:from-green-600 hover:to-green-700"
-                        >
-                          ✅ Won (+${potentialProfit.toFixed(2)})
-                        </Button>
-                        <Button
-                          size="sm"
-                          onClick={() => handleMarkOutcome(signal, 'stop_loss_hit', -potentialLoss)}
-                          className="bg-gradient-to-r from-risk to-red-600 hover:from-red-600 hover:to-red-700"
-                        >
-                          ❌ Lost (-${potentialLoss.toFixed(2)})
-                        </Button>
-                        <Button
-                          size="sm"
-                          onClick={() => handleMarkOutcome(signal, 'breakeven', 0)}
-                          className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800"
-                        >
-                          ⚖️ BE ($0)
-                        </Button>
-                        <Button
-                          size="sm"
-                          onClick={() => setShowCustomPnlInput(signal.id)}
-                          className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800"
-                        >
-                          💰 Custom
-                        </Button>
-                      </div>
+                        {/* Action Buttons */}
+                        <div className="space-y-4 pt-2">
+                          {isSignalTaken ? (
+                            <div className="space-y-3">
+                              <div className="p-4 rounded-xl bg-gradient-to-r from-white/[0.04] to-white/[0.01] border border-white/[0.08] text-center">
+                                <p className="text-sm text-white/50 flex items-center justify-center gap-2">
+                                  <CheckCircle className="w-4 h-4 text-success/70" />
+                                  Signal already used
+                                </p>
+                              </div>
+                              {(signal.outcome && signal.outcome !== 'pending') && (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => setReplaySignal(signal)}
+                                  className="w-full border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50 transition-all"
+                                >
+                                  <Play className="w-4 h-4 mr-2" />
+                                  View Trade Replay
+                                </Button>
+                              )}
+                            </div>
+                          ) : isLocked ? (
+                            <Button
+                              variant="outline"
+                              className={`w-full ${milestoneConfig.borderColor} ${milestoneConfig.color} opacity-70`}
+                              disabled
+                            >
+                              <Lock className="w-4 h-4 mr-2" />
+                              Locked - {milestoneConfig.name}
+                            </Button>
+                          ) : !canTakeMoreSignals ? (
+                            <Button
+                              onClick={() => navigate('/membership')}
+                              className="w-full bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border border-amber-500/40 text-amber-400 hover:from-amber-500/30 hover:to-yellow-500/20 transition-all"
+                            >
+                              <Crown className="w-4 h-4 mr-2" />
+                              Upgrade for More Signals
+                            </Button>
+                          ) : (
+                            <>
+                              {/* Trade Outcome Buttons - Label */}
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="text-[10px] uppercase tracking-widest text-white/30 font-medium">Mark Outcome</span>
+                                <div className="flex-1 h-px bg-gradient-to-r from-white/10 to-transparent" />
+                              </div>
 
-                      {/* Utility Buttons */}
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleAddToJournal(signal)}
-                          className="flex-1 border-blue-500/30 text-blue-400 hover:bg-blue-500/10"
-                        >
-                          <BookOpen className="w-4 h-4 mr-2" />
-                          Journal
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleChatWithNexus(signal)}
-                          className="flex-1 border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
-                        >
+                              {/* Trade Outcome Buttons */}
+                              <div className="grid grid-cols-4 gap-2">
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleMarkOutcome(signal, 'target_hit', potentialProfit)}
+                                  className="bg-gradient-to-r from-success to-emerald-600 hover:from-success/90 hover:to-emerald-600/90 text-white font-bold shadow-lg shadow-success/20 transition-all"
+                                >
+                                  <span className="text-xs tracking-wide">Won</span>
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleMarkOutcome(signal, 'stop_loss_hit', -potentialLoss)}
+                                  className="bg-gradient-to-r from-risk to-red-600 hover:from-risk/90 hover:to-red-600/90 text-white font-bold shadow-lg shadow-risk/20 transition-all"
+                                >
+                                  <span className="text-xs tracking-wide">Lost</span>
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleMarkOutcome(signal, 'breakeven', 0)}
+                                  className="bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-500/90 hover:to-amber-500/90 text-white font-bold shadow-lg shadow-yellow-500/20 transition-all"
+                                >
+                                  <span className="text-xs tracking-wide">BE</span>
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  onClick={() => setShowCustomPnlInput(signal.id)}
+                                  className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-500/90 hover:to-orange-600/90 text-white font-bold shadow-lg shadow-orange-500/20 transition-all"
+                                >
+                                  <span className="text-xs tracking-wide">Custom</span>
+                                </Button>
+                              </div>
+
+                              {/* Utility Buttons */}
+                              <div className="flex gap-3 pt-1">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleAddToJournal(signal)}
+                                  className="flex-1 border-blue-500/30 text-blue-400 hover:bg-blue-500/10 hover:border-blue-500/50 transition-all"
+                                >
+                                  <BookOpen className="w-4 h-4 mr-2" />
+                                  Journal
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleChatWithNexus(signal)}
+                                  className="flex-1 border-purple-500/30 text-purple-400 hover:bg-purple-500/10 hover:border-purple-500/50 transition-all"
+                                >
                           <Bot className="w-4 h-4 mr-2" />
                           Nexus
                         </Button>
@@ -1750,6 +1861,8 @@ const SignalsFeedTab = () => {
                 </div>
                 </>
                 )}
+                  </div>
+                </div>
               </motion.div>
             );
           })
@@ -1761,31 +1874,63 @@ const SignalsFeedTab = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="glass-card p-4 rounded-xl"
+        className="relative group"
       >
-        <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
-          <Trophy className="w-4 h-4 text-primary" />
-          Milestone System
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {MILESTONE_CONFIGS.map((milestone) => {
-            const isUnlocked = unlockedMilestones.includes(milestone.id);
-            return (
-              <div
-                key={milestone.id}
-                className={`p-3 rounded-lg border ${isUnlocked ? milestone.borderColor : 'border-white/10'} ${isUnlocked ? milestone.bgColor : 'bg-white/5'}`}
-              >
-                <div className={`flex items-center gap-2 mb-1 ${isUnlocked ? milestone.color : 'text-muted-foreground'}`}>
-                  {isUnlocked ? milestone.icon : <Lock className="w-4 h-4" />}
-                  <span className="font-medium text-sm">{milestone.name}</span>
-                </div>
-                <p className="text-xs text-muted-foreground">{milestone.description}</p>
-                <p className={`text-xs mt-1 ${isUnlocked ? milestone.color : 'text-muted-foreground'}`}>
-                  Target: {milestone.targetWinRate}
-                </p>
-              </div>
-            );
-          })}
+        {/* Subtle glow */}
+        <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-amber-500/5 to-purple-500/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+        <div className="relative bg-white/[0.02] backdrop-blur-sm border border-white/[0.08] p-5 rounded-2xl overflow-hidden group-hover:border-white/[0.12] transition-colors">
+          {/* Top accent */}
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
+
+          <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500/20 to-yellow-500/10 border border-amber-500/20 flex items-center justify-center">
+              <Trophy className="w-4 h-4 text-amber-400" />
+            </div>
+            <span className="bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">Milestone System</span>
+          </h3>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {MILESTONE_CONFIGS.map((milestone, index) => {
+              const isUnlocked = unlockedMilestones.includes(milestone.id);
+              return (
+                <motion.div
+                  key={milestone.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 + index * 0.1 }}
+                  whileHover={{ y: -2, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
+                  className={`relative p-4 rounded-xl border overflow-hidden transition-all duration-300 ${
+                    isUnlocked
+                      ? `${milestone.borderColor} ${milestone.bgColor} hover:shadow-lg`
+                      : 'border-white/[0.08] bg-white/[0.02]'
+                  }`}
+                >
+                  {/* Unlocked glow */}
+                  {isUnlocked && (
+                    <div className={`absolute inset-0 ${milestone.bgColor} opacity-50`} />
+                  )}
+
+                  <div className="relative z-10">
+                    <div className={`flex items-center gap-2 mb-2 ${isUnlocked ? milestone.color : 'text-muted-foreground'}`}>
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
+                        isUnlocked
+                          ? `bg-gradient-to-br ${milestone.bgColor} border ${milestone.borderColor}`
+                          : 'bg-white/[0.05] border border-white/[0.1]'
+                      }`}>
+                        {isUnlocked ? milestone.icon : <Lock className="w-3.5 h-3.5" />}
+                      </div>
+                      <span className="font-semibold text-sm">{milestone.name}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-1">{milestone.description}</p>
+                    <p className={`text-xs font-medium ${isUnlocked ? milestone.color : 'text-muted-foreground'}`}>
+                      Target: {milestone.targetWinRate}
+                    </p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </motion.div>
 

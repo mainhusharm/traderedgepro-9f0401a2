@@ -228,29 +228,44 @@ export default function DailyTradingChecklist({ accountId, className }: DailyTra
   }
 
   return (
-    <Card className={className}>
-      <CardHeader className="pb-3">
+    <Card className={`${className} relative overflow-hidden group`}>
+      {/* Premium gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-emerald-500/5" />
+
+      {/* Subtle border glow on hover */}
+      <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-primary/20 via-emerald-500/20 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-sm" />
+
+      {/* Top accent line */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+
+      <CardHeader className="pb-3 relative">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
-            <Target className="w-5 h-5 text-primary" />
-            Daily Trading Checklist
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-emerald-500/10 border border-primary/20 flex items-center justify-center">
+              <Target className="w-4 h-4 text-primary" />
+            </div>
+            <span className="bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+              Daily Trading Checklist
+            </span>
           </CardTitle>
           <div className="flex items-center gap-2">
             {isComplete ? (
-              <Badge className="bg-emerald-500/20 text-emerald-400">
+              <Badge className="bg-gradient-to-r from-emerald-500/20 to-green-500/20 text-emerald-400 border border-emerald-500/30">
                 <Trophy className="w-3 h-3 mr-1" />
                 Complete
               </Badge>
             ) : (
-              <Badge variant="outline">
-                {completedCount}/{items.length}
+              <Badge variant="outline" className="bg-white/[0.03] border-white/[0.1]">
+                <span className="bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent font-semibold">
+                  {completedCount}/{items.length}
+                </span>
               </Badge>
             )}
             {accountId && (
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8"
+                className="h-8 w-8 hover:bg-white/[0.05]"
                 onClick={() => setShowSettings(!showSettings)}
               >
                 <Settings className="w-4 h-4" />
@@ -258,12 +273,37 @@ export default function DailyTradingChecklist({ accountId, className }: DailyTra
             )}
           </div>
         </div>
-        <Progress value={progress} className="h-1.5 mt-2" />
+
+        {/* Premium progress bar */}
+        <div className="relative mt-3">
+          <div className="w-full h-2 bg-white/[0.05] rounded-full overflow-hidden">
+            <motion.div
+              className="h-full bg-gradient-to-r from-primary via-purple-500 to-emerald-500 rounded-full relative"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            >
+              {/* Shimmer effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+            </motion.div>
+          </div>
+          {/* Glow under progress */}
+          <div
+            className="absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-emerald-500 rounded-full blur-lg opacity-30"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
       </CardHeader>
-      <CardContent className="space-y-2">
+
+      <CardContent className="space-y-2 relative">
         {/* Enforcement Toggle */}
         {showSettings && accountId && (
-          <div className="p-3 rounded-lg bg-muted/30 border border-border mb-3">
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="p-4 rounded-xl bg-gradient-to-r from-white/[0.03] to-transparent border border-white/[0.08] mb-3"
+          >
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="enforce-checklist" className="text-sm font-medium">
@@ -280,7 +320,7 @@ export default function DailyTradingChecklist({ accountId, className }: DailyTra
                 disabled={updatingEnforcement}
               />
             </div>
-          </div>
+          </motion.div>
         )}
 
         {items.map((item, index) => (
@@ -289,25 +329,41 @@ export default function DailyTradingChecklist({ accountId, className }: DailyTra
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.05 }}
+            whileHover={{ x: 4 }}
             onClick={() => toggleItem(item)}
             className={`
-              w-full flex items-start gap-3 p-3 rounded-lg text-left transition-all
-              ${item.checked 
-                ? 'bg-emerald-500/10 border border-emerald-500/30' 
-                : 'bg-muted/30 border border-transparent hover:border-border'
+              relative w-full flex items-start gap-3 p-3 rounded-xl text-left transition-all overflow-hidden group/item
+              ${item.checked
+                ? 'bg-gradient-to-r from-emerald-500/10 to-green-500/5 border border-emerald-500/30'
+                : 'bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.04]'
               }
             `}
           >
-            <div className={`mt-0.5 ${item.checked ? 'text-emerald-400' : 'text-muted-foreground'}`}>
+            {/* Shimmer on hover */}
+            <div className="absolute inset-0 opacity-0 group-hover/item:opacity-100 transition-opacity duration-500">
+              <div className="absolute inset-0 -translate-x-full group-hover/item:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/[0.03] to-transparent" />
+            </div>
+
+            {/* Checkbox */}
+            <div className={`relative mt-0.5 ${item.checked ? 'text-emerald-400' : 'text-muted-foreground'}`}>
               {item.checked ? (
-                <CheckCircle className="w-5 h-5" />
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                >
+                  <CheckCircle className="w-5 h-5" />
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 bg-emerald-400 blur-md opacity-50" />
+                </motion.div>
               ) : (
                 <Circle className="w-5 h-5" />
               )}
             </div>
-            <div className="flex-1">
+
+            <div className="flex-1 relative z-10">
               <div className="flex items-center gap-2">
-                <span className={item.checked ? 'text-emerald-400' : 'text-muted-foreground'}>
+                <span className={`transition-colors ${item.checked ? 'text-emerald-400' : 'text-muted-foreground group-hover/item:text-foreground'}`}>
                   {item.icon}
                 </span>
                 <span className={`font-medium ${item.checked ? 'text-foreground' : 'text-foreground'}`}>
@@ -318,21 +374,47 @@ export default function DailyTradingChecklist({ accountId, className }: DailyTra
                 {item.description}
               </p>
             </div>
+
+            {/* Check indicator */}
+            {item.checked && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="absolute right-3 top-1/2 -translate-y-1/2"
+              >
+                <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+              </motion.div>
+            )}
           </motion.button>
         ))}
 
         {!isComplete && (
-          <div className={`mt-3 p-3 rounded-lg ${requireChecklist ? 'bg-red-500/10 border border-red-500/30' : 'bg-yellow-500/10 border border-yellow-500/30'}`}>
-            <div className={`flex items-center gap-2 text-sm ${requireChecklist ? 'text-red-400' : 'text-yellow-400'}`}>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`mt-4 p-4 rounded-xl relative overflow-hidden ${
+              requireChecklist
+                ? 'bg-gradient-to-r from-red-500/10 to-orange-500/5 border border-red-500/30'
+                : 'bg-gradient-to-r from-amber-500/10 to-yellow-500/5 border border-amber-500/30'
+            }`}
+          >
+            {/* Animated gradient background */}
+            <div className={`absolute inset-0 ${
+              requireChecklist
+                ? 'bg-gradient-to-r from-red-500/5 to-transparent'
+                : 'bg-gradient-to-r from-amber-500/5 to-transparent'
+            }`} />
+
+            <div className={`flex items-center gap-2 text-sm relative z-10 ${requireChecklist ? 'text-red-400' : 'text-amber-400'}`}>
               <AlertTriangle className="w-4 h-4" />
-              <span>
-                {requireChecklist 
-                  ? 'Trading blocked until checklist is complete' 
+              <span className="font-medium">
+                {requireChecklist
+                  ? 'Trading blocked until checklist is complete'
                   : 'Complete your checklist before trading'
                 }
               </span>
             </div>
-          </div>
+          </motion.div>
         )}
       </CardContent>
     </Card>
